@@ -29,11 +29,11 @@ export interface Project {
 export const projects: Project[] = [
   {
     id: 'sigma',
-    title: 'Sigma — orquestrador de agentes de IA',
+    title: 'Sigma — atendimento com IA',
     category: 'Desenvolvimento de software · IA',
     description:
-      'Plataforma para construir, versionar e publicar agentes de IA de atendimento em um canvas visual: fluxos por área, tools que consultam ERP e bancos, base de conhecimento e execução com rastreio. Demo navegável com dados fictícios.',
-    tech: ['React', 'Canvas de fluxo', 'Agentes de IA', 'Tools & RAG'],
+      'Sistema de atendimento com IA para empresas que precisam responder clientes com contexto, regras e histórico. Por trás, organiza agentes por área, conecta ferramentas como ERP e bancos de dados, usa base de conhecimento e registra cada execução. Demo navegável com dados fictícios.',
+    tech: ['Atendimento com IA', 'Fluxos por área', 'Base de conhecimento', 'Integrações'],
     links: {
       demo: '/sigma/',
       code: 'https://github.com/raniere57/raniere-dev/tree/main/sigma',
