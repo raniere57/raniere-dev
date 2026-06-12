@@ -243,9 +243,8 @@
   top: 50%;
   left: 50%;
   translate: -50% -50%;
-  min-width: 9rem;
-  min-height: 3.25rem;
-  padding: 0.7rem 1rem;
+  width: 4.5rem;
+  height: 4.5rem;
   display: grid;
   place-content: center;
   border: 1px solid var(--color-border);
@@ -262,7 +261,7 @@
 
 .scope-map__brand {
   font-family: var(--font-mono);
-  font-size: clamp(0.95rem, 0.8rem + 0.7vw, 1.25rem);
+  font-size: clamp(1.55rem, 1.2rem + 1.4vw, 2.25rem);
   font-weight: 600;
   line-height: 1;
   color: var(--color-text);
@@ -295,28 +294,28 @@
 .scope-map__domain--software {
   --orbit-a-x: 1.1rem;
   --orbit-a-y: 0.8rem;
-  --orbit-b-x: 18rem;
-  --orbit-b-y: 6.4rem;
-  --orbit-c-x: 6rem;
-  --orbit-c-y: 21rem;
+  --orbit-b-x: 19.4rem;
+  --orbit-b-y: 7.4rem;
+  --orbit-c-x: 4.8rem;
+  --orbit-c-y: 22.1rem;
 }
 
 .scope-map__domain--automacao {
-  --orbit-a-x: 18rem;
-  --orbit-a-y: 6.4rem;
-  --orbit-b-x: 6rem;
-  --orbit-b-y: 21rem;
+  --orbit-a-x: 19.4rem;
+  --orbit-a-y: 7.4rem;
+  --orbit-b-x: 4.8rem;
+  --orbit-b-y: 22.1rem;
   --orbit-c-x: 1.1rem;
   --orbit-c-y: 0.8rem;
 }
 
 .scope-map__domain--dados {
-  --orbit-a-x: 6rem;
-  --orbit-a-y: 21rem;
+  --orbit-a-x: 4.8rem;
+  --orbit-a-y: 22.1rem;
   --orbit-b-x: 1.1rem;
   --orbit-b-y: 0.8rem;
-  --orbit-c-x: 18rem;
-  --orbit-c-y: 6.4rem;
+  --orbit-c-x: 19.4rem;
+  --orbit-c-y: 7.4rem;
 }
 
 @keyframes scope-orbit {

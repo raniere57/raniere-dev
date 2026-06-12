@@ -67,7 +67,7 @@ export function HeroScopeMap() {
       <div className="scope-map__grid">
         <div className="scope-map__core">
           <span className="scope-map__brand">
-            raniere<span>.dev</span>
+            r<span>.</span>
           </span>
         </div>
 
