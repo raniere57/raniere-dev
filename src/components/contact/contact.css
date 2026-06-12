@@ -1,0 +1,110 @@
+.contact__panel {
+  position: relative;
+  padding: clamp(2.5rem, 2rem + 3vw, 5rem);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Brilho de canto: reforça o painel como ponto focal */
+.contact__panel::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 50%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, var(--glow), transparent 70%);
+  pointer-events: none;
+}
+
+.contact__title {
+  font-size: clamp(1.6rem, 1.2rem + 2.2vw, 2.75rem);
+  font-weight: 800;
+  max-width: 24ch;
+}
+
+.contact__lead {
+  margin-top: 1.25rem;
+  max-width: 48ch;
+  color: var(--color-text-muted);
+}
+
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.contact__cta {
+  display: inline-flex;
+  padding: 0.9rem 1.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  border-radius: var(--radius-card);
+  transition: transform var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+}
+
+.contact__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -10px var(--color-accent-soft);
+}
+
+.contact__social {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.9rem 1.25rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--color-text);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-card);
+  transition: border-color var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.contact__social:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Largura mínima evita salto de layout quando o rótulo vira "E-mail copiado ✓" */
+.contact__email {
+  min-width: 13.5rem;
+  justify-content: center;
+}
+
+.contact__email--copied {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Mobile: painel de contato centralizado, botões em coluna alinhada */
+@media (max-width: 640px) {
+  .contact__panel {
+    text-align: center;
+  }
+
+  .contact__title,
+  .contact__lead {
+    margin-inline: auto;
+  }
+
+  .contact__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .contact__cta,
+  .contact__social {
+    justify-content: center;
+  }
+}

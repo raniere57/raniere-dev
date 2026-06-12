@@ -1,0 +1,126 @@
+.about__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(2rem, 1.5rem + 3vw, 5rem);
+  align-items: stretch;
+}
+
+.about__principles {
+  display: grid;
+  /* space-between distribui as 3 frases na altura da coluna,
+     mantendo os blocos alinhados com o card ao lado */
+  align-content: space-between;
+  gap: clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem);
+}
+
+.about__principle {
+  position: relative;
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--color-border);
+  transition: border-color var(--duration-normal) ease;
+}
+
+.about__principle:hover {
+  border-left-color: var(--color-accent);
+}
+
+.about__principle h3 {
+  font-size: var(--text-h3);
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.about__principle p {
+  color: var(--color-text-muted);
+  max-width: 52ch;
+}
+
+.about__stack {
+  padding: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.about__stack-heading {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 1.25rem;
+}
+
+.about__stack-group + .about__stack-group {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.about__stack-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.about__stack-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.about__stack-items li {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  transition: border-color var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.about__stack-items li:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+@media (max-width: 880px) {
+  .about__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .about__stack {
+    position: static;
+  }
+}
+
+/* Mobile: princípios e card de domínio centralizados.
+   Borda lateral vira borda superior para manter o acento sem quebrar o centro */
+@media (max-width: 640px) {
+  .about__principle {
+    padding-left: 0;
+    padding-top: 1rem;
+    border-left: none;
+    border-top: 2px solid var(--color-border);
+    text-align: center;
+  }
+
+  .about__principle:hover {
+    border-top-color: var(--color-accent);
+  }
+
+  .about__principle p {
+    margin-inline: auto;
+  }
+
+  .about__stack {
+    text-align: center;
+  }
+
+  .about__stack-items {
+    justify-content: center;
+  }
+}
