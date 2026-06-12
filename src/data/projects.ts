@@ -15,16 +15,15 @@ export interface Project {
 // Trocar os links pelos subdomínios/repos reais quando publicar cada case.
 export const projects: Project[] = [
   {
-    id: 'app-multiplataforma',
-    title: 'Aplicação multiplataforma de gestão',
-    category: 'Desenvolvimento de software',
+    id: 'sigma',
+    title: 'Sigma — orquestrador de agentes de IA',
+    category: 'Desenvolvimento de software · IA',
     description:
-      'Sistema sob medida com painel web e app mobile (iOS e Android) compartilhando a mesma API: cadastro, fluxo de aprovações e relatórios em tempo real, do front à publicação nas lojas.',
-    tech: ['Web', 'iOS & Android', 'API REST', 'Autenticação'],
+      'Plataforma para construir, versionar e publicar agentes de IA de atendimento em um canvas visual: fluxos por área, tools que consultam ERP e bancos, base de conhecimento e execução com rastreio. Demo navegável com dados fictícios.',
+    tech: ['React', 'Canvas de fluxo', 'Agentes de IA', 'Tools & RAG'],
     links: {
-      case: '#projetos',
-      demo: 'https://demo.raniere.dev',
-      code: 'https://github.com/raniere',
+      demo: '/sigma/',
+      code: 'https://github.com/raniere57/raniere-dev/tree/main/sigma',
     },
   },
   {

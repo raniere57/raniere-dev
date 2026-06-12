@@ -25,11 +25,22 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Instalar dependências
+      - name: Instalar dependências (portfólio)
         run: npm ci
 
-      - name: Build
+      - name: Build do portfólio
         run: npm run build
+
+      - name: Instalar dependências (demo Sigma)
+        run: npm ci --prefix sigma
+
+      - name: Build do demo Sigma
+        run: npm run build --prefix sigma
+
+      - name: Agrupar demo em dist/sigma
+        run: |
+          mkdir -p dist/sigma
+          cp -r sigma/dist/. dist/sigma/
 
       - uses: actions/upload-pages-artifact@v3
         with:

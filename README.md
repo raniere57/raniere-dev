@@ -31,12 +31,36 @@ Configuração única no repositório:
 ## Estrutura
 
 ```
-src/
+src/                # portfólio (raniere.dev)
 ├── components/     # um diretório por seção (tsx + css)
 ├── hooks/          # useTheme (dark/light + localStorage), useReveal (scroll)
 ├── data/           # serviços e projetos (editar aqui para atualizar conteúdo)
 └── styles/         # tokens.css (design tokens) e global.css
+
+sigma/              # demo do projeto Sigma (raniere.dev/sigma/)
+├── src/            # app React (Vite, base '/sigma/')
+│   ├── components/LoginScreen.tsx   # login pré-preenchido (cosmético)
+│   ├── components/DemoBackPill.tsx  # pílula de volta ao portfólio
+│   └── lib/mockBackend.ts           # intercepta fetch → dados fictícios
 ```
+
+### Demo Sigma
+
+`sigma/` é uma app Vite independente, buildada com `base: '/sigma/'` e publicada
+em `dist/sigma` pelo mesmo workflow do GitHub Actions. Sem backend: `mockBackend.ts`
+intercepta `window.fetch` e responde aos endpoints da API com dados fictícios
+(operadora "NovaConecta" — nenhum nome real de cliente). A IA é mockada com
+respostas canned. Login já preenchido entra direto.
+
+```bash
+npm --prefix sigma install
+npm --prefix sigma run dev      # serve em /sigma/
+npm --prefix sigma run build
+```
+
+> Limitação conhecida: por ser SPA em subpath no Pages, recarregar uma sub-rota
+> profunda (ex.: `/sigma/agents`) pode dar 404 — entrar pela raiz `/sigma/` e
+> navegar pela interface funciona normalmente.
 
 ## Conteúdo
 

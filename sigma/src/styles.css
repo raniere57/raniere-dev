@@ -1,0 +1,230 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  background: #060708;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #060708;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.react-flow__edge-path {
+  filter: drop-shadow(0 0 8px rgba(199, 255, 61, 0.16));
+}
+
+.react-flow__attribution {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .react-flow__minimap {
+    display: none;
+  }
+}
+
+/* ===== Home / Command Deck ============================================== */
+
+.font-display {
+  font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+}
+
+@keyframes home-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes home-aurora {
+  from {
+    transform: rotate(0deg) scale(1.25);
+  }
+  to {
+    transform: rotate(360deg) scale(1.25);
+  }
+}
+
+@keyframes home-grid-pan {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 56px 0, 0 56px;
+  }
+}
+
+@keyframes home-scan {
+  0% {
+    transform: translateY(-10vh);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.5;
+  }
+  88% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(110vh);
+    opacity: 0;
+  }
+}
+
+@keyframes home-wordmark-glow {
+  0%,
+  100% {
+    opacity: 0.5;
+    filter: blur(34px);
+  }
+  50% {
+    opacity: 0.85;
+    filter: blur(44px);
+  }
+}
+
+@keyframes home-blink {
+  0%,
+  72%,
+  100% {
+    opacity: 1;
+  }
+  78%,
+  94% {
+    opacity: 0.25;
+  }
+}
+
+.home-reveal {
+  opacity: 0;
+  animation: home-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.home-aurora {
+  animation: home-aurora 48s linear infinite;
+}
+
+.home-grid {
+  background-image:
+    linear-gradient(to right, rgba(199, 255, 61, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(199, 255, 61, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  animation: home-grid-pan 14s linear infinite;
+  mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 78%);
+}
+
+.home-scanline {
+  animation: home-scan 7.5s ease-in-out infinite;
+}
+
+.home-wordmark-glow {
+  animation: home-wordmark-glow 6s ease-in-out infinite;
+}
+
+.home-blink {
+  animation: home-blink 4s steps(1, end) infinite;
+}
+
+.home-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* Spotlight following the cursor (vars set inline via window mousemove). */
+.home-spotlight {
+  background: radial-gradient(
+    460px circle at var(--mx, 50%) var(--my, 25%),
+    rgba(199, 255, 61, 0.16),
+    rgba(199, 255, 61, 0.05) 40%,
+    transparent 68%
+  );
+  will-change: background;
+}
+
+.home-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.home-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.home-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 45%;
+  height: 100%;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--accent) 22%, transparent), transparent);
+  transform: skewX(-18deg);
+  transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-card:not(:disabled):hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow:
+    0 26px 60px -22px color-mix(in srgb, var(--accent) 40%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.home-card:not(:disabled):hover::before {
+  opacity: 1;
+}
+
+.home-card:not(:disabled):hover::after {
+  left: 120%;
+}
+
+.home-card:not(:disabled):hover .home-card-arrow {
+  transform: translate(4px, -4px);
+  color: var(--accent);
+}
+
+.home-card-arrow {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), color 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-reveal,
+  .home-aurora,
+  .home-grid,
+  .home-scanline,
+  .home-wordmark-glow,
+  .home-blink {
+    animation: none;
+  }
+  .home-reveal {
+    opacity: 1;
+  }
+}
