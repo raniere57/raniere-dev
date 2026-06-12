@@ -1,3 +1,14 @@
+export interface ProjectBrand {
+  /** Glifo curto da marca do projeto (ex.: 'Σ'). */
+  mark: string
+  /** Cor de acento da identidade do projeto. */
+  accent: string
+  /** Cor do texto sobre o acento. */
+  accentInk: string
+  /** Superfície do card no tema do projeto. */
+  surface: string
+}
+
 export interface Project {
   id: string
   title: string
@@ -9,6 +20,8 @@ export interface Project {
     demo?: string
     code?: string
   }
+  /** Quando presente, o card adota a identidade visual do próprio projeto. */
+  brand?: ProjectBrand
 }
 
 // Cases genéricos, sem nomes de empresas ou clientes reais.
@@ -24,6 +37,12 @@ export const projects: Project[] = [
     links: {
       demo: '/sigma/',
       code: 'https://github.com/raniere57/raniere-dev/tree/main/sigma',
+    },
+    brand: {
+      mark: 'Σ',
+      accent: 'oklch(89% 0.19 124)',
+      accentInk: 'oklch(22% 0.05 140)',
+      surface: 'oklch(17% 0.012 160)',
     },
   },
   {

@@ -33,6 +33,65 @@
   color: var(--color-accent);
 }
 
+/* ── Card com a identidade visual do próprio projeto ───────────── */
+.project-card--branded {
+  position: relative;
+  grid-column: 1 / -1;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 130% at 100% 0%, color-mix(in oklab, var(--p-accent) 14%, transparent), transparent 55%),
+    var(--p-surface);
+  border-color: color-mix(in oklab, var(--p-accent) 30%, var(--color-border));
+}
+
+.project-card--branded:hover {
+  border-color: var(--p-accent);
+}
+
+/* Glifo da marca como marca-d'água no canto */
+.project-card__mark {
+  position: absolute;
+  top: clamp(-0.5rem, -1rem + 2vw, 0.5rem);
+  right: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 4rem + 12vw, 12rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--p-accent);
+  opacity: 0.12;
+  pointer-events: none;
+  user-select: none;
+}
+
+.project-card--branded .project-card__category {
+  color: var(--p-accent);
+}
+
+.project-card--branded .project-card__description {
+  max-width: 60ch;
+}
+
+.project-card--branded .project-card__tech li::before {
+  color: var(--p-accent);
+}
+
+/* O CTA principal do card branded usa o acento do projeto */
+.project-card--branded .project-link:first-child {
+  background: var(--p-accent);
+  border-color: var(--p-accent);
+  color: var(--p-accent-ink);
+}
+
+.project-card--branded .project-link:first-child:hover {
+  background: transparent;
+  color: var(--p-accent);
+}
+
+.project-card--branded .project-link:hover {
+  border-color: var(--p-accent);
+  color: var(--p-accent);
+}
+
 .project-card__title {
   font-size: var(--text-h3);
   font-weight: 700;

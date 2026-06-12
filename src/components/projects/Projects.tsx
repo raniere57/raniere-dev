@@ -47,12 +47,26 @@ export function Projects() {
         </h2>
 
         <div className="projects__grid">
-          {projects.map((project, index) => (
+          {projects.map((project, index) => {
+            const brandStyle: Record<string, string> = project.brand
+              ? {
+                  '--p-accent': project.brand.accent,
+                  '--p-accent-ink': project.brand.accentInk,
+                  '--p-surface': project.brand.surface,
+                }
+              : {}
+
+            return (
             <article
               key={project.id}
-              className="project-card reveal"
-              style={{ '--reveal-delay': `${index * 90}ms` } as CSSProperties}
+              className={`project-card reveal${project.brand ? ' project-card--branded' : ''}`}
+              style={{ '--reveal-delay': `${index * 90}ms`, ...brandStyle } as CSSProperties}
             >
+              {project.brand && (
+                <span className="project-card__mark" aria-hidden="true">
+                  {project.brand.mark}
+                </span>
+              )}
               <p className="project-card__category">{project.category}</p>
               <h3 className="project-card__title">{project.title}</h3>
               <p className="project-card__description">{project.description}</p>
@@ -65,7 +79,8 @@ export function Projects() {
 
               <ProjectLinks project={project} />
             </article>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
