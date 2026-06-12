@@ -23,9 +23,9 @@ function ScopeArtifact({ id }: { id: string }) {
     return (
       <div className="scope-artifact scope-artifact--software">
         <span className="artifact-window__bar" />
-        <span className="artifact-window__line artifact-window__line--wide" />
-        <span className="artifact-window__line" />
-        <span className="artifact-window__line artifact-window__line--short" />
+        <span className="artifact-code__line artifact-code__line--one">const app = build()</span>
+        <span className="artifact-code__line artifact-code__line--two">api.sync(data)</span>
+        <span className="artifact-code__line artifact-code__line--three">return ui</span>
         <span className="artifact-window__cursor" />
       </div>
     )
