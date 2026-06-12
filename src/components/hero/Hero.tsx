@@ -8,7 +8,7 @@ export function Hero() {
         <div className="hero__content">
           <p className="hero__eyebrow">
             <span className="hero__pulse" aria-hidden="true" />
-            Desenvolvedor generalista
+            Software · Dados · Automação
           </p>
 
           <h1 id="hero-heading" className="hero__title">

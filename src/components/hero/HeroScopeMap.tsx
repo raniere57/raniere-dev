@@ -4,19 +4,55 @@ const LANES = [
   {
     id: 'software',
     title: 'Software',
-    items: ['Web', 'Mobile', 'Desktop', 'APIs'],
+    detail: 'Web · Mobile · Desktop · APIs',
   },
   {
     id: 'automacao',
     title: 'Automação',
-    items: ['Integrações', 'Rotinas', 'Webhooks', 'Back-office'],
+    detail: 'Integrações · Rotinas · Back-office',
   },
   {
     id: 'dados',
     title: 'Dados',
-    items: ['ETL / ELT', 'BI', 'Dashboards', 'Modelagem'],
+    detail: 'ETL · BI · Dashboards · Modelagem',
   },
 ]
+
+function ScopeArtifact({ id }: { id: string }) {
+  if (id === 'software') {
+    return (
+      <div className="scope-artifact scope-artifact--software">
+        <span className="artifact-window__bar" />
+        <span className="artifact-window__line artifact-window__line--wide" />
+        <span className="artifact-window__line" />
+        <span className="artifact-window__line artifact-window__line--short" />
+        <span className="artifact-window__cursor" />
+      </div>
+    )
+  }
+
+  if (id === 'automacao') {
+    return (
+      <div className="scope-artifact scope-artifact--automacao">
+        <span className="artifact-flow__line artifact-flow__line--a" />
+        <span className="artifact-flow__line artifact-flow__line--b" />
+        <span className="artifact-flow__node artifact-flow__node--source" />
+        <span className="artifact-flow__node artifact-flow__node--router" />
+        <span className="artifact-flow__node artifact-flow__node--target" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="scope-artifact scope-artifact--dados">
+      <span className="artifact-data__bar artifact-data__bar--one" />
+      <span className="artifact-data__bar artifact-data__bar--two" />
+      <span className="artifact-data__bar artifact-data__bar--three" />
+      <span className="artifact-data__base artifact-data__base--top" />
+      <span className="artifact-data__base artifact-data__base--bottom" />
+    </div>
+  )
+}
 
 export function HeroScopeMap() {
   return (
@@ -29,16 +65,15 @@ export function HeroScopeMap() {
         {LANES.map((lane, index) => (
           <div
             key={lane.id}
-            className={`scope-map__lane scope-map__lane--${lane.id}`}
+            className={`scope-map__domain scope-map__domain--${lane.id}`}
             style={{ '--lane-index': index } as CSSProperties}
           >
-            <span className="scope-map__index">{String(index + 1).padStart(2, '0')}</span>
-            <h2>{lane.title}</h2>
-            <ul>
-              {lane.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+            <ScopeArtifact id={lane.id} />
+            <div className="scope-map__label">
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <strong>{lane.title}</strong>
+              <small>{lane.detail}</small>
+            </div>
           </div>
         ))}
       </div>
