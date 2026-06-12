@@ -1,73 +1,101 @@
 # raniere.dev
 
-Landing page pessoal — portfólio e vitrine de serviços de desenvolvimento de software, dados, BI e automação.
+Meu site profissional: portfólio, vitrine de projetos e ponto de contato.
 
-100% estática (React + Vite + TypeScript), hospedada no GitHub Pages com domínio customizado.
+O objetivo dele é simples: mostrar como eu trabalho na interseção entre
+**software, automação e dados**. Sem tentar parecer uma empresa enorme, sem
+landing page genérica e sem esconder o que importa atrás de buzzword.
 
-## Desenvolvimento
+[raniere.dev](https://raniere.dev)
+
+## A ideia
+
+`raniere.dev` é uma primeira conversa comigo.
+
+Ele apresenta:
+
+- o tipo de problema que eu resolvo;
+- os serviços que eu consigo entregar;
+- projetos e demos navegáveis;
+- uma forma direta de entrar em contato.
+
+A linguagem visual segue a mesma linha do trabalho que quero comunicar:
+técnica, organizada, escura, com movimento suficiente para parecer viva, mas
+sem virar enfeite gratuito.
+
+## O que o site mostra
+
+**Software sob medida**
+
+Aplicações web, mobile, desktop, APIs e sistemas internos.
+
+**Automação e integrações**
+
+Rotinas manuais, sistemas que não conversam, processos repetitivos e fluxos de
+back-office.
+
+**Dados e BI**
+
+Pipelines, modelagem, dashboards, indicadores e organização de informação para
+decisão.
+
+## Projeto em destaque
+
+### Sigma
+
+Sigma é um sistema de atendimento com IA.
+
+Para uma pessoa de negócio, ele resolve este problema: clientes precisam ser
+atendidos com contexto, regras e histórico, sem depender de respostas soltas ou
+operação manual demais.
+
+Por baixo, ele organiza agentes por área, conecta ferramentas como ERP e bancos
+de dados, usa base de conhecimento e registra cada execução. A demo publicada em
+`/sigma/` usa dados fictícios e backend mockado.
+
+## Bastidores
+
+O site principal é uma aplicação estática em React, Vite e TypeScript. A demo do
+Sigma vive como uma segunda aplicação Vite dentro do mesmo repositório e é
+publicada junto no GitHub Pages.
+
+```text
+src/
+  components/    seções do portfólio
+  data/          projetos e serviços
+  hooks/         tema, reveals e âncoras suaves
+  styles/        tokens e estilos globais
+
+sigma/
+  src/           demo navegável do Sigma
+```
+
+## Stack
+
+- React
+- TypeScript
+- Vite
+- CSS modular por seção
+- GitHub Pages
+- GitHub Actions
+
+## Manutenção
+
+Isto aqui não é o foco do README, mas fica registrado para evolução do site:
 
 ```bash
 npm install
-npm run dev      # servidor local
-npm run build    # build de produção em dist/
-npm run preview  # serve o build localmente
+npm run dev
+npm run build
 ```
 
-## Deploy (GitHub Pages)
-
-O workflow em `.github/workflows/deploy.yml` publica automaticamente a cada push na branch `main`.
-
-Configuração única no repositório:
-
-1. **Settings → Pages → Source**: selecionar **GitHub Actions**.
-2. **Settings → Pages → Custom domain**: `raniere.dev` (o arquivo `public/CNAME` já mantém o domínio a cada deploy).
-3. No DNS do domínio, apontar:
-   - `raniere.dev` → registros `A` do GitHub Pages (`185.199.108.153`, `.109.`, `.110.`, `.111.`)
-   - ou `CNAME` de `www` → `<usuario>.github.io`
-4. Marcar **Enforce HTTPS** depois que o certificado for emitido.
-
-> Se um dia o site for servido como *project page* (`usuario.github.io/repo`) em vez de domínio customizado, ajustar `base` em `vite.config.ts` para `'/repo/'`.
-
-## Estrutura
-
-```
-src/                # portfólio (raniere.dev)
-├── components/     # um diretório por seção (tsx + css)
-├── hooks/          # useTheme (dark/light + localStorage), useReveal (scroll)
-├── data/           # serviços e projetos (editar aqui para atualizar conteúdo)
-└── styles/         # tokens.css (design tokens) e global.css
-
-sigma/              # demo do projeto Sigma (raniere.dev/sigma/)
-├── src/            # app React (Vite, base '/sigma/')
-│   ├── components/LoginScreen.tsx   # login pré-preenchido (cosmético)
-│   ├── components/DemoBackPill.tsx  # pílula de volta ao portfólio
-│   └── lib/mockBackend.ts           # intercepta fetch → dados fictícios
-```
-
-### Demo Sigma
-
-`sigma/` é uma app Vite independente, buildada com `base: '/sigma/'` e publicada
-em `dist/sigma` pelo mesmo workflow do GitHub Actions. Sem backend: `mockBackend.ts`
-intercepta `window.fetch` e responde aos endpoints da API com dados fictícios
-(operadora "NovaConecta" — nenhum nome real de cliente). A IA é mockada com
-respostas canned. Login já preenchido entra direto.
+Demo Sigma:
 
 ```bash
 npm --prefix sigma install
-npm --prefix sigma run dev      # serve em /sigma/
+npm --prefix sigma run dev
 npm --prefix sigma run build
 ```
 
-> Limitação conhecida: por ser SPA em subpath no Pages, recarregar uma sub-rota
-> profunda (ex.: `/sigma/agents`) pode dar 404 — entrar pela raiz `/sigma/` e
-> navegar pela interface funciona normalmente.
-
-## Conteúdo
-
-- **Projetos**: editar `src/data/projects.ts` — os links de case/demo/código são placeholders (`demo.raniere.dev`, `github.com/raniere`); trocar pelos reais.
-- **Serviços**: editar `src/data/services.ts`.
-- **E-mail e redes**: editar constantes em `src/components/contact/Contact.tsx`.
-
-## Tema
-
-Dark é o padrão. O toggle no header alterna para light e persiste em `localStorage` (`theme`). Um script inline no `index.html` aplica o tema antes do primeiro paint para evitar flash.
+O deploy acontece automaticamente a cada push na `main`, usando
+`.github/workflows/deploy.yml`.
