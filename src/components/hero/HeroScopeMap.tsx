@@ -4,25 +4,30 @@ const LANES = [
   {
     id: 'software',
     title: 'Software',
-    detail: 'Web · Mobile · Desktop · APIs',
   },
   {
     id: 'automacao',
     title: 'Automação',
-    detail: 'Integrações · Rotinas · Back-office',
   },
   {
     id: 'dados',
     title: 'Dados',
-    detail: 'ETL · BI · Dashboards · Modelagem',
   },
 ]
 
-function ScopeArtifact({ id }: { id: string }) {
+function WindowBar({ title }: { title: string }) {
+  return (
+    <span className="artifact-window__bar">
+      <span className="artifact-window__title">{title}</span>
+    </span>
+  )
+}
+
+function ScopeArtifact({ id, title }: { id: string; title: string }) {
   if (id === 'software') {
     return (
       <div className="scope-artifact scope-artifact--software">
-        <span className="artifact-window__bar" />
+        <WindowBar title={title} />
         <span className="artifact-code__line artifact-code__line--one">const app = build()</span>
         <span className="artifact-code__line artifact-code__line--two">api.sync(data)</span>
         <span className="artifact-code__line artifact-code__line--three">return ui</span>
@@ -34,6 +39,7 @@ function ScopeArtifact({ id }: { id: string }) {
   if (id === 'automacao') {
     return (
       <div className="scope-artifact scope-artifact--automacao">
+        <WindowBar title={title} />
         <span className="artifact-flow__line artifact-flow__line--a" />
         <span className="artifact-flow__line artifact-flow__line--b" />
         <span className="artifact-flow__node artifact-flow__node--source" />
@@ -45,6 +51,7 @@ function ScopeArtifact({ id }: { id: string }) {
 
   return (
     <div className="scope-artifact scope-artifact--dados">
+      <WindowBar title={title} />
       <span className="artifact-data__bar artifact-data__bar--one" />
       <span className="artifact-data__bar artifact-data__bar--two" />
       <span className="artifact-data__bar artifact-data__bar--three" />
@@ -68,12 +75,7 @@ export function HeroScopeMap() {
             className={`scope-map__domain scope-map__domain--${lane.id}`}
             style={{ '--lane-index': index } as CSSProperties}
           >
-            <ScopeArtifact id={lane.id} />
-            <div className="scope-map__label">
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <strong>{lane.title}</strong>
-              <small>{lane.detail}</small>
-            </div>
+            <ScopeArtifact id={lane.id} title={lane.title} />
           </div>
         ))}
       </div>
