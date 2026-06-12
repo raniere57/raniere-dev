@@ -7,27 +7,27 @@ interface StatusLine {
 }
 
 const STATUS_LINES: StatusLine[] = [
-  { label: 'api/gateway', detail: '99.9% uptime' },
-  { label: 'bi/dashboards', detail: '12 painéis ativos' },
-  { label: 'sync/erp-crm', detail: '4.2k eventos/dia' },
+  { label: 'software', detail: 'sistemas sob medida' },
+  { label: 'dados', detail: 'modelos confiáveis' },
+  { label: 'automação', detail: 'rotinas conectadas' },
 ]
 
 const LOG_POOL: StatusLine[] = [
-  { label: 'api/webhooks', detail: '200 OK · 38ms' },
-  { label: 'etl/estoque', detail: '1.8k linhas processadas' },
-  { label: 'sync/erp-crm', detail: 'evento confirmado' },
-  { label: 'bi/indicadores', detail: 'cache renovado' },
-  { label: 'backup/diario', detail: 'íntegro · verificado' },
-  { label: 'jobs/agendados', detail: 'fila vazia' },
-  { label: 'etl/vendas', detail: 'carga concluída' },
-  { label: 'api/auth', detail: 'tokens renovados' },
+  { label: 'problema', detail: 'gargalo identificado' },
+  { label: 'processo', detail: 'fluxo redesenhado' },
+  { label: 'integração', detail: 'sistemas alinhados' },
+  { label: 'dados', detail: 'fonte validada' },
+  { label: 'interface', detail: 'decisão em foco' },
+  { label: 'deploy', detail: 'ambiente preparado' },
+  { label: 'operação', detail: 'rotina documentada' },
+  { label: 'melhoria', detail: 'próximo ciclo aberto' },
 ]
 
 const VISIBLE_LOGS = 3
 const LOG_INTERVAL_MS = 2600
 
 /**
- * Painel decorativo: terminal de monitoramento com log "ao vivo".
+ * Painel decorativo: terminal conceitual com log "ao vivo".
  * Conteúdo é ilustrativo — escondido de leitores de tela.
  * Com prefers-reduced-motion, o log fica estático.
  */
