@@ -1,4 +1,4 @@
-import { HeroTerminal } from './HeroTerminal'
+import { HeroScopeMap } from './HeroScopeMap'
 import './hero.css'
 
 export function Hero() {
@@ -8,19 +8,19 @@ export function Hero() {
         <div className="hero__content">
           <p className="hero__eyebrow">
             <span className="hero__pulse" aria-hidden="true" />
-            Software · Dados · Automação
+            Desenvolvedor generalista
           </p>
 
           <h1 id="hero-heading" className="hero__title">
-            <span className="hero__line">Sistemas conectados.</span>
-            <span className="hero__line hero__line--accent">Dados organizados.</span>
-            <span className="hero__line hero__line--outline">Decisões melhores.</span>
+            <span className="hero__line">Software, automação</span>
+            <span className="hero__line hero__line--accent">e dados</span>
+            <span className="hero__line">no mesmo fluxo.</span>
           </h1>
 
           <p className="hero__lead">
-            Sou <strong>Raniere Rodrigues Gomes</strong>. Desenvolvo software sob medida — web,
-            mobile e desktop — e conecto sistemas, organizo dados e automatizo processos para
-            transformar informação em decisão.
+            Sou <strong>Raniere Rodrigues Gomes</strong>. Crio aplicações, integrações,
+            automações e soluções de dados para transformar necessidades reais em ferramentas
+            úteis no dia a dia.
           </p>
 
           <div className="hero__actions">
@@ -38,7 +38,7 @@ export function Hero() {
           </p>
         </div>
 
-        <HeroTerminal />
+        <HeroScopeMap />
       </div>
     </section>
   )
