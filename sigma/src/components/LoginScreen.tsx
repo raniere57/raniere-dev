@@ -33,14 +33,6 @@ export function LoginScreen({ onAuthenticated }: LoginScreenProps) {
         }}
       />
 
-      <a
-        href={RANIERE_HOME}
-        className="absolute left-5 top-5 inline-flex items-center gap-2 text-xs text-steel/70 transition-colors hover:text-acid"
-      >
-        <ArrowLeft size={14} />
-        raniere.dev
-      </a>
-
       <div className="relative w-full max-w-sm">
         <div className="mb-8 text-center">
           <div className="mb-4 inline-flex items-center gap-2">
@@ -114,6 +106,14 @@ export function LoginScreen({ onAuthenticated }: LoginScreenProps) {
         <p className="mt-5 text-center text-[0.7rem] leading-relaxed text-steel/50">
           Ambiente de demonstração · dados fictícios · credenciais já preenchidas
         </p>
+
+        <a
+          href={RANIERE_HOME}
+          className="group mt-4 inline-flex w-full items-center justify-center gap-2 text-xs text-steel/70 transition-colors hover:text-acid"
+        >
+          <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
+          Voltar para raniere.dev
+        </a>
       </div>
     </div>
   );
