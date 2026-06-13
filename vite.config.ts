@@ -14,7 +14,7 @@ const MIME: Record<string, string> = {
 }
 
 // Demos buildados como apps independentes, servidos em subpaths.
-const DEMOS = ['sigma', 'sentinel']
+const DEMOS = ['sigma', 'sentinel', 'insightgate']
 
 /**
  * Em dev, serve os demos já buildados (<demo>/dist) em /<demo>, espelhando o que

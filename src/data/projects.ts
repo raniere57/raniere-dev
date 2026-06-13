@@ -64,16 +64,21 @@ export const projects: Project[] = [
     },
   },
   {
-    id: 'plataforma-bi',
-    title: 'Plataforma de BI self-service',
-    category: 'Business Intelligence',
+    id: 'insightgate',
+    title: 'InsightGate — portal de relatórios Power BI',
+    category: 'Business Intelligence · Governança',
     description:
-      'Camada completa de indicadores para operação comercial: extração de dados de múltiplas fontes, modelagem em warehouse e dashboards self-service para os times de gestão.',
-    tech: ['Pipeline de dados', 'Data warehouse', 'Dashboards'],
+      'Portal central para publicar, controlar e auditar relatórios Power BI públicos: catálogo organizado, controle de acesso, histórico de quem viu o quê, alertas de falha e entregas agendadas. Governança sem licença cara de Embedded. Demo navegável com dados fictícios.',
+    tech: ['React', 'Power BI', 'Governança & auditoria', 'Dashboards'],
     links: {
-      case: '#projetos',
-      demo: 'https://demo.raniere.dev',
-      code: 'https://github.com/raniere',
+      demo: '/insightgate/',
+      code: 'https://github.com/raniere57/raniere-dev/tree/main/insightgate',
+    },
+    brand: {
+      mark: '◫',
+      accent: 'oklch(62% 0.19 264)',
+      accentInk: 'oklch(98% 0.01 264)',
+      surface: 'oklch(15% 0.025 264)',
     },
   },
   {

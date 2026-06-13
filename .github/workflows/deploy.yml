@@ -53,6 +53,17 @@ jobs:
           mkdir -p dist/sentinel
           cp -r sentinel/dist/. dist/sentinel/
 
+      - name: Instalar dependências (demo InsightGate)
+        run: npm ci --prefix insightgate
+
+      - name: Build do demo InsightGate
+        run: npm run build --prefix insightgate
+
+      - name: Agrupar demo em dist/insightgate
+        run: |
+          mkdir -p dist/insightgate
+          cp -r insightgate/dist/. dist/insightgate/
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

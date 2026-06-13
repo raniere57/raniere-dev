@@ -64,6 +64,17 @@ Por baixo, define modelos e critérios de avaliação, pontua cada atendimento c
 IA, acompanha agentes e gera relatórios e dashboards. A demo publicada em
 `/sentinel/` usa dados fictícios.
 
+### InsightGate
+
+InsightGate é um portal de governança para relatórios Power BI públicos.
+
+Ele resolve este problema: relatórios publicados na web ficam soltos, sem
+controle de quem acessa nem visão de uso, e licença de Embedded é cara.
+
+Por baixo, centraliza um catálogo de relatórios, controla acesso, audita o
+histórico de acessos, dispara alertas de falha e agenda entregas. A demo
+publicada em `/insightgate/` usa dados fictícios.
+
 ## Bastidores
 
 O site principal é uma aplicação estática em React, Vite e TypeScript. Cada demo
@@ -82,6 +93,9 @@ sigma/
 
 sentinel/
   src/           demo navegável do Sentinel QA (dados fictícios)
+
+insightgate/
+  src/           demo navegável do InsightGate (dados fictícios)
 ```
 
 ## Stack
@@ -108,11 +122,12 @@ Demos (Sigma / Sentinel):
 ```bash
 npm --prefix sigma install && npm --prefix sigma run build
 npm --prefix sentinel install && npm --prefix sentinel run build
+npm --prefix insightgate install && npm --prefix insightgate run build
 ```
 
-> Os links `/sigma/` e `/sentinel/` no portfólio são servidos pelo Pages em
-> produção. Para abri-los no dev local, builde cada demo antes — o `vite.config.ts`
-> serve `<demo>/dist` no subpath correspondente.
+> Os links `/sigma/`, `/sentinel/` e `/insightgate/` no portfólio são servidos
+> pelo Pages em produção. Para abri-los no dev local, builde cada demo antes — o
+> `vite.config.ts` serve `<demo>/dist` no subpath correspondente.
 
 O deploy acontece automaticamente a cada push na `main`, usando
 `.github/workflows/deploy.yml`.
