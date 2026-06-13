@@ -95,15 +95,21 @@ export const projects: Project[] = [
     },
   },
   {
-    id: 'pipeline-dados',
-    title: 'Pipeline de dados operacionais',
+    id: 'dataforge',
+    title: 'DataForge — pipelines de dados',
     category: 'Engenharia de dados',
     description:
-      'Pipeline diário que consolida dados de produção, valida qualidade em cada etapa e alimenta relatórios regulatórios — com alertas automáticos quando algo foge do padrão.',
-    tech: ['Pipeline de dados', 'Orquestração', 'Banco de dados', 'Alertas'],
+      'Plataforma leve de pipelines sobre DuckDB: conecta fontes, unifica e transforma dados com SQL assistido por IA, valida qualidade e publica bases otimizadas para consumo. Editor SQL, catálogo e jobs em um só lugar. Demo navegável com dados fictícios.',
+    tech: ['React', 'DuckDB', 'SQL + IA', 'ETL & qualidade'],
     links: {
-      case: '#projetos',
-      code: 'https://github.com/raniere',
+      demo: '/dataforge/',
+      code: 'https://github.com/raniere57/raniere-dev/tree/main/dataforge',
+    },
+    brand: {
+      mark: '⚡',
+      accent: 'oklch(70% 0.16 200)',
+      accentInk: 'oklch(18% 0.04 230)',
+      surface: 'oklch(15% 0.03 240)',
     },
   },
   {

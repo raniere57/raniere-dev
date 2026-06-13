@@ -75,6 +75,17 @@ Por baixo, centraliza um catálogo de relatórios, controla acesso, audita o
 histórico de acessos, dispara alertas de falha e agenda entregas. A demo
 publicada em `/insightgate/` usa dados fictícios.
 
+### DataForge
+
+DataForge é uma plataforma leve de pipelines de dados sobre DuckDB.
+
+Ele resolve este problema: preparar e unificar dados de várias fontes costuma
+exigir infraestrutura pesada; aqui o fluxo é leve, com SQL assistido por IA.
+
+Por baixo, conecta fontes, transforma com SQL, valida qualidade, roda jobs e
+publica bases otimizadas para consumo. A demo publicada em `/dataforge/` usa
+dados fictícios.
+
 ## Bastidores
 
 O site principal é uma aplicação estática em React, Vite e TypeScript. Cada demo
@@ -96,6 +107,9 @@ sentinel/
 
 insightgate/
   src/           demo navegável do InsightGate (dados fictícios)
+
+dataforge/
+  src/           demo navegável do DataForge (dados fictícios)
 ```
 
 ## Stack
@@ -123,11 +137,12 @@ Demos (Sigma / Sentinel):
 npm --prefix sigma install && npm --prefix sigma run build
 npm --prefix sentinel install && npm --prefix sentinel run build
 npm --prefix insightgate install && npm --prefix insightgate run build
+npm --prefix dataforge install && npm --prefix dataforge run build
 ```
 
-> Os links `/sigma/`, `/sentinel/` e `/insightgate/` no portfólio são servidos
-> pelo Pages em produção. Para abri-los no dev local, builde cada demo antes — o
-> `vite.config.ts` serve `<demo>/dist` no subpath correspondente.
+> Os links `/sigma/`, `/sentinel/`, `/insightgate/` e `/dataforge/` no portfólio
+> são servidos pelo Pages em produção. Para abri-los no dev local, builde cada
+> demo antes — o `vite.config.ts` serve `<demo>/dist` no subpath correspondente.
 
 O deploy acontece automaticamente a cada push na `main`, usando
 `.github/workflows/deploy.yml`.

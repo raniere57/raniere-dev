@@ -64,6 +64,17 @@ jobs:
           mkdir -p dist/insightgate
           cp -r insightgate/dist/. dist/insightgate/
 
+      - name: Instalar dependências (demo DataForge)
+        run: npm ci --prefix dataforge
+
+      - name: Build do demo DataForge
+        run: npm run build --prefix dataforge
+
+      - name: Agrupar demo em dist/dataforge
+        run: |
+          mkdir -p dist/dataforge
+          cp -r dataforge/dist/. dist/dataforge/
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
