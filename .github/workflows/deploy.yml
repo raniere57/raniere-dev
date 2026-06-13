@@ -42,6 +42,17 @@ jobs:
           mkdir -p dist/sigma
           cp -r sigma/dist/. dist/sigma/
 
+      - name: Instalar dependências (demo Sentinel)
+        run: npm ci --prefix sentinel
+
+      - name: Build do demo Sentinel
+        run: npm run build --prefix sentinel
+
+      - name: Agrupar demo em dist/sentinel
+        run: |
+          mkdir -p dist/sentinel
+          cp -r sentinel/dist/. dist/sentinel/
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

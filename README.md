@@ -53,11 +53,22 @@ Por baixo, ele organiza agentes por área, conecta ferramentas como ERP e bancos
 de dados, usa base de conhecimento e registra cada execução. A demo publicada em
 `/sigma/` usa dados fictícios e backend mockado.
 
+### Sentinel QA
+
+Sentinel é uma plataforma de monitoria de qualidade de atendimentos.
+
+Ele resolve este problema: equipes de atendimento precisam saber se as conversas
+seguem o padrão esperado, sem depender de auditoria manual amostra por amostra.
+
+Por baixo, define modelos e critérios de avaliação, pontua cada atendimento com
+IA, acompanha agentes e gera relatórios e dashboards. A demo publicada em
+`/sentinel/` usa dados fictícios.
+
 ## Bastidores
 
-O site principal é uma aplicação estática em React, Vite e TypeScript. A demo do
-Sigma vive como uma segunda aplicação Vite dentro do mesmo repositório e é
-publicada junto no GitHub Pages.
+O site principal é uma aplicação estática em React, Vite e TypeScript. Cada demo
+vive como uma aplicação Vite independente dentro do mesmo repositório, com `base`
+própria (`/sigma/`, `/sentinel/`), e é publicada junto no GitHub Pages.
 
 ```text
 src/
@@ -67,7 +78,10 @@ src/
   styles/        tokens e estilos globais
 
 sigma/
-  src/           demo navegável do Sigma
+  src/           demo navegável do Sigma (backend mockado)
+
+sentinel/
+  src/           demo navegável do Sentinel QA (dados fictícios)
 ```
 
 ## Stack
@@ -89,13 +103,16 @@ npm run dev
 npm run build
 ```
 
-Demo Sigma:
+Demos (Sigma / Sentinel):
 
 ```bash
-npm --prefix sigma install
-npm --prefix sigma run dev
-npm --prefix sigma run build
+npm --prefix sigma install && npm --prefix sigma run build
+npm --prefix sentinel install && npm --prefix sentinel run build
 ```
+
+> Os links `/sigma/` e `/sentinel/` no portfólio são servidos pelo Pages em
+> produção. Para abri-los no dev local, builde cada demo antes — o `vite.config.ts`
+> serve `<demo>/dist` no subpath correspondente.
 
 O deploy acontece automaticamente a cada push na `main`, usando
 `.github/workflows/deploy.yml`.

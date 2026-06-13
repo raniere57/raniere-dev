@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-navy-950: #060a14;
+  --color-navy-900: #0a0f1e;
+  --color-navy-850: #0d1326;
+  --color-navy-800: #0f1629;
+  --color-navy-700: #1a2340;
+  --color-navy-600: #243052;
+  --color-cyan-glow: rgba(6, 182, 212, 0.15);
+  --color-purple-glow: rgba(139, 92, 246, 0.15);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(6, 182, 212, 0.2) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.2);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(6, 182, 212, 0.35);
+}
+
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(6, 182, 212, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.light .grid-bg {
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.glass {
+  background: rgba(15, 22, 41, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(56, 189, 248, 0.08);
+}
+
+.light .glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.glass-strong {
+  background: rgba(15, 22, 41, 0.8);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(56, 189, 248, 0.1);
+}
+
+.light .glass-strong {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.1), 0 0 60px rgba(6, 182, 212, 0.05);
+}
+
+.glow-cyan-strong {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.2), 0 0 60px rgba(6, 182, 212, 0.1);
+}
+
+.light .glow-cyan {
+  box-shadow: 0 4px 20px rgba(8, 145, 178, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.light .glow-cyan-strong {
+  box-shadow: 0 4px 20px rgba(8, 145, 178, 0.15), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.1), 0 0 60px rgba(139, 92, 246, 0.05);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+.border-glow {
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.05);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.recharts-default-tooltip {
+  background: rgba(15, 22, 41, 0.9) !important;
+  border: 1px solid rgba(56, 189, 248, 0.15) !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.light .recharts-default-tooltip {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(15, 23, 42, 0.1) !important;
+}
+
+.sidebar-gradient {
+  background: linear-gradient(180deg, rgba(10, 15, 30, 0.98) 0%, rgba(6, 10, 20, 0.98) 100%);
+}
+
+.light .sidebar-gradient {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 247, 251, 0.98) 100%);
+}
+
+.hero-gradient {
+  background: radial-gradient(ellipse at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
+}
+
+.light .hero-gradient {
+  background: radial-gradient(ellipse at 50% 0%, rgba(8, 145, 178, 0.06) 0%, transparent 60%);
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: rgba(6, 182, 212, 0.2);
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #06b6d4;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+}

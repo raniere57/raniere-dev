@@ -3,8 +3,6 @@ import { extname, join, normalize } from 'node:path'
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 
-const SIGMA_DIST = join(__dirname, 'sigma', 'dist')
-
 const MIME: Record<string, string> = {
   '.html': 'text/html',
   '.js': 'text/javascript',
@@ -15,29 +13,35 @@ const MIME: Record<string, string> = {
   '.woff2': 'font/woff2',
 }
 
+// Demos buildados como apps independentes, servidos em subpaths.
+const DEMOS = ['sigma', 'sentinel']
+
 /**
- * Em dev, serve o demo Sigma já buildado (sigma/dist) em /sigma, espelhando o
- * que o GitHub Pages faz em produção. Rode `npm --prefix sigma run build` antes.
- * Em produção o link /sigma/ é servido pelo Pages — este plugin é só para dev.
+ * Em dev, serve os demos já buildados (<demo>/dist) em /<demo>, espelhando o que
+ * o GitHub Pages faz em produção. Rode `npm --prefix <demo> run build` antes.
+ * Em produção os links /<demo>/ são servidos pelo Pages — o plugin é só p/ dev.
  */
-function serveSigmaDemo(): Plugin {
+function serveDemos(): Plugin {
   return {
-    name: 'serve-sigma-demo',
+    name: 'serve-demos',
     configureServer(server) {
-      server.middlewares.use('/sigma', (req, res, next) => {
-        if (!existsSync(SIGMA_DIST)) return next()
+      for (const demo of DEMOS) {
+        const distDir = join(__dirname, demo, 'dist')
+        server.middlewares.use(`/${demo}`, (req, res, next) => {
+          if (!existsSync(distDir)) return next()
 
-        const rawPath = (req.url ?? '/').split('?')[0]
-        const relative = normalize(rawPath).replace(/^(\.\.[/\\])+/, '')
-        let filePath = join(SIGMA_DIST, relative)
+          const rawPath = (req.url ?? '/').split('?')[0]
+          const relative = normalize(rawPath).replace(/^(\.\.[/\\])+/, '')
+          let filePath = join(distDir, relative)
 
-        if (!existsSync(filePath) || statSync(filePath).isDirectory()) {
-          filePath = join(SIGMA_DIST, 'index.html') // fallback SPA
-        }
+          if (!existsSync(filePath) || statSync(filePath).isDirectory()) {
+            filePath = join(distDir, 'index.html') // fallback SPA
+          }
 
-        res.setHeader('Content-Type', MIME[extname(filePath)] ?? 'application/octet-stream')
-        res.end(readFileSync(filePath))
-      })
+          res.setHeader('Content-Type', MIME[extname(filePath)] ?? 'application/octet-stream')
+          res.end(readFileSync(filePath))
+        })
+      }
     },
   }
 }
@@ -45,7 +49,7 @@ function serveSigmaDemo(): Plugin {
 // Domínio customizado (raniere.dev) → base '/'.
 // Se um dia servir como project page (user.github.io/repo), trocar para '/repo/'.
 export default defineConfig({
-  plugins: [react(), serveSigmaDemo()],
+  plugins: [react(), serveDemos()],
   base: '/',
   server: {
     // Permite que o ambiente atribua a porta (PORT); 5173 como padrão.

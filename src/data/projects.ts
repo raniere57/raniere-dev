@@ -46,6 +46,24 @@ export const projects: Project[] = [
     },
   },
   {
+    id: 'sentinel',
+    title: 'Sentinel QA — monitoria de atendimentos',
+    category: 'Desenvolvimento de software · IA',
+    description:
+      'Plataforma de monitoria de qualidade que avalia atendimentos com IA: define modelos e critérios, pontua cada conversa, acompanha agentes e gera relatórios. Painel completo com dashboards e gráficos. Demo navegável com dados fictícios.',
+    tech: ['React', 'Dashboards', 'Avaliação por IA', 'Relatórios'],
+    links: {
+      demo: '/sentinel/',
+      code: 'https://github.com/raniere57/raniere-dev/tree/main/sentinel',
+    },
+    brand: {
+      mark: '◈',
+      accent: 'oklch(72% 0.135 220)',
+      accentInk: 'oklch(20% 0.04 240)',
+      surface: 'oklch(16% 0.02 250)',
+    },
+  },
+  {
     id: 'plataforma-bi',
     title: 'Plataforma de BI self-service',
     category: 'Business Intelligence',
