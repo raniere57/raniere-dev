@@ -38,14 +38,9 @@
   position: relative;
   grid-column: 1 / -1;
   overflow: hidden;
-  /* O surface do card é sempre escuro (identidade da marca), então o texto e
-     as bordas são sempre claros — não seguem o tema do portfólio. Sem isso, no
-     tema claro o texto escuro fica ilegível sobre o fundo escuro do card. */
-  --color-text: oklch(95% 0.01 250);
-  --color-text-muted: oklch(76% 0.02 250);
-  --color-text-faint: oklch(62% 0.02 250);
-  --color-border: oklch(88% 0.02 250 / 0.18);
-  --color-border-strong: oklch(90% 0.02 250 / 0.42);
+  /* Acento usado em textos/detalhes; no tema claro vira uma versão escurecida
+     para manter legibilidade sobre o surface claro (definido mais abaixo). */
+  --p-accent-text: var(--p-accent);
   color: var(--color-text);
   background:
     radial-gradient(120% 130% at 100% 0%, color-mix(in oklab, var(--p-accent) 14%, transparent), transparent 55%),
@@ -53,12 +48,31 @@
   border-color: color-mix(in oklab, var(--p-accent) 30%, var(--color-border));
 }
 
+/* Tema escuro: surface escuro da marca → texto e bordas claros. */
+[data-theme='dark'] .project-card--branded {
+  --color-text: oklch(95% 0.01 250);
+  --color-text-muted: oklch(76% 0.02 250);
+  --color-text-faint: oklch(62% 0.02 250);
+  --color-border: oklch(88% 0.02 250 / 0.18);
+  --color-border-strong: oklch(90% 0.02 250 / 0.42);
+}
+
+/* Tema claro: surface clara tingida com o acento, texto escuro do tema, e um
+   acento escurecido para categoria/bullets/links ficarem legíveis. */
+[data-theme='light'] .project-card--branded {
+  --p-accent-text: color-mix(in oklab, var(--p-accent) 58%, #0a1020);
+  background:
+    radial-gradient(120% 130% at 100% 0%, color-mix(in oklab, var(--p-accent) 16%, transparent), transparent 60%),
+    color-mix(in oklab, var(--p-accent) 8%, white);
+  border-color: color-mix(in oklab, var(--p-accent) 38%, var(--color-border));
+}
+
 .project-card--branded .project-card__title {
   color: var(--color-text);
 }
 
 .project-card--branded:hover {
-  border-color: var(--p-accent);
+  border-color: var(--p-accent-text);
 }
 
 /* Glifo da marca como marca-d'água no canto */
@@ -70,14 +84,18 @@
   font-size: clamp(6rem, 4rem + 12vw, 12rem);
   font-weight: 800;
   line-height: 1;
-  color: var(--p-accent);
+  color: var(--p-accent-text);
   opacity: 0.12;
   pointer-events: none;
   user-select: none;
 }
 
+[data-theme='light'] .project-card__mark {
+  opacity: 0.16;
+}
+
 .project-card--branded .project-card__category {
-  color: var(--p-accent);
+  color: var(--p-accent-text);
 }
 
 .project-card--branded .project-card__description {
@@ -85,7 +103,7 @@
 }
 
 .project-card--branded .project-card__tech li::before {
-  color: var(--p-accent);
+  color: var(--p-accent-text);
 }
 
 /* O CTA principal do card branded usa o acento do projeto */
@@ -97,12 +115,12 @@
 
 .project-card--branded .project-link:first-child:hover {
   background: transparent;
-  color: var(--p-accent);
+  color: var(--p-accent-text);
 }
 
 .project-card--branded .project-link:hover {
-  border-color: var(--p-accent);
-  color: var(--p-accent);
+  border-color: var(--p-accent-text);
+  color: var(--p-accent-text);
 }
 
 .project-card__title {
