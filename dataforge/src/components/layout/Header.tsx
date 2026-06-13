@@ -95,14 +95,8 @@ export const Header: React.FC<HeaderProps> = ({ page, darkMode, onToggleDark }) 
           )}
         </button>
 
-        {/* Dark mode toggle */}
-        <button
-          onClick={onToggleDark}
-          className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-colors"
-          title={darkMode ? "Modo claro" : "Modo escuro"}
-        >
-          {darkMode ? <Sun size={15} /> : <Moon size={15} />}
-        </button>
+        {/* Toggle de tema removido: o demo é travado no dark (tema claro
+            do app original é parcial). onToggleDark fica como no-op. */}
 
         {/* User avatar */}
         <button

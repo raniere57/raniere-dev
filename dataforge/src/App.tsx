@@ -18,22 +18,16 @@ import { Settings } from "./pages/Settings";
 
 
 function App() {
-  const [darkMode, setDarkMode] = useState(() => {
-    const stored = localStorage.getItem("df-theme");
-    return stored !== "light";
-  });
+  // Demo travado no tema escuro — o tema claro do app original é parcial
+  // (vários componentes têm cores escuras hardcoded). Mantemos o dark, que é
+  // o design real, e escondemos o toggle (ver Header).
+  const darkMode = true;
   const [currentPage, setCurrentPage] = useState<PageId>("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (darkMode) {
-      root.classList.remove("light");
-    } else {
-      root.classList.add("light");
-    }
-    localStorage.setItem("df-theme", darkMode ? "dark" : "light");
-  }, [darkMode]);
+    document.documentElement.classList.remove("light");
+  }, []);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -94,11 +88,7 @@ function App() {
 
         {/* Main area */}
         <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-          <Header
-            page={currentPage}
-            darkMode={darkMode}
-            onToggleDark={() => setDarkMode(!darkMode)}
-          />
+          <Header page={currentPage} darkMode={darkMode} onToggleDark={() => {}} />
 
           {/* Page content */}
           <div className="flex-1 overflow-hidden flex flex-col relative">
