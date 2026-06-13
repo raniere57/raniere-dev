@@ -77,17 +77,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => onChange(item.id)}
               title={collapsed ? item.label : undefined}
               className={cn(
-                "nav-item w-full flex items-center rounded-lg text-left transition-all",
+                "nav-item w-full flex items-center rounded-lg text-left transition-colors",
                 collapsed ? "justify-center px-0 py-2.5" : "gap-2.5 px-3 py-2",
                 active
                   ? "bg-blue-500/10 text-blue-400"
-                  : "text-slate-400 hover:text-slate-200"
+                  : "text-slate-400 hover:bg-white/[0.03] hover:text-slate-200"
               )}
-              style={
-                active
-                  ? { borderLeft: "2px solid #3b82f6" }
-                  : { borderLeft: "2px solid transparent" }
-              }
             >
               <Icon size={15} className="flex-shrink-0" />
               {!collapsed && (

@@ -82,19 +82,6 @@ export const projects: Project[] = [
     },
   },
   {
-    id: 'hub-integracoes',
-    title: 'Hub de integrações ERP ↔ CRM',
-    category: 'Integrações',
-    description:
-      'Serviço central que sincroniza cadastros, pedidos e status entre ERP e CRM em tempo quase real, com fila de reprocessamento e trilha de auditoria de cada evento.',
-    tech: ['APIs', 'Integração ERP/CRM', 'Mensageria', 'Containers'],
-    links: {
-      case: '#projetos',
-      demo: 'https://demo.raniere.dev',
-      code: 'https://github.com/raniere',
-    },
-  },
-  {
     id: 'dataforge',
     title: 'DataForge — pipelines de dados',
     category: 'Engenharia de dados',
@@ -110,6 +97,19 @@ export const projects: Project[] = [
       accent: 'oklch(70% 0.16 200)',
       accentInk: 'oklch(18% 0.04 230)',
       surface: 'oklch(15% 0.03 240)',
+    },
+  },
+  {
+    id: 'hub-integracoes',
+    title: 'Hub de integrações ERP ↔ CRM',
+    category: 'Integrações',
+    description:
+      'Serviço central que sincroniza cadastros, pedidos e status entre ERP e CRM em tempo quase real, com fila de reprocessamento e trilha de auditoria de cada evento.',
+    tech: ['APIs', 'Integração ERP/CRM', 'Mensageria', 'Containers'],
+    links: {
+      case: '#projetos',
+      demo: 'https://demo.raniere.dev',
+      code: 'https://github.com/raniere',
     },
   },
   {
