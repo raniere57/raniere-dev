@@ -43,7 +43,7 @@ export function Projects() {
       <div className="container">
         <p className="section-label reveal">02 / Projetos</p>
         <h2 id="projects-heading" className="section-title reveal">
-          Projetos que geram resultado
+          Projetos
         </h2>
 
         <div className="projects__grid">
