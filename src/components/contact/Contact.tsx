@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { useReveal } from '../../hooks/useReveal'
 import './contact.css'
 
-// Trocar pelos perfis reais antes de publicar.
 const SOCIAL_LINKS = [
-  { label: 'GitHub', href: 'https://github.com/raniere' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/raniere' },
+  { label: 'GitHub', href: 'https://github.com/raniere57' },
+  {
+    label: 'LinkedIn',
+    href: 'https://www.linkedin.com/in/raniere-rodrigues-gomes-237862116/',
+  },
 ]
 
 const EMAIL = 'contato@raniere.dev'

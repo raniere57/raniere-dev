@@ -12,9 +12,9 @@ export function Hero() {
           </p>
 
           <h1 id="hero-heading" className="hero__title">
-            <span className="hero__line">Software, automação</span>
-            <span className="hero__line hero__line--accent">e dados</span>
-            <span className="hero__line">no mesmo fluxo.</span>
+            <span className="hero__line">Desenvolvimento, Dados e</span>
+            <span className="hero__line hero__line--accent">Automação</span>
+            <span className="hero__line">para negócios reais.</span>
           </h1>
 
           <p className="hero__lead">
