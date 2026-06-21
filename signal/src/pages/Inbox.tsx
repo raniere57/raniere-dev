@@ -220,12 +220,20 @@ export const Inbox: React.FC = () => {
                       {msg.sender !== 'cliente' && (
                         <div className={`flex items-center gap-1.5 mb-1 justify-end`}>
                           {msg.sender === 'ia' && (
-                            <span className="inline-flex items-center gap-1 text-[10px] bg-violet-500/20 text-violet-400 border border-violet-500/30 px-2 py-0.5 rounded-full font-semibold">
+                            <span className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-semibold border ${
+                              isDark
+                                ? 'bg-violet-500/20 text-violet-400 border-violet-500/30'
+                                : 'bg-violet-100 text-violet-700 border-violet-200'
+                            }`}>
                               <Bot size={10} /> IA
                             </span>
                           )}
                           {msg.sender === 'agente' && (
-                            <span className="inline-flex items-center gap-1 text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-semibold">
+                            <span className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-semibold border ${
+                              isDark
+                                ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                                : 'bg-amber-100 text-amber-800 border-amber-200'
+                            }`}>
                               <User size={10} /> {msg.agentName}
                             </span>
                           )}
@@ -235,8 +243,12 @@ export const Inbox: React.FC = () => {
                         msg.sender === 'cliente'
                           ? isDark ? 'bg-slate-800 text-slate-200 rounded-tl-sm' : 'bg-white border border-slate-200 text-slate-800 rounded-tl-sm'
                           : msg.sender === 'ia'
-                          ? 'bg-violet-500/15 text-violet-200 border border-violet-500/20 rounded-tr-sm'
-                          : 'bg-amber-500/15 text-amber-200 border border-amber-500/20 rounded-tr-sm'
+                          ? isDark
+                            ? 'bg-violet-500/15 text-violet-200 border border-violet-500/20 rounded-tr-sm'
+                            : 'bg-violet-50 text-violet-900 border border-violet-200 rounded-tr-sm'
+                          : isDark
+                            ? 'bg-amber-500/15 text-amber-200 border border-amber-500/20 rounded-tr-sm'
+                            : 'bg-amber-50 text-amber-950 border border-amber-200 rounded-tr-sm'
                       }`}>
                         {msg.text}
                       </div>
