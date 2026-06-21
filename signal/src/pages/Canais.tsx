@@ -1,19 +1,31 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, Settings, MessageSquare, Phone, Send } from 'lucide-react';
+import { ChannelIcon, type ChannelIconId } from '../components/ui/ChannelIcon';
 import { useTheme } from '../contexts/ThemeContext';
 import toast from 'react-hot-toast';
 
-const channels = [
+const channels: Array<{
+  id: ChannelIconId;
+  name: string;
+  description: string;
+  connected: boolean;
+  todayVolume: number;
+  color: string;
+  iconColor: string;
+  iconBg: string;
+  number: string;
+  account: string;
+}> = [
   {
     id: 'whatsapp',
     name: 'WhatsApp Business',
     description: 'API oficial Meta · Número verificado',
     connected: true,
     todayVolume: 189,
-    icon: '💬',
     color: 'from-green-500/20 to-green-600/10 border-green-500/30',
-    iconBg: 'bg-green-500/15 text-green-400',
+    iconColor: 'text-[#25D366]',
+    iconBg: 'bg-green-500/15',
     number: '+55 11 3000-1234',
     account: 'Signal Comunicação',
   },
@@ -23,9 +35,9 @@ const channels = [
     description: 'Meta Business · @signal_oficial',
     connected: true,
     todayVolume: 87,
-    icon: '📸',
     color: 'from-pink-500/20 to-pink-600/10 border-pink-500/30',
-    iconBg: 'bg-pink-500/15 text-pink-400',
+    iconColor: 'text-[#E1306C]',
+    iconBg: 'bg-pink-500/15',
     number: '@signal_oficial',
     account: 'Signal Comunicação',
   },
@@ -35,9 +47,9 @@ const channels = [
     description: 'Meta Business · Página verificada',
     connected: true,
     todayVolume: 54,
-    icon: '👥',
     color: 'from-blue-500/20 to-blue-600/10 border-blue-500/30',
-    iconBg: 'bg-blue-500/15 text-blue-400',
+    iconColor: 'text-[#0084FF]',
+    iconBg: 'bg-blue-500/15',
     number: 'Signal Comunicação',
     account: 'signal.comunicacao',
   },
@@ -47,9 +59,9 @@ const channels = [
     description: 'Widget ativo · script instalado',
     connected: true,
     todayVolume: 43,
-    icon: '🌐',
     color: 'from-slate-500/20 to-slate-600/10 border-slate-500/30',
-    iconBg: 'bg-slate-500/15 text-slate-400',
+    iconColor: 'text-slate-400',
+    iconBg: 'bg-slate-500/15',
     number: 'signal.com.br',
     account: 'Widget v2.4.1',
   },
@@ -59,9 +71,9 @@ const channels = [
     description: 'Não configurado',
     connected: false,
     todayVolume: 0,
-    icon: '✈️',
     color: 'from-sky-500/10 to-sky-600/5 border-sky-500/20',
-    iconBg: 'bg-sky-500/10 text-sky-500',
+    iconColor: 'text-[#26A5E4]',
+    iconBg: 'bg-sky-500/10',
     number: '-',
     account: '-',
   },
@@ -71,9 +83,9 @@ const channels = [
     description: 'Não configurado',
     connected: false,
     todayVolume: 0,
-    icon: '📧',
     color: 'from-violet-500/10 to-violet-600/5 border-violet-500/20',
-    iconBg: 'bg-violet-500/10 text-violet-500',
+    iconColor: 'text-violet-400',
+    iconBg: 'bg-violet-500/10',
     number: '-',
     account: '-',
   },
@@ -118,14 +130,14 @@ export const Canais: React.FC = () => {
               className={`rounded-2xl border p-5 ${cardBg} bg-gradient-to-br ${channel.color} relative overflow-hidden group`}
             >
               {/* Background pattern */}
-              <div className="absolute top-0 right-0 w-24 h-24 opacity-5 text-6xl flex items-center justify-center">
-                {channel.icon}
+              <div className={`absolute top-3 right-3 opacity-[0.07] ${channel.iconColor}`}>
+                <ChannelIcon channel={channel.id} size={72} />
               </div>
 
               {/* Status */}
               <div className="flex items-start justify-between mb-4">
-                <div className={`p-3 rounded-xl text-2xl ${channel.iconBg}`}>
-                  {channel.icon}
+                <div className={`p-3 rounded-xl ${channel.iconBg} ${channel.iconColor}`}>
+                  <ChannelIcon channel={channel.id} size={28} />
                 </div>
                 <span className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${
                   channel.connected
@@ -182,12 +194,14 @@ export const Canais: React.FC = () => {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[
-              { title: 'WhatsApp API Oficial', desc: 'Use a API Business para envio de templates aprovados pela Meta e maior volume de mensagens.', icon: '🟢' },
-              { title: 'Chat no Site', desc: 'Instale o snippet JavaScript no <head> do seu site para ativar o widget de atendimento em tempo real.', icon: '🌐' },
-              { title: 'E-mail via SMTP', desc: 'Conecte seu servidor SMTP ou use o SendGrid para receber e responder e-mails diretamente na plataforma.', icon: '📬' },
+              { title: 'WhatsApp API Oficial', desc: 'Use a API Business para envio de templates aprovados pela Meta e maior volume de mensagens.', channel: 'whatsapp' as ChannelIconId },
+              { title: 'Chat no Site', desc: 'Instale o snippet JavaScript no <head> do seu site para ativar o widget de atendimento em tempo real.', channel: 'site' as ChannelIconId },
+              { title: 'E-mail via SMTP', desc: 'Conecte seu servidor SMTP ou use o SendGrid para receber e responder e-mails diretamente na plataforma.', channel: 'email' as ChannelIconId },
             ].map(tip => (
               <div key={tip.title} className={`p-4 rounded-xl ${isDark ? 'bg-slate-800/40 border border-slate-700/30' : 'bg-slate-50 border border-slate-100'}`}>
-                <div className="text-xl mb-2">{tip.icon}</div>
+                <div className={`mb-2 ${tip.channel === 'whatsapp' ? 'text-[#25D366]' : tip.channel === 'site' ? 'text-slate-400' : 'text-violet-400'}`}>
+                  <ChannelIcon channel={tip.channel} size={22} />
+                </div>
                 <p className={`text-xs font-semibold ${textPrimary} mb-1`}>{tip.title}</p>
                 <p className={`text-xs ${textMuted} leading-relaxed`}>{tip.desc}</p>
               </div>

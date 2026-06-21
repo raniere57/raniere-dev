@@ -4,18 +4,19 @@ import {
   Search, Filter, Send, FileText, ArrowRightLeft, XCircle, Bot, User, Phone, Mail, Tag, History, FileEdit, ChevronRight,
 } from 'lucide-react';
 import { ChannelBadge } from '../components/ui/ChannelBadge';
+import { ChannelIcon } from '../components/ui/ChannelIcon';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { useTheme } from '../contexts/ThemeContext';
 import { conversations, type ConversationStatus, type Channel } from '../data/mockData';
 import toast from 'react-hot-toast';
 
-const channelFilters: { value: 'todos' | Channel; label: string }[] = [
+const channelFilters: { value: 'todos' | Channel; label: string; icon?: Channel }[] = [
   { value: 'todos', label: 'Todos' },
-  { value: 'whatsapp', label: 'WhatsApp' },
-  { value: 'instagram', label: 'Instagram' },
-  { value: 'facebook', label: 'Facebook' },
-  { value: 'site', label: 'Site' },
-  { value: 'telefone', label: 'Telefone' },
+  { value: 'whatsapp', label: 'WhatsApp', icon: 'whatsapp' },
+  { value: 'instagram', label: 'Instagram', icon: 'instagram' },
+  { value: 'facebook', label: 'Facebook', icon: 'facebook' },
+  { value: 'site', label: 'Site', icon: 'site' },
+  { value: 'telefone', label: 'Telefone', icon: 'telefone' },
 ];
 
 const statusFilters: { value: 'todos' | ConversationStatus; label: string }[] = [
@@ -97,12 +98,13 @@ export const Inbox: React.FC = () => {
               <button
                 key={f.value}
                 onClick={() => setChannelFilter(f.value)}
-                className={`flex-shrink-0 text-xs px-2.5 py-1 rounded-lg transition-colors font-medium ${
+                className={`flex-shrink-0 text-xs px-2.5 py-1 rounded-lg transition-colors font-medium inline-flex items-center gap-1.5 ${
                   channelFilter === f.value
                     ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
                     : isDark ? 'text-slate-500 hover:text-slate-300 hover:bg-slate-800' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
                 }`}
               >
+                {f.icon && <ChannelIcon channel={f.icon} size={12} />}
                 {f.label}
               </button>
             ))}
