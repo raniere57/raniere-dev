@@ -83,11 +83,11 @@ export const projects: Project[] = [
   },
   {
     id: 'insightgate',
-    title: 'InsightGate — portal de relatórios Power BI',
+    title: 'InsightGate — portal de relatórios e dashboards',
     category: 'Business Intelligence · Governança',
     description:
-      'Portal central para publicar, controlar e auditar relatórios Power BI públicos: catálogo organizado, controle de acesso, histórico de quem viu o quê, alertas de falha e entregas agendadas. Governança sem licença cara de Embedded. Demo navegável com dados fictícios.',
-    tech: ['React', 'Power BI', 'Governança & auditoria', 'Dashboards'],
+      'Portal central para publicar, controlar e auditar relatórios e dashboards públicos — Power BI, Tableau, Looker Studio, Metabase, Redash, Streamlit e outras plataformas. Catálogo organizado, controle de acesso, histórico de acessos, alertas de falha e entregas agendadas. Governança sem licença cara de Embedded. Demo navegável com dados fictícios.',
+    tech: ['React', 'Multi-plataforma', 'Governança & auditoria', 'Dashboards'],
     links: {
       demo: '/insightgate/',
       code: 'https://github.com/raniere57/raniere-dev/tree/main/insightgate',

@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 import { cn } from '../utils/cn';
 
 const features = [
-  { icon: <BookOpen size={18} />, title: 'Portal centralizado', desc: 'Todos os relatórios Power BI da empresa em um único lugar organizado' },
+  { icon: <BookOpen size={18} />, title: 'Portal centralizado', desc: 'Relatórios e dashboards de Power BI, Tableau, Looker Studio, Metabase, Redash, Streamlit e outras fontes em um só lugar' },
   { icon: <Eye size={18} />, title: 'Controle de acessos', desc: 'Gerencie quem pode ver cada relatório por usuário e grupo' },
   { icon: <BarChart2 size={18} />, title: 'Auditoria e histórico', desc: 'Rastreie cada acesso, exportação e ação realizada no portal' },
   { icon: <RefreshCw size={18} />, title: 'Monitoramento de refresh', desc: 'Monitore status de atualização dos datasets conectados' },
@@ -18,9 +18,9 @@ const features = [
 
 const roadmap = [
   { version: 'v1', label: 'MVP', desc: 'Portal, login, relatórios, acessos e auditoria', status: 'done' },
-  { version: 'v2', label: 'Integração API', desc: 'API simulada Power BI para metadados e refresh', status: 'done' },
+  { version: 'v2', label: 'Integração API', desc: 'Conectores simulados para metadados, refresh e status das fontes (ex.: Power BI)', status: 'done' },
   { version: 'v3', label: 'Automações', desc: 'Exportação, agendamento e alertas avançados', status: 'done' },
-  { version: 'v4', label: 'Em breve', desc: 'Power BI Embedded, RLS real e multi-tenant', status: 'upcoming' },
+  { version: 'v4', label: 'Em breve', desc: 'Embedded multi-plataforma, RLS real e multi-tenant', status: 'upcoming' },
 ];
 
 export function About() {
@@ -46,10 +46,10 @@ export function About() {
             <span className="text-gradient">InsightGate</span>
           </h1>
           <p className={cn('text-lg mb-4', isDark ? 'text-slate-400' : 'text-slate-600')}>
-            Governança leve para relatórios Power BI públicos
+            Governança leve para relatórios e dashboards públicos
           </p>
           <p className="text-sm text-slate-500 max-w-2xl mx-auto leading-relaxed">
-            Centralize relatórios, controle o acesso pelo portal, acompanhe uso, monitore atualizações e automatize entregas para equipes que precisam de BI sem uma estrutura cara de licenças.
+            Centralize relatórios de Power BI, Tableau, Looker Studio, Metabase, Redash, Streamlit e outras plataformas. Controle o acesso pelo portal, acompanhe uso, monitore atualizações e automatize entregas para equipes que precisam de BI sem uma estrutura cara de licenças.
           </p>
           <div className="flex items-center justify-center gap-3 mt-6">
             <Button onClick={() => setCurrentPage('dashboard')} icon={<BarChart2 size={16} />}>
@@ -76,7 +76,7 @@ export function About() {
             <h2 className={cn('font-semibold text-lg', isDark ? 'text-white' : 'text-slate-900')}>O problema</h2>
           </div>
           <p className="text-sm text-slate-400 leading-relaxed mb-4">
-            Pequenas empresas usam relatórios Power BI públicos porque não querem pagar muitas licenças, mas acabam com:
+            Pequenas empresas publicam relatórios e dashboards em link público — Power BI, Looker Studio, Metabase e similares — porque não querem pagar muitas licenças, mas acabam com:
           </p>
           <ul className="space-y-2">
             {[
@@ -138,7 +138,7 @@ export function About() {
             Limitação honesta — importante ler
           </h3>
           <p className={cn('text-sm leading-relaxed', isDark ? 'text-amber-200/70' : 'text-amber-800/80')}>
-            Links públicos do Power BI continuam públicos fora do portal. Para dados sensíveis, o ideal é Power BI Embedded com autenticação ou outro modelo de segurança real.
+            Links públicos de qualquer plataforma continuam públicos fora do portal. Para dados sensíveis, o ideal é embedded com autenticação (Power BI Embedded, Tableau Server autenticado, etc.) ou outro modelo de segurança real.
             O InsightGate é ideal para relatórios não sensíveis onde a organização, rastreabilidade e automação operacional são o valor principal — não a restrição de acesso técnico ao dado.
           </p>
         </div>

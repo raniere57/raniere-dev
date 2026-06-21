@@ -78,12 +78,14 @@ IA, acompanha agentes e gera relatórios e dashboards. A demo publicada em
 
 ### InsightGate
 
-InsightGate é um portal de governança para relatórios Power BI públicos.
+InsightGate é um portal de governança para relatórios e dashboards públicos.
 
-Ele resolve este problema: relatórios publicados na web ficam soltos, sem
-controle de quem acessa nem visão de uso, e licença de Embedded é cara.
+Para uma pessoa de negócio, ele resolve este problema: relatórios publicados na web
+ficam espalhados — em Power BI, Tableau, Looker Studio, Metabase, Redash, Streamlit
+ou outras ferramentas — sem controle de quem acessa nem visão de uso, e licença de
+Embedded costuma ser cara.
 
-Por baixo, centraliza um catálogo de relatórios, controla acesso, audita o
+Por baixo, centraliza um catálogo multi-plataforma, controla acesso, audita o
 histórico de acessos, dispara alertas de falha e agenda entregas. A demo
 publicada em `/insightgate/` usa dados fictícios.
 

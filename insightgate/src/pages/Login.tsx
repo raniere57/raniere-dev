@@ -64,11 +64,11 @@ export function Login() {
           <div className="space-y-6">
             <h1 className={cn('text-4xl font-bold leading-tight', isDark ? 'text-white' : 'text-slate-900')}>
               Governança leve para{' '}
-              <span className="text-gradient">relatórios Power BI</span>{' '}
+              <span className="text-gradient">relatórios e dashboards</span>{' '}
               públicos.
             </h1>
             <p className={cn('text-lg leading-relaxed', isDark ? 'text-slate-400' : 'text-slate-600')}>
-              Centralize, controle, monitore e automatize a distribuição de relatórios BI para equipes sem uma estrutura cara de licenças.
+              Power BI, Tableau, Looker Studio, Metabase, Redash, Streamlit e outras plataformas — centralize, controle, monitore e automatize a distribuição de BI para equipes sem uma estrutura cara de licenças.
             </p>
           </div>
 
@@ -95,7 +95,7 @@ export function Login() {
           isDark ? 'bg-amber-500/5 border-amber-500/20 text-amber-200/70' : 'bg-amber-50 border-amber-200 text-amber-800'
         )}>
           <AlertTriangle size={14} className="text-amber-400 flex-shrink-0 mt-0.5" />
-          Relatórios publicados na web continuam públicos pelo link original. O InsightGate adiciona governança e auditoria, mas não substitui Power BI Embedded.
+          Relatórios publicados na web continuam públicos pelo link original. O InsightGate adiciona governança e auditoria sobre qualquer fonte, mas não substitui embedded autenticado para dados sensíveis.
         </div>
       </motion.div>
 
