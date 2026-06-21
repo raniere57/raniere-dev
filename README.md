@@ -41,6 +41,18 @@ decisão.
 
 ## Projeto em destaque
 
+### Signal
+
+Signal é uma plataforma omnichannel de atendimento ao cliente.
+
+Para uma pessoa de negócio, ele resolve este problema: clientes chegam por
+WhatsApp, Instagram, Facebook, site ou telefone — e a equipe precisa atender
+tudo sem trocar de ferramenta a cada canal.
+
+Por baixo, unifica conversas num inbox, integra PABX para ligações, inclui agente
+de IA de atendimento e módulo de disparos massivos. A demo publicada em
+`/signal/` usa dados fictícios.
+
 ### Sigma
 
 Sigma é um sistema de atendimento com IA.
@@ -90,7 +102,7 @@ dados fictícios.
 
 O site principal é uma aplicação estática em React, Vite e TypeScript. Cada demo
 vive como uma aplicação Vite independente dentro do mesmo repositório, com `base`
-própria (`/sigma/`, `/sentinel/`), e é publicada junto no GitHub Pages.
+própria (`/sigma/`, `/sentinel/`, `/signal/`), e é publicada junto no GitHub Pages.
 
 ```text
 src/
@@ -101,6 +113,9 @@ src/
 
 sigma/
   src/           demo navegável do Sigma (backend mockado)
+
+signal/
+  src/           demo navegável do Signal (dados fictícios)
 
 sentinel/
   src/           demo navegável do Sentinel QA (dados fictícios)
@@ -138,9 +153,10 @@ npm --prefix sigma install && npm --prefix sigma run build
 npm --prefix sentinel install && npm --prefix sentinel run build
 npm --prefix insightgate install && npm --prefix insightgate run build
 npm --prefix dataforge install && npm --prefix dataforge run build
+npm --prefix signal install && npm --prefix signal run build
 ```
 
-> Os links `/sigma/`, `/sentinel/`, `/insightgate/` e `/dataforge/` no portfólio
+> Os links `/sigma/`, `/sentinel/`, `/insightgate/`, `/dataforge/` e `/signal/` no portfólio
 > são servidos pelo Pages em produção. Para abri-los no dev local, builde cada
 > demo antes — o `vite.config.ts` serve `<demo>/dist` no subpath correspondente.
 

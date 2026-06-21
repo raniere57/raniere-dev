@@ -75,6 +75,17 @@ jobs:
           mkdir -p dist/dataforge
           cp -r dataforge/dist/. dist/dataforge/
 
+      - name: Instalar dependências (demo Signal)
+        run: npm ci --prefix signal
+
+      - name: Build do demo Signal
+        run: npm run build --prefix signal
+
+      - name: Agrupar demo em dist/signal
+        run: |
+          mkdir -p dist/signal
+          cp -r signal/dist/. dist/signal/
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

@@ -28,6 +28,24 @@ export interface Project {
 // Trocar os links pelos subdomínios/repos reais quando publicar cada case.
 export const projects: Project[] = [
   {
+    id: 'signal',
+    title: 'Signal — plataforma omnichannel',
+    category: 'Desenvolvimento de software · Atendimento',
+    description:
+      'Plataforma omnichannel que centraliza atendimento de WhatsApp, Instagram, Facebook, site e telefone (PABX) em um só lugar. Inclui agente de IA, inbox unificada e módulo de disparos massivos. Demo navegável com dados fictícios.',
+    tech: ['Omnichannel', 'PABX', 'Agente de IA', 'Disparos'],
+    links: {
+      demo: '/signal/',
+      code: 'https://github.com/raniere57/raniere-dev/tree/main/signal',
+    },
+    brand: {
+      mark: '◉',
+      accent: 'oklch(75% 0.17 75)',
+      accentInk: 'oklch(18% 0.04 55)',
+      surface: 'oklch(16% 0.02 55)',
+    },
+  },
+  {
     id: 'sigma',
     title: 'Sigma — atendimento com IA',
     category: 'Desenvolvimento de software · IA',
