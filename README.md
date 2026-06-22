@@ -41,6 +41,19 @@ decisão.
 
 ## Projeto em destaque
 
+### Synkin
+
+Synkin é um SaaS de inbound e outbound para LinkedIn com auxílio de IA.
+
+Para uma pessoa de negócio, ele resolve este problema: crescer no LinkedIn exige
+conteúdo, engajamento e prospecção — mas fazer tudo manualmente não escala, e
+automação cega queima credibilidade.
+
+Por baixo, analisa perfil, sugere melhorias, cria calendário de conteúdo, copilota
+comentários e respostas, centraliza inbox/CRM e assiste outbound — sempre com
+aprovação humana antes de publicar ou enviar. A demo publicada em `/synkin/` usa
+dados fictícios.
+
 ### Signal
 
 Signal é uma plataforma omnichannel de atendimento ao cliente.
@@ -104,7 +117,7 @@ dados fictícios.
 
 O site principal é uma aplicação estática em React, Vite e TypeScript. Cada demo
 vive como uma aplicação Vite independente dentro do mesmo repositório, com `base`
-própria (`/sigma/`, `/sentinel/`, `/signal/`), e é publicada junto no GitHub Pages.
+própria (`/sigma/`, `/sentinel/`, `/signal/`, `/synkin/`), e é publicada junto no GitHub Pages.
 
 ```text
 src/
@@ -118,6 +131,9 @@ sigma/
 
 signal/
   src/           demo navegável do Signal (dados fictícios)
+
+synkin/
+  src/           demo navegável do Synkin (dados fictícios)
 
 sentinel/
   src/           demo navegável do Sentinel QA (dados fictícios)
@@ -156,9 +172,10 @@ npm --prefix sentinel install && npm --prefix sentinel run build
 npm --prefix insightgate install && npm --prefix insightgate run build
 npm --prefix dataforge install && npm --prefix dataforge run build
 npm --prefix signal install && npm --prefix signal run build
+npm --prefix synkin install && npm --prefix synkin run build
 ```
 
-> Os links `/sigma/`, `/sentinel/`, `/insightgate/`, `/dataforge/` e `/signal/` no portfólio
+> Os links `/sigma/`, `/sentinel/`, `/insightgate/`, `/dataforge/`, `/signal/` e `/synkin/` no portfólio
 > são servidos pelo Pages em produção. Para abri-los no dev local, builde cada
 > demo antes — o `vite.config.ts` serve `<demo>/dist` no subpath correspondente.
 

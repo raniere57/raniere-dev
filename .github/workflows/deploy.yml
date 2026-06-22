@@ -86,6 +86,17 @@ jobs:
           mkdir -p dist/signal
           cp -r signal/dist/. dist/signal/
 
+      - name: Instalar dependências (demo Synkin)
+        run: npm ci --prefix synkin
+
+      - name: Build do demo Synkin
+        run: npm run build --prefix synkin
+
+      - name: Agrupar demo em dist/synkin
+        run: |
+          mkdir -p dist/synkin
+          cp -r synkin/dist/. dist/synkin/
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

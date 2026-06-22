@@ -46,6 +46,24 @@ export const projects: Project[] = [
     },
   },
   {
+    id: 'synkin',
+    title: 'Synkin — inbound e outbound no LinkedIn',
+    category: 'Desenvolvimento de software · IA',
+    description:
+      'SaaS para crescer no LinkedIn com estratégia e IA: analisa perfil, sugere melhorias, cria calendário de conteúdo, copilota engajamento e centraliza inbox/CRM. Outbound assistido com aprovação humana antes de publicar, comentar ou enviar mensagem. Demo navegável com dados fictícios.',
+    tech: ['LinkedIn', 'Inbound & outbound', 'Copiloto IA', 'CRM'],
+    links: {
+      demo: '/synkin/',
+      code: 'https://github.com/raniere57/raniere-dev/tree/main/synkin',
+    },
+    brand: {
+      mark: 'in',
+      accent: 'oklch(52% 0.14 250)',
+      accentInk: 'oklch(98% 0.01 250)',
+      surface: 'oklch(15% 0.025 250)',
+    },
+  },
+  {
     id: 'sigma',
     title: 'Sigma — atendimento com IA',
     category: 'Desenvolvimento de software · IA',
