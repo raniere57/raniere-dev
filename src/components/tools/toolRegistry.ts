@@ -1,5 +1,7 @@
 import type { ComponentType } from 'react'
 import { Base64Tool } from './Base64Tool'
+import { BrContactTool } from './BrContactTool'
+import { CepTool } from './CepTool'
 import { CpfCnpjTool } from './CpfCnpjTool'
 import { CsvColumnsTool } from './CsvColumnsTool'
 import { CsvDedupeTool } from './CsvDedupeTool'
@@ -66,6 +68,8 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   'json-schema': JsonSchemaTool,
   'series-forecast': ForecastTool,
   'cpf-cnpj': CpfCnpjTool,
+  'br-contact': BrContactTool,
+  'cep': CepTool,
 }
 
 export function isImplementedTool(toolId: string): boolean {

@@ -139,7 +139,7 @@ export function Tools() {
   const isSearching = searchQuery.trim().length > 0
   const showGroupedList = activeCategory === 'all'
   const { toggle: toggleGroup, expand: expandGroup, isExpanded: isGroupExpanded } =
-    useCollapsibleGroups<ToolCategoryId>(getToolById(defaultToolId)?.category)
+    useCollapsibleGroups<ToolCategoryId>({ storageKey: 'raniere-tools-sidebar-groups' })
 
   const filteredTools = useMemo(() => {
     return tools.filter((tool) => {
@@ -166,6 +166,7 @@ export function Tools() {
     if (!tool) return
 
     setActiveToolId(toolId)
+    expandGroup(tool.category)
     const url = new URL(window.location.href)
     url.searchParams.set('tool', toolId)
     history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`)
@@ -176,6 +177,7 @@ export function Tools() {
     const fromUrl = params.get('tool')
     if (fromUrl && getToolById(fromUrl)) {
       setActiveToolId(fromUrl)
+      expandGroup(getToolById(fromUrl)!.category)
     } else {
       setActiveToolId(normalizeToolId(fromUrl))
     }
@@ -185,12 +187,7 @@ export function Tools() {
         document.getElementById('ferramentas')?.scrollIntoView()
       })
     }
-  }, [])
-
-  useEffect(() => {
-    const tool = getToolById(activeToolId)
-    if (tool) expandGroup(tool.category)
-  }, [activeToolId, expandGroup])
+  }, [expandGroup])
 
   useEffect(() => {
     const activeItem = listRef.current?.querySelector<HTMLElement>('.tools-sidebar__item.is-active')
