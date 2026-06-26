@@ -4,6 +4,7 @@ import { CsvColumnsTool } from './CsvColumnsTool'
 import { CsvDedupeTool } from './CsvDedupeTool'
 import { CsvDelimiterTool } from './CsvDelimiterTool'
 import { CsvJoinTool } from './CsvJoinTool'
+import { CsvProcvTool } from './CsvProcvTool'
 import { CsvSplitTool } from './CsvSplitTool'
 import { CsvTransposeTool } from './CsvTransposeTool'
 import { DataProfileTool } from './DataProfileTool'
@@ -40,6 +41,7 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   'data-profile': DataProfileTool,
   'csv-dedupe': CsvDedupeTool,
   'csv-join': CsvJoinTool,
+  'csv-procv': CsvProcvTool,
   'json-path': JsonPathTool,
   'fake-data': FakeDataTool,
   'base64': Base64Tool,

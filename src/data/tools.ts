@@ -179,6 +179,15 @@ export const tools: ToolDefinition[] = [
     mark: '⋈',
   },
   {
+    id: 'csv-procv',
+    category: 'dados',
+    name: 'PROCV / VLOOKUP',
+    description: 'Busque valores em outra tabela e adicione uma coluna na planilha principal.',
+    keywords: ['procv', 'vlookup', 'lookup', 'csv', 'excel', 'buscar'],
+    status: 'available',
+    mark: '⇲',
+  },
+  {
     id: 'json-path',
     category: 'dados',
     name: 'JSONPath',
