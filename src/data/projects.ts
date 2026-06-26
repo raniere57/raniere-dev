@@ -175,3 +175,30 @@ export function getProjectGroup(category: string): string {
 export const projectGroups = Array.from(
   new Set(projects.map((project) => getProjectGroup(project.category))),
 )
+
+const projectGroupLabels: Record<string, string> = {
+  'Desenvolvimento de software': 'Software',
+  'Business Intelligence': 'BI',
+  'Engenharia de dados': 'Dados',
+  Integrações: 'Integrações',
+  Automação: 'Automação',
+}
+
+export function getProjectGroupLabel(group: string): string {
+  return projectGroupLabels[group] ?? group
+}
+
+export function getProjectShortName(title: string): string {
+  const [name] = title.split(' — ')
+  return name?.trim() || title
+}
+
+export function getProjectSubtitle(title: string): string | null {
+  const parts = title.split(' — ')
+  return parts[1]?.trim() || null
+}
+
+export function getProjectCategoryTag(category: string): string {
+  const parts = category.split(' · ')
+  return parts[parts.length - 1]?.trim() || category
+}

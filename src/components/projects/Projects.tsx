@@ -1,9 +1,13 @@
 import type { CSSProperties } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   defaultProjectId,
   getProjectById,
+  getProjectCategoryTag,
   getProjectGroup,
+  getProjectGroupLabel,
+  getProjectShortName,
+  getProjectSubtitle,
   projectGroups,
   projects,
   type Project,
@@ -16,15 +20,20 @@ function ProjectLinks({ project }: { project: Project }) {
 
   return (
     <div className="project-detail__actions">
-      {links.case && (
-        <a href={links.case} className="project-link project-link--primary">
-          Ver case
-        </a>
-      )}
       {links.demo && (
-        <a href={links.demo} target="_blank" rel="noopener noreferrer" className="project-link">
+        <a
+          href={links.demo}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="project-link project-link--primary"
+        >
           Abrir demonstração
           <span aria-hidden="true">↗</span>
+        </a>
+      )}
+      {links.case && (
+        <a href={links.case} className={`project-link${links.demo ? '' : ' project-link--primary'}`}>
+          Ver case
         </a>
       )}
       {links.code && (
@@ -38,6 +47,10 @@ function ProjectLinks({ project }: { project: Project }) {
 }
 
 function ProjectDetail({ project }: { project: Project }) {
+  const shortName = getProjectShortName(project.title)
+  const subtitle = getProjectSubtitle(project.title)
+  const categoryTag = getProjectCategoryTag(project.category)
+
   const brandStyle: Record<string, string> = project.brand
     ? {
         '--p-accent': project.brand.accent,
@@ -48,7 +61,8 @@ function ProjectDetail({ project }: { project: Project }) {
 
   return (
     <article
-      className={`project-detail reveal is-visible${project.brand ? ' project-detail--branded' : ''}`}
+      key={project.id}
+      className={`project-detail${project.brand ? ' project-detail--branded' : ''}`}
       style={brandStyle as CSSProperties}
     >
       {project.brand && (
@@ -57,8 +71,28 @@ function ProjectDetail({ project }: { project: Project }) {
         </span>
       )}
 
-      <p className="project-detail__category">{project.category}</p>
-      <h3 className="project-detail__title">{project.title}</h3>
+      <header className="project-detail__header">
+        <div className="project-detail__meta">
+          <p className="project-detail__category">{project.category}</p>
+          <div className="project-detail__badges">
+            {project.links.demo && <span className="project-detail__badge">Demo navegável</span>}
+            <span className="project-detail__badge project-detail__badge--muted">{categoryTag}</span>
+          </div>
+        </div>
+
+        <div className="project-detail__title-block">
+          {project.brand && (
+            <span className="project-detail__glyph" aria-hidden="true">
+              {project.brand.mark}
+            </span>
+          )}
+          <div>
+            <h3 className="project-detail__title">{shortName}</h3>
+            {subtitle && <p className="project-detail__subtitle">{subtitle}</p>}
+          </div>
+        </div>
+      </header>
+
       <p className="project-detail__description">{project.description}</p>
 
       <ul className="project-detail__tech" aria-label="Tecnologias utilizadas">
@@ -75,7 +109,13 @@ function ProjectDetail({ project }: { project: Project }) {
 function matchesSearch(project: Project, query: string): boolean {
   if (!query.trim()) return true
 
-  const haystack = [project.title, project.description, project.category, ...project.tech]
+  const haystack = [
+    project.title,
+    getProjectShortName(project.title),
+    project.description,
+    project.category,
+    ...project.tech,
+  ]
     .join(' ')
     .toLowerCase()
 
@@ -87,13 +127,23 @@ function normalizeProjectId(raw: string | null): string {
   return defaultProjectId
 }
 
+function getSidebarItemStyle(project: Project, isActive: boolean): CSSProperties | undefined {
+  if (!isActive || !project.brand) return undefined
+
+  return {
+    '--item-accent': project.brand.accent,
+  } as CSSProperties
+}
+
 export function Projects() {
   const sectionRef = useReveal<HTMLElement>()
+  const listRef = useRef<HTMLElement>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [activeGroup, setActiveGroup] = useState<'all' | string>('all')
   const [activeProjectId, setActiveProjectId] = useState(defaultProjectId)
 
   const activeProject = getProjectById(activeProjectId) ?? getProjectById(defaultProjectId)!
+  const showGroupedList = activeGroup === 'all' && !searchQuery.trim()
 
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
@@ -138,6 +188,44 @@ export function Projects() {
     }
   }, [])
 
+  useEffect(() => {
+    const activeItem = listRef.current?.querySelector<HTMLElement>('.projects-sidebar__item.is-active')
+    activeItem?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  }, [activeProjectId, filteredProjects.length])
+
+  function renderSidebarItem(project: Project) {
+    const isActive = project.id === activeProjectId
+    const shortName = getProjectShortName(project.title)
+    const subtitle = getProjectSubtitle(project.title)
+
+    return (
+      <li key={project.id}>
+        <button
+          type="button"
+          className={`projects-sidebar__item${isActive ? ' is-active' : ''}${project.brand ? ' has-brand' : ''}`}
+          style={getSidebarItemStyle(project, isActive)}
+          onClick={() => selectProject(project.id)}
+          aria-current={isActive ? 'true' : undefined}
+        >
+          <span className="projects-sidebar__item-row">
+            {project.brand && (
+              <span className="projects-sidebar__mark" aria-hidden="true">
+                {project.brand.mark}
+              </span>
+            )}
+            <span className="projects-sidebar__item-copy">
+              <span className="projects-sidebar__item-name">{shortName}</span>
+              <span className="projects-sidebar__item-desc">
+                {subtitle ?? getProjectCategoryTag(project.category)}
+              </span>
+            </span>
+            {project.links.demo && <span className="projects-sidebar__pill">Demo</span>}
+          </span>
+        </button>
+      </li>
+    )
+  }
+
   return (
     <section
       id="projetos"
@@ -152,8 +240,8 @@ export function Projects() {
             Projetos
           </h2>
           <p className="projects__lead">
-            Demos navegáveis, integrações e automações — escolha um item na lista para ver o
-            contexto completo.
+            Demos navegáveis, integrações e automações — escolha na lista e explore o contexto
+            completo à direita.
           </p>
         </div>
 
@@ -186,7 +274,7 @@ export function Projects() {
                 id="projects-search"
                 type="search"
                 className="projects-sidebar__input"
-                placeholder="Buscar por nome, stack ou área…"
+                placeholder="Buscar…"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 autoComplete="off"
@@ -203,7 +291,11 @@ export function Projects() {
               )}
             </div>
 
-            <div className="projects-sidebar__categories" role="tablist" aria-label="Áreas">
+            <div
+              className="projects-sidebar__categories"
+              role="tablist"
+              aria-label="Áreas"
+            >
               <button
                 type="button"
                 role="tab"
@@ -222,17 +314,18 @@ export function Projects() {
                   aria-selected={activeGroup === group}
                   className={`projects-sidebar__category${activeGroup === group ? ' is-active' : ''}`}
                   onClick={() => setActiveGroup(group)}
+                  title={group}
                 >
-                  {group}
+                  {getProjectGroupLabel(group)}
                   <span className="projects-sidebar__count">{groupCounts[group]}</span>
                 </button>
               ))}
             </div>
 
-            <nav className="projects-sidebar__list" aria-label="Projetos filtrados">
+            <nav ref={listRef} className="projects-sidebar__list" aria-label="Projetos filtrados">
               {filteredProjects.length === 0 ? (
                 <p className="projects-sidebar__empty">Nenhum projeto encontrado.</p>
-              ) : (
+              ) : showGroupedList ? (
                 projectGroups.map((group) => {
                   const items = filteredProjects.filter(
                     (project) => getProjectGroup(project.category) === group,
@@ -241,43 +334,17 @@ export function Projects() {
 
                   return (
                     <div key={group} className="projects-sidebar__group">
-                      <p className="projects-sidebar__group-label">{group}</p>
-                      <ul className="projects-sidebar__items">
-                        {items.map((project) => {
-                          const isActive = project.id === activeProjectId
-
-                          return (
-                            <li key={project.id}>
-                              <button
-                                type="button"
-                                className={`projects-sidebar__item${isActive ? ' is-active' : ''}`}
-                                onClick={() => selectProject(project.id)}
-                                aria-current={isActive ? 'true' : undefined}
-                              >
-                                <span className="projects-sidebar__item-head">
-                                  {project.brand && (
-                                    <span className="projects-sidebar__mark" aria-hidden="true">
-                                      {project.brand.mark}
-                                    </span>
-                                  )}
-                                  <span className="projects-sidebar__item-name">
-                                    {project.title}
-                                  </span>
-                                </span>
-                                <span className="projects-sidebar__item-desc">
-                                  {project.category}
-                                </span>
-                                {project.links.demo && (
-                                  <span className="projects-sidebar__badge">Demo</span>
-                                )}
-                              </button>
-                            </li>
-                          )
-                        })}
-                      </ul>
+                      <p className="projects-sidebar__group-label">
+                        {getProjectGroupLabel(group)}
+                      </p>
+                      <ul className="projects-sidebar__items">{items.map(renderSidebarItem)}</ul>
                     </div>
                   )
                 })
+              ) : (
+                <ul className="projects-sidebar__items projects-sidebar__items--flat">
+                  {filteredProjects.map(renderSidebarItem)}
+                </ul>
               )}
             </nav>
           </aside>
@@ -295,7 +362,7 @@ export function Projects() {
               >
                 {projects.map((project) => (
                   <option key={project.id} value={project.id}>
-                    {project.title}
+                    {getProjectShortName(project.title)}
                   </option>
                 ))}
               </select>
