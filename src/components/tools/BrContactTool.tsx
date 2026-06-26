@@ -10,7 +10,7 @@ import {
 import { parseInputTable } from '../../utils/inputTable'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
-import { ToolActionBar, ToolToolbar } from './shared/ToolToolbar'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 type ValidatorView = 'single' | 'batch' | 'csv'
@@ -77,53 +77,76 @@ export function BrContactTool() {
 
   return (
     <div className="tool-convert tool-validator">
-      <div className="tool-convert__modes" role="tablist" aria-label="Modo de validação">
-        {(
-          [
-            ['single', 'Um item'],
-            ['batch', 'Lista'],
-            ['csv', 'Coluna CSV'],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={view === id}
-            className={`tool-convert__mode${view === id ? ' is-active' : ''}`}
-            onClick={() => {
-              setView(id)
-              setOutput('')
-              setMeta(null)
-              setError(null)
-            }}
-          >
-            {label}
-          </button>
-        ))}
+      <div className="tool-validator__mode-row">
+        <div className="tool-convert__modes" role="tablist" aria-label="Modo de validação">
+          {(
+            [
+              ['single', 'Um item'],
+              ['batch', 'Lista'],
+              ['csv', 'Coluna CSV'],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={view === id}
+              className={`tool-convert__mode${view === id ? ' is-active' : ''}`}
+              onClick={() => {
+                setView(id)
+                setOutput('')
+                setMeta(null)
+                setError(null)
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <div className="tool-convert__modes tool-convert__modes--secondary" role="tablist" aria-label="Tipo de contato">
+          {(
+            [
+              ['email', 'E-mail'],
+              ['phone', 'Telefone'],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={kind === id}
+              className={`tool-convert__mode tool-convert__mode--compact${kind === id ? ' is-active' : ''}`}
+              onClick={() => setKind(id)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="tool-convert__modes tool-convert__modes--secondary" role="tablist" aria-label="Tipo de contato">
-        {(
-          [
-            ['email', 'E-mail'],
-            ['phone', 'Telefone'],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={kind === id}
-            className={`tool-convert__mode tool-convert__mode--compact${kind === id ? ' is-active' : ''}`}
-            onClick={() => setKind(id)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      {view === 'csv' && (
+        <div className="tool-convert__settings">
+          <label className="tool-convert__setting">
+            <span>Coluna</span>
+            <select value={column} onChange={(event) => setColumn(event.target.value)}>
+              {columns.map((header) => (
+                <option key={header} value={header}>
+                  {header}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
 
-      <ToolToolbar>
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Validar
+          </button>
+        }
+      >
         <button type="button" className="tools-btn tools-btn--ghost" onClick={loadSample}>
           Carregar exemplo
         </button>
@@ -141,27 +164,6 @@ export function BrContactTool() {
           Limpar
         </button>
       </ToolToolbar>
-
-      {view === 'csv' && (
-        <div className="tool-convert__settings">
-          <label className="tool-convert__setting">
-            <span>Coluna</span>
-            <select value={column} onChange={(event) => setColumn(event.target.value)}>
-              {columns.map((header) => (
-                <option key={header} value={header}>
-                  {header}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      )}
-
-      <ToolActionBar>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Validar
-        </button>
-      </ToolActionBar>
 
       <div className="tool-convert__panes tool-convert__panes--stack">
         <div className="tool-convert__pane">

@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import { generateFakeData, type FakeOutputFormat } from '../../utils/fakeData'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
-import { ToolActionBar } from './shared/ToolToolbar'
+import { ToolToolbar } from './shared/ToolToolbar'
 
 export function FakeDataTool() {
   const [format, setFormat] = useState<FakeOutputFormat>('csv')
@@ -50,7 +50,13 @@ export function FakeDataTool() {
         </label>
       </div>
 
-      <ToolActionBar>
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Gerar dados
+          </button>
+        }
+      >
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
@@ -62,10 +68,7 @@ export function FakeDataTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Gerar dados
-        </button>
-      </ToolActionBar>
+      </ToolToolbar>
 
       <div className="tool-convert__pane">
         <div className="tool-convert__pane-head">

@@ -9,7 +9,7 @@ import {
 import { parseInputTable } from '../../utils/inputTable'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
-import { ToolActionBar, ToolToolbar } from './shared/ToolToolbar'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 type ValidatorView = 'single' | 'batch' | 'csv'
@@ -95,7 +95,28 @@ export function CepTool() {
         ))}
       </div>
 
-      <ToolToolbar>
+      {view === 'csv' && (
+        <div className="tool-convert__settings">
+          <label className="tool-convert__setting">
+            <span>Coluna de CEP</span>
+            <select value={column} onChange={(event) => setColumn(event.target.value)}>
+              {columns.map((header) => (
+                <option key={header} value={header}>
+                  {header}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
+
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Validar
+          </button>
+        }
+      >
         <button type="button" className="tools-btn tools-btn--ghost" onClick={loadSample}>
           Carregar exemplo
         </button>
@@ -113,27 +134,6 @@ export function CepTool() {
           Limpar
         </button>
       </ToolToolbar>
-
-      {view === 'csv' && (
-        <div className="tool-convert__settings">
-          <label className="tool-convert__setting">
-            <span>Coluna de CEP</span>
-            <select value={column} onChange={(event) => setColumn(event.target.value)}>
-              {columns.map((header) => (
-                <option key={header} value={header}>
-                  {header}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      )}
-
-      <ToolActionBar>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Validar
-        </button>
-      </ToolActionBar>
 
       <div className="tool-convert__panes tool-convert__panes--stack">
         <div className="tool-convert__pane">

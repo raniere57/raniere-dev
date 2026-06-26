@@ -628,7 +628,7 @@
 }
 
 .tool-convert__modes--secondary {
-  margin-top: -0.5rem;
+  margin-top: 0;
 }
 
 .tool-convert__mode--compact {
@@ -665,10 +665,14 @@
 .tool-json-csv__toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.75rem;
   margin-bottom: 1rem;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  padding: 0.65rem 0.75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
 }
 
 .tool-convert__toolbar-group {
@@ -676,9 +680,18 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
+  min-width: 0;
 }
 
 .tool-convert__toolbar-group--end {
+  margin-left: auto;
+}
+
+.tool-convert__toolbar--action {
+  justify-content: flex-end;
+}
+
+.tool-convert__toolbar--action .tool-convert__toolbar-group:only-child {
   margin-left: auto;
 }
 
@@ -688,10 +701,26 @@
   justify-content: flex-end;
   gap: 0.5rem;
   margin-bottom: 1rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
 }
 
 .tool-convert__action-bar .tools-btn--ghost {
   margin-right: auto;
+}
+
+.tool-validator__mode-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.tool-validator__mode-row .tool-convert__modes {
+  margin-bottom: 0;
 }
 
 .tool-convert__settings {

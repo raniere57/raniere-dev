@@ -172,7 +172,13 @@ export function XlsxTool() {
         </>
       )}
 
-      <ToolActionBar>
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Converter
+          </button>
+        }
+      >
         {isImport && fileName && (
           <button
             type="button"
@@ -188,10 +194,7 @@ export function XlsxTool() {
             Limpar
           </button>
         )}
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Converter
-        </button>
-      </ToolActionBar>
+      </ToolToolbar>
 
       {isImport && output && (
         <div className="tool-convert__pane">
