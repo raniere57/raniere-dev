@@ -13,10 +13,11 @@ Tudo roda no browser; zero API externa. Encaixa na seção **Ferramentas** (`#fe
 | # | Ferramenta | Descrição | Status |
 |---|------------|-----------|--------|
 | 4.1 | **JSON ↔ CSV** | Colar JSON → tabela/CSV; colar CSV → JSON. Download do resultado. | **concluído** |
+| 4.1b | **Suite Dados & arquivos** | Formatador JSON, preview tabela, delimitador/BOM, NDJSON, XLSX, YAML, flatten, SQL INSERT, Markdown, colunas, diff. | **concluído** |
 | 4.2 | **Validador CPF/CNPJ** | Input → válido/inválido, formatação, dígitos verificadores. | pendente |
 | 4.3 | **Testador de regex** | Pattern + flags + texto de teste → matches destacados. | pendente |
 | 4.4 | **Próximas execuções cron** | Expressão cron + timezone → próximas N datas legíveis. | pendente |
-| 4.5 | **Diff JSON / texto** | Dois blocos → diff visual (linhas +/-). | pendente |
+| 4.5 | **Diff JSON / texto** | Dois blocos → diff visual (linhas +/-). | **concluído** (`json-diff`) |
 
 ### Notas técnicas (fase 1)
 
@@ -106,3 +107,4 @@ Decisão atual: **Opção A** para 4.1–4.2; reavaliar `/tools/` se passar de ~
 |------|------|
 | 2026-06-22 | Roadmap criado; fase 1 (item 4) priorizada. |
 | 2026-06-19 | 4.1 JSON ↔ CSV — hub `#ferramentas` com busca, categorias e deep link `?tool=json-csv`. |
+| 2026-06-19 | Suite Dados (4.1b): +11 ferramentas JSON/CSV/XLSX/YAML com lazy load (xlsx, js-yaml). |

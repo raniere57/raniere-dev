@@ -10,41 +10,21 @@ import {
   type ToolDefinition,
 } from '../../data/tools'
 import { useReveal } from '../../hooks/useReveal'
+import { isImplementedTool, TOOL_LOADERS } from './toolRegistry'
 import './tools.css'
 
-const JsonCsvTool = lazy(() =>
-  import('./JsonCsvTool').then((module) => ({ default: module.JsonCsvTool })),
-)
-
-const TOOL_PANELS: Record<string, () => JSX.Element> = {
-  'json-csv': () => <JsonCsvTool />,
-}
-
 function normalizeToolId(raw: string | null): string {
-  if (raw && getToolById(raw)?.status === 'available') return raw
+  if (raw && getToolById(raw)) return raw
   return defaultToolId
 }
 
-function matchesSearch(tool: ToolDefinition, query: string): boolean {
-  if (!query.trim()) return true
-  const haystack = [tool.name, tool.description, ...tool.keywords].join(' ').toLowerCase()
-  return haystack.includes(query.trim().toLowerCase())
-}
+const LAZY_TOOLS = Object.fromEntries(
+  Object.entries(TOOL_LOADERS).map(([id, loader]) => [id, lazy(loader)]),
+) as Record<string, ReturnType<typeof lazy>>
 
-function ToolPanel({ toolId }: { toolId: string }) {
-  const tool = getToolById(toolId)
-
-  if (!tool || tool.status !== 'available') {
-    return (
-      <div className="tool-detail__soon">
-        <p>Esta ferramenta ainda está em desenvolvimento.</p>
-        <p className="tool-detail__soon-hint">Volte em breve — ela aparecerá aqui quando estiver pronta.</p>
-      </div>
-    )
-  }
-
-  const render = TOOL_PANELS[toolId]
-  if (!render) {
+function LazyToolPanel({ toolId }: { toolId: string }) {
+  const Component = LAZY_TOOLS[toolId]
+  if (!Component) {
     return (
       <div className="tool-detail__soon">
         <p>Esta ferramenta ainda não está disponível.</p>
@@ -53,16 +33,39 @@ function ToolPanel({ toolId }: { toolId: string }) {
   }
 
   return (
-    <Suspense
-      fallback={
-        <div className="tool-detail__loading" aria-live="polite">
-          Carregando ferramenta…
-        </div>
-      }
-    >
-      {render()}
+    <Suspense fallback={<div className="tool-detail__loading">Carregando ferramenta…</div>}>
+      <Component />
     </Suspense>
   )
+}
+
+function ToolPanel({ toolId }: { toolId: string }) {
+  const tool = getToolById(toolId)
+
+  if (!tool) {
+    return (
+      <div className="tool-detail__soon">
+        <p>Ferramenta não encontrada.</p>
+      </div>
+    )
+  }
+
+  if (tool.status !== 'available' || !isImplementedTool(toolId)) {
+    return (
+      <div className="tool-detail__soon">
+        <p>Esta ferramenta ainda está em desenvolvimento.</p>
+        <p className="tool-detail__soon-hint">Volte em breve — ela aparecerá aqui quando estiver pronta.</p>
+      </div>
+    )
+  }
+
+  return <LazyToolPanel toolId={toolId} />
+}
+
+function matchesSearch(tool: ToolDefinition, query: string): boolean {
+  if (!query.trim()) return true
+  const haystack = [tool.name, tool.description, ...tool.keywords].join(' ').toLowerCase()
+  return haystack.includes(query.trim().toLowerCase())
 }
 
 function ToolDetail({ tool }: { tool: ToolDefinition }) {

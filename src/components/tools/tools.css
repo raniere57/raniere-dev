@@ -544,8 +544,9 @@
   box-shadow: 0 8px 20px -10px var(--color-accent-soft);
 }
 
-/* ── JSON ↔ CSV ──────────────────────────────────────────────── */
+/* ── Conversores (layout compartilhado) ──────────────────────── */
 
+.tool-convert__modes,
 .tool-json-csv__modes {
   display: inline-flex;
   flex-wrap: wrap;
@@ -557,6 +558,7 @@
   border-radius: var(--radius-card);
 }
 
+.tool-convert__mode,
 .tool-json-csv__mode {
   padding: 0.45rem 0.85rem;
   font-family: var(--font-mono);
@@ -571,24 +573,60 @@
     background var(--duration-fast) ease;
 }
 
+.tool-convert__mode.is-active,
 .tool-json-csv__mode.is-active {
   color: var(--color-accent-ink);
   background: var(--color-accent);
 }
 
+.tool-convert__toolbar,
 .tool-json-csv__toolbar {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1rem;
+  align-items: center;
 }
 
+.tool-convert__check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.tool-convert__inline-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--color-text-muted);
+}
+
+.tool-convert__inline-field input,
+.tool-convert__inline-field select {
+  padding: 0.45rem 0.65rem;
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.tool-convert__panes,
 .tool-json-csv__panes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
 }
 
+.tool-convert__panes--stack {
+  grid-template-columns: 1fr;
+}
+
+.tool-convert__pane,
 .tool-json-csv__pane {
   display: flex;
   flex-direction: column;
@@ -596,6 +634,7 @@
   min-width: 0;
 }
 
+.tool-convert__pane-head,
 .tool-json-csv__pane-head {
   display: flex;
   flex-wrap: wrap;
@@ -604,6 +643,7 @@
   gap: 0.5rem;
 }
 
+.tool-convert__label,
 .tool-json-csv__label {
   font-family: var(--font-mono);
   font-size: var(--text-mono);
@@ -612,15 +652,17 @@
   color: var(--color-text-faint);
 }
 
+.tool-convert__meta,
 .tool-json-csv__meta {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--color-accent);
 }
 
+.tool-convert__textarea,
 .tool-json-csv__textarea {
   width: 100%;
-  min-height: 16rem;
+  min-height: 14rem;
   padding: 0.85rem 1rem;
   font-family: var(--font-mono);
   font-size: 0.8125rem;
@@ -634,15 +676,18 @@
   transition: border-color var(--duration-fast) ease;
 }
 
+.tool-convert__textarea:focus,
 .tool-json-csv__textarea:focus {
   outline: none;
   border-color: var(--color-accent);
 }
 
+.tool-convert__textarea--output,
 .tool-json-csv__textarea--output {
   background: color-mix(in oklab, var(--color-bg) 65%, var(--color-surface));
 }
 
+.tool-convert__error,
 .tool-json-csv__error {
   margin-top: 1rem;
   padding: 0.75rem 1rem;
@@ -653,6 +698,7 @@
   border-radius: var(--radius-card);
 }
 
+.tool-convert__footer,
 .tool-json-csv__footer {
   display: flex;
   flex-wrap: wrap;
@@ -664,11 +710,13 @@
   border-top: 1px solid var(--color-border);
 }
 
+.tool-convert__hint,
 .tool-json-csv__hint {
   font-size: var(--text-sm);
   color: var(--color-text-faint);
 }
 
+.tool-convert__hint kbd,
 .tool-json-csv__hint kbd {
   display: inline-block;
   padding: 0.1rem 0.35rem;
@@ -679,13 +727,101 @@
   border-radius: 3px;
 }
 
+.tool-convert__footer-actions,
 .tool-json-csv__footer-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-/* ── Responsivo ──────────────────────────────────────────────── */
+.tool-table__wrap {
+  overflow: auto;
+  max-height: 24rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.tool-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.tool-table th,
+.tool-table td {
+  padding: 0.45rem 0.65rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.tool-table th {
+  position: sticky;
+  top: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: var(--color-bg-raised);
+}
+
+.tool-table tr:nth-child(even) td {
+  background: color-mix(in oklab, var(--color-text-muted) 4%, transparent);
+}
+
+.tool-table__empty {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.tool-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.tool-columns__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.tool-diff__output {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  min-height: 10rem;
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  white-space: pre-wrap;
+}
+
+.tool-xlsx__import {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.tool-xlsx__upload input[type='file'] {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: var(--text-sm);
+}
 
 @media (max-width: 960px) {
   .tools__hub {
@@ -706,10 +842,12 @@
 }
 
 @media (max-width: 720px) {
+  .tool-convert__panes,
   .tool-json-csv__panes {
     grid-template-columns: 1fr;
   }
 
+  .tool-convert__textarea,
   .tool-json-csv__textarea {
     min-height: 12rem;
   }

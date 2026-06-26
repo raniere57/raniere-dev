@@ -1,96 +1,19 @@
+import { DataToolError, type DataToolResult } from './dataError'
+import {
+  detectDelimiter,
+  delimitedToObjects,
+  objectsToDelimited,
+  parseDelimited,
+  type CsvDelimiter,
+} from './csv'
+
 export type JsonCsvDirection = 'json-to-csv' | 'csv-to-json'
 
-export interface ConvertResult {
-  output: string
-  meta?: string
-}
-
-export class ConvertError extends Error {
+export class ConvertError extends DataToolError {
   constructor(message: string) {
     super(message)
     this.name = 'ConvertError'
   }
-}
-
-function escapeCsvCell(value: unknown): string {
-  if (value === null || value === undefined) return ''
-
-  const text =
-    typeof value === 'object' ? JSON.stringify(value) : String(value)
-
-  if (/[",\n\r]/.test(text)) {
-    return `"${text.replace(/"/g, '""')}"`
-  }
-
-  return text
-}
-
-function parseCsvLine(line: string): string[] {
-  const cells: string[] = []
-  let current = ''
-  let inQuotes = false
-
-  for (let i = 0; i < line.length; i += 1) {
-    const char = line[i]
-    const next = line[i + 1]
-
-    if (char === '"') {
-      if (inQuotes && next === '"') {
-        current += '"'
-        i += 1
-      } else {
-        inQuotes = !inQuotes
-      }
-      continue
-    }
-
-    if (char === ',' && !inQuotes) {
-      cells.push(current)
-      current = ''
-      continue
-    }
-
-    current += char
-  }
-
-  cells.push(current)
-  return cells
-}
-
-function parseCsv(text: string): string[][] {
-  const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim()
-  if (!normalized) return []
-
-  const rows: string[][] = []
-  let row = ''
-  let inQuotes = false
-
-  for (let i = 0; i < normalized.length; i += 1) {
-    const char = normalized[i]
-    const next = normalized[i + 1]
-
-    if (char === '"') {
-      if (inQuotes && next === '"') {
-        row += '""'
-        i += 1
-      } else {
-        inQuotes = !inQuotes
-        row += char
-      }
-      continue
-    }
-
-    if (char === '\n' && !inQuotes) {
-      if (row.trim() !== '') rows.push(parseCsvLine(row))
-      row = ''
-      continue
-    }
-
-    row += char
-  }
-
-  if (row.trim() !== '') rows.push(parseCsvLine(row))
-  return rows
 }
 
 function normalizeJsonRows(parsed: unknown): Record<string, unknown>[] {
@@ -127,7 +50,7 @@ function normalizeJsonRows(parsed: unknown): Record<string, unknown>[] {
   )
 }
 
-export function jsonToCsv(input: string): ConvertResult {
+export function jsonToCsv(input: string, delimiter: CsvDelimiter = ','): DataToolResult {
   const trimmed = input.trim()
   if (!trimmed) throw new ConvertError('Cole um JSON para converter.')
 
@@ -139,52 +62,34 @@ export function jsonToCsv(input: string): ConvertResult {
   }
 
   const rows = normalizeJsonRows(parsed)
-  if (rows.length === 0) {
-    return { output: '', meta: '0 linhas' }
-  }
+  if (rows.length === 0) return { output: '', meta: '0 linhas' }
 
-  const headers = Array.from(
-    rows.reduce((set, row) => {
-      Object.keys(row).forEach((key) => set.add(key))
-      return set
-    }, new Set<string>()),
-  )
-
-  const lines = [
-    headers.map(escapeCsvCell).join(','),
-    ...rows.map((row) => headers.map((header) => escapeCsvCell(row[header])).join(',')),
-  ]
+  const output = objectsToDelimited(rows, delimiter)
+  const colCount = rows.reduce((max, row) => Math.max(max, Object.keys(row).length), 0)
 
   return {
-    output: lines.join('\n'),
-    meta: `${rows.length} linha${rows.length === 1 ? '' : 's'} · ${headers.length} coluna${headers.length === 1 ? '' : 's'}`,
+    output,
+    meta: `${rows.length} linha${rows.length === 1 ? '' : 's'} · ${colCount} coluna${colCount === 1 ? '' : 's'}`,
   }
 }
 
-export function csvToJson(input: string): ConvertResult {
-  const rows = parseCsv(input)
-  if (rows.length === 0) throw new ConvertError('Cole um CSV para converter.')
+export function csvToJson(input: string, delimiter?: CsvDelimiter): DataToolResult {
+  const trimmed = input.trim()
+  if (!trimmed) throw new ConvertError('Cole um CSV para converter.')
 
-  const [headerRow, ...dataRows] = rows
-  const headers = headerRow.map((header, index) => header.trim() || `col_${index + 1}`)
+  const resolved = delimiter ?? detectDelimiter(trimmed)
+  const rows = parseDelimited(trimmed, resolved)
+  if (rows.length === 0) throw new ConvertError('Nenhuma linha válida encontrada.')
 
-  if (headers.length === 0) throw new ConvertError('Cabeçalho CSV não encontrado.')
-
-  const objects = dataRows.map((cells) => {
-    const record: Record<string, string> = {}
-    headers.forEach((header, index) => {
-      record[header] = cells[index] ?? ''
-    })
-    return record
-  })
+  const objects = delimitedToObjects(rows)
 
   return {
     output: JSON.stringify(objects, null, 2),
-    meta: `${objects.length} registro${objects.length === 1 ? '' : 's'} · ${headers.length} campo${headers.length === 1 ? '' : 's'}`,
+    meta: `${objects.length} registro${objects.length === 1 ? '' : 's'} · ${rows[0]?.length ?? 0} campo${rows[0]?.length === 1 ? '' : 's'}`,
   }
 }
 
-export function convertJsonCsv(direction: JsonCsvDirection, input: string): ConvertResult {
+export function convertJsonCsv(direction: JsonCsvDirection, input: string): DataToolResult {
   return direction === 'json-to-csv' ? jsonToCsv(input) : csvToJson(input)
 }
 
