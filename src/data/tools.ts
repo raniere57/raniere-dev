@@ -136,9 +136,9 @@ export const tools: ToolDefinition[] = [
   {
     id: 'csv-columns',
     category: 'dados',
-    name: 'Filtrar colunas CSV',
-    description: 'Selecione e reordene colunas antes de exportar o CSV.',
-    keywords: ['csv', 'colunas', 'filtrar', 'reordenar'],
+    name: 'Reordenar colunas CSV',
+    description: 'Escolha quais colunas manter e defina a ordem de saída.',
+    keywords: ['csv', 'colunas', 'reordenar', 'ordenar', 'filtrar'],
     status: 'available',
     mark: '☰',
   },

@@ -7,7 +7,7 @@ export function filterCsvColumns(
   order: string[],
 ): DataToolResult {
   const trimmed = input.trim()
-  if (!trimmed) throw new DataToolError('Cole um CSV para filtrar colunas.')
+  if (!trimmed) throw new DataToolError('Cole um CSV para reordenar colunas.')
 
   const delimiter = detectDelimiter(trimmed)
   const matrix = parseDelimited(trimmed, delimiter)

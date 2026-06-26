@@ -3,6 +3,14 @@ import { csvColumnsSample, filterCsvColumns, listCsvColumns } from '../../utils/
 import { runDataTool } from './shared/ConvertToolLayout'
 import { ImportFileButton } from './shared/ImportFileButton'
 
+function moveItem<T>(items: T[], from: number, to: number): T[] {
+  if (to < 0 || to >= items.length || from === to) return items
+  const next = [...items]
+  const [item] = next.splice(from, 1)
+  next.splice(to, 0, item)
+  return next
+}
+
 export function CsvColumnsTool() {
   const [input, setInput] = useState('')
   const [columns, setColumns] = useState<string[]>([])
@@ -21,6 +29,10 @@ export function CsvColumnsTool() {
     setSelected((current) =>
       current.includes(column) ? current.filter((item) => item !== column) : [...current, column],
     )
+  }
+
+  const moveColumn = (index: number, direction: -1 | 1) => {
+    setSelected((current) => moveItem(current, index, index + direction))
   }
 
   const run = useCallback(() => {
@@ -48,7 +60,7 @@ export function CsvColumnsTool() {
           Limpar
         </button>
         <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Aplicar colunas
+          Aplicar ordem
         </button>
       </div>
 
@@ -68,7 +80,7 @@ export function CsvColumnsTool() {
         </div>
 
         <div className="tool-convert__pane">
-          <p className="tool-convert__label">Colunas (ordem de seleção)</p>
+          <p className="tool-convert__label">Colunas disponíveis</p>
           <div className="tool-columns">
             {columns.length === 0 ? (
               <p className="tool-table__empty">Cole um CSV para listar colunas.</p>
@@ -85,12 +97,45 @@ export function CsvColumnsTool() {
               ))
             )}
           </div>
+
+          {selected.length > 0 && (
+            <>
+              <p className="tool-convert__label tool-columns__order-label">Ordem de saída</p>
+              <ol className="tool-columns__order">
+                {selected.map((column, index) => (
+                  <li key={column} className="tool-columns__order-item">
+                    <span className="tool-columns__order-name">{column}</span>
+                    <span className="tool-columns__order-actions">
+                      <button
+                        type="button"
+                        className="tools-btn tools-btn--ghost tool-columns__move"
+                        disabled={index === 0}
+                        onClick={() => moveColumn(index, -1)}
+                        aria-label={`Mover ${column} para cima`}
+                      >
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        className="tools-btn tools-btn--ghost tool-columns__move"
+                        disabled={index === selected.length - 1}
+                        onClick={() => moveColumn(index, 1)}
+                        aria-label={`Mover ${column} para baixo`}
+                      >
+                        ↓
+                      </button>
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </>
+          )}
         </div>
       </div>
 
       <div className="tool-convert__pane">
         <div className="tool-convert__pane-head">
-          <span className="tool-convert__label">CSV filtrado</span>
+          <span className="tool-convert__label">CSV reordenado</span>
           {meta && <span className="tool-convert__meta">{meta}</span>}
         </div>
         <textarea
