@@ -31,13 +31,14 @@ export function ImportFileButton({
   }
 
   return (
-    <>
+    <span className="tool-convert__import">
       <input
         ref={inputRef}
         id={inputId}
         type="file"
         accept={accept}
         className="tool-convert__file-input"
+        tabIndex={-1}
         onChange={handleChange}
       />
       <button
@@ -47,6 +48,6 @@ export function ImportFileButton({
       >
         {label}
       </button>
-    </>
+    </span>
   )
 }

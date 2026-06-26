@@ -636,11 +636,12 @@
   border-radius: var(--radius-card);
 }
 
+.tool-convert__import {
+  display: inline-flex;
+}
+
 .tool-convert__file-input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
+  display: none;
 }
 
 .tool-convert__bom {
