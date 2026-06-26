@@ -4,8 +4,8 @@ import './header.css'
 const NAV_ITEMS = [
   { href: '#servicos', label: 'Serviços' },
   { href: '#projetos', label: 'Projetos' },
-  { href: '#sobre', label: 'Sobre' },
   { href: '#ferramentas', label: 'Ferramentas' },
+  { href: '#sobre', label: 'Sobre' },
   { href: '#contato', label: 'Contato' },
 ]
 

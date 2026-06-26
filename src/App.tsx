@@ -24,8 +24,8 @@ export function App() {
         <Ticker />
         <Services />
         <Projects />
-        <About />
         <Tools />
+        <About />
         <Contact />
       </main>
       <Footer />

@@ -110,7 +110,7 @@ export function Tools() {
       aria-labelledby="tools-heading"
     >
       <div className="container">
-        <p className="section-label reveal">04 / Ferramentas</p>
+        <p className="section-label reveal">03 / Ferramentas</p>
         <div className="tools__intro reveal">
           <h2 id="tools-heading" className="section-title tools__title">
             Utilitários no navegador

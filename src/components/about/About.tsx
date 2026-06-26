@@ -45,7 +45,7 @@ export function About() {
       aria-labelledby="about-heading"
     >
       <div className="container">
-        <p className="section-label reveal">03 / Sobre</p>
+        <p className="section-label reveal">04 / Sobre</p>
         <h2 id="about-heading" className="section-title reveal">
           Como o trabalho acontece
         </h2>
