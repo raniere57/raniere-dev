@@ -250,7 +250,8 @@ function sanitizeEmailCandidate(value: string, warnings: string[]): string {
 
 export function correctEmail(raw: string): ContactCorrection {
   const warnings: string[] = []
-  let value = raw.trim()
+  const originalRaw = raw.trim()
+  let value = originalRaw
 
   if (!value) {
     return { ...validateEmail(''), warnings: [], changed: false }
@@ -308,14 +309,34 @@ export function correctEmail(raw: string): ContactCorrection {
 
   return {
     ...validation,
+    raw: originalRaw,
     warnings,
-    changed: warnings.length > 0 || validation.formatted !== raw.trim(),
+    changed: warnings.length > 0 || validation.formatted !== originalRaw,
   }
+}
+
+function insertMobileNineIfNeeded(digits: string, warnings: string[]): string {
+  if (digits.length !== 10) return digits
+
+  const localStart = digits[2]
+  if (!localStart) return digits
+
+  // Fixo: 8 dígitos após DDD começando em 2–5 — não inserir 9
+  if (/[2-5]/.test(localStart)) return digits
+
+  // Celular sem o 9: 8 dígitos após DDD começando em 6–9 (ou qualquer coisa ≠ fixo)
+  if (/[6-9]/.test(localStart)) {
+    pushWarning(warnings, 'Nono dígito (9) inserido após o DDD (celular BR).')
+    return `${digits.slice(0, 2)}9${digits.slice(2)}`
+  }
+
+  return digits
 }
 
 export function correctPhone(raw: string): ContactCorrection {
   const warnings: string[] = []
-  let digits = stripPhoneDigits(raw)
+  const originalRaw = raw.trim()
+  let digits = stripPhoneDigits(originalRaw)
 
   if (!digits) {
     return { ...validatePhone(''), warnings: [], changed: false }
@@ -335,21 +356,38 @@ export function correctPhone(raw: string): ContactCorrection {
     const extra = digits.length - 11
     digits = digits.slice(-11)
     pushWarning(warnings, `${extra} dígito(s) extra(s) removido(s) — confira se o número ficou correto.`)
-  } else if (digits.length === 10 && /^[6-9]/.test(digits.slice(2))) {
-    // Celular antigo sem o 9 — tentativa conservadora
-    digits = `${digits.slice(0, 2)}9${digits.slice(2)}`
-    pushWarning(warnings, 'Nono dígito (9) inserido — padrão de celular BR.')
-  } else if (digits.length === 9) {
-    pushWarning(warnings, 'Nove dígitos sem DDD — não foi possível completar automaticamente.')
-  } else if (digits.length === 8) {
-    pushWarning(warnings, 'Oito dígitos sem DDD — não foi possível completar automaticamente.')
   }
 
-  const validation = validatePhone(digits)
-  const changed = warnings.length > 0 || digits !== normalizePhoneDigits(raw)
+  digits = insertMobileNineIfNeeded(digits, warnings)
+
+  if (digits.length === 9 && VALID_DDD.has(digits.slice(0, 2))) {
+    digits = `${digits.slice(0, 2)}9${digits.slice(2)}`
+    pushWarning(warnings, 'Nono dígito (9) inserido após o DDD (celular BR).')
+  }
+
+  let validation = validatePhone(digits)
+
+  // Fallback: 10 dígitos com 9 na 3ª posição = celular sem nono dígito
+  if (!validation.valid && digits.length === 10 && digits[2] === '9') {
+    digits = `${digits.slice(0, 2)}9${digits.slice(2)}`
+    pushWarning(warnings, 'Nono dígito (9) inserido após o DDD (celular BR).')
+    validation = validatePhone(digits)
+  }
+
+  if (digits.length === 9) {
+    pushWarning(warnings, 'Nove dígitos — não foi possível completar o número.')
+  } else if (digits.length === 8) {
+    pushWarning(warnings, 'Oito dígitos — informe o DDD.')
+  }
+
+  const changed =
+    warnings.length > 0 ||
+    digits !== normalizePhoneDigits(originalRaw) ||
+    validation.formatted !== originalRaw
 
   return {
     ...validation,
+    raw: originalRaw,
     warnings,
     changed,
   }
@@ -515,7 +553,7 @@ export const brContactSamples = {
   email: 'ana.silva@example.com',
   emailMessy: 'ana.silva@example.com@',
   phone: '(86) 99999-1234',
-  phoneMessy: '+55 (86) 99999-1234',
+  phoneMessy: '+55 (86) 9999-1234',
   batchEmail: ['ana@example.com', 'invalido', 'contato@empresa.com.br'].join('\n'),
   batchPhone: ['86999991234', '(11) 3456-7890', '123', '(86) 88888-1111'].join('\n'),
   csvEmail: ['nome,email', 'Ana,ana@example.com', 'Ruim,nao-email', 'Beto,beto@empresa.com'].join('\n'),
