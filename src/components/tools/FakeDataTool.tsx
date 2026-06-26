@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { generateFakeData, type FakeOutputFormat } from '../../utils/fakeData'
 import { runDataTool } from './shared/ConvertToolLayout'
+import { OutputActions } from './shared/OutputActions'
 
 export function FakeDataTool() {
   const [format, setFormat] = useState<FakeOutputFormat>('csv')
@@ -71,6 +72,7 @@ export function FakeDataTool() {
           {meta && <span className="tool-convert__meta">{meta}</span>}
         </div>
         <textarea className="tool-convert__textarea tool-convert__textarea--output" value={output} readOnly rows={14} spellCheck={false} />
+        <OutputActions output={output} downloadFilename={format === 'csv' ? 'dados.csv' : 'dados.json'} />
       </div>
 
       <p className="tool-convert__hint">CPFs gerados são fictícios, apenas para testes locais.</p>

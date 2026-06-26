@@ -3,6 +3,7 @@ import { buildDataProfile, dataProfileSample, profileToText } from '../../utils/
 import { DataToolError } from '../../utils/dataError'
 import type { InputTableFormat } from '../../utils/inputTable'
 import { parseInputTable } from '../../utils/inputTable'
+import { OutputActions } from './shared/OutputActions'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function DataProfileTool() {
@@ -11,17 +12,21 @@ export function DataProfileTool() {
   const [error, setError] = useState<string | null>(null)
   const [profiles, setProfiles] = useState<ReturnType<typeof buildDataProfile> | null>(null)
   const [meta, setMeta] = useState<string | null>(null)
+  const [exportText, setExportText] = useState('')
 
   const run = useCallback(() => {
     try {
       const table = parseInputTable(input, format)
       const next = buildDataProfile(input, format)
+      const result = profileToText(next, table.rows.length)
       setProfiles(next)
-      setMeta(profileToText(next, table.rows.length).meta ?? null)
+      setMeta(result.meta ?? null)
+      setExportText(result.output)
       setError(null)
     } catch (cause) {
       setProfiles(null)
       setMeta(null)
+      setExportText('')
       setError(cause instanceof DataToolError ? cause.message : 'Não foi possível analisar.')
     }
   }, [format, input])
@@ -61,6 +66,7 @@ export function DataProfileTool() {
             setInput('')
             setProfiles(null)
             setMeta(null)
+            setExportText('')
             setError(null)
           }}
         >
@@ -123,6 +129,7 @@ export function DataProfileTool() {
           ) : (
             <p className="tool-table__empty">O perfil aparece aqui.</p>
           )}
+          <OutputActions output={exportText} downloadFilename="perfil.txt" />
         </div>
       </div>
 

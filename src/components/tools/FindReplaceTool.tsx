@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { findAndReplace, findReplaceSample, type ReplaceMode } from '../../utils/findReplace'
 import { runDataTool } from './shared/ConvertToolLayout'
+import { OutputActions } from './shared/OutputActions'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function FindReplaceTool() {
@@ -94,6 +95,7 @@ export function FindReplaceTool() {
             {meta && <span className="tool-convert__meta">{meta}</span>}
           </div>
           <textarea className="tool-convert__textarea tool-convert__textarea--output" value={output} readOnly rows={12} spellCheck={false} />
+        <OutputActions output={output} downloadFilename="resultado.txt" />
         </div>
       </div>
 

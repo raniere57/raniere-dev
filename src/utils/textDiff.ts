@@ -84,16 +84,20 @@ export function computeDiff(left: string, right: string, format: 'text' | 'json'
   return { lines, adds, removes }
 }
 
-export function diffText(left: string, right: string, format: 'text' | 'json'): DataToolResult {
-  const { lines, adds, removes } = computeDiff(left, right, format)
-
-  const output = lines
+export function formatDiffLines(lines: DiffLine[]): string {
+  return lines
     .map((line) => {
       if (line.type === 'add') return `+ ${line.text}`
       if (line.type === 'remove') return `- ${line.text}`
       return `  ${line.text}`
     })
     .join('\n')
+}
+
+export function diffText(left: string, right: string, format: 'text' | 'json'): DataToolResult {
+  const { lines, adds, removes } = computeDiff(left, right, format)
+
+  const output = formatDiffLines(lines)
 
   return {
     output,

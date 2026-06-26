@@ -10,6 +10,7 @@ import { parseInputTable } from '../../utils/inputTable'
 import { DataToolError } from '../../utils/dataError'
 import { ForecastChart } from './shared/ForecastChart'
 import { ImportFileButton } from './shared/ImportFileButton'
+import { OutputActions } from './shared/OutputActions'
 
 export function ForecastTool() {
   const [input, setInput] = useState('')
@@ -175,6 +176,7 @@ export function ForecastTool() {
           <span className="tool-convert__label">Série com projeção</span>
         </div>
         <textarea className="tool-convert__textarea tool-convert__textarea--output" value={output} readOnly rows={10} spellCheck={false} />
+        <OutputActions output={output} downloadFilename="projecao.csv" />
       </div>
 
       <p className="tool-convert__hint">

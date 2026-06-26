@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { csvSplitSample, splitCsv, type SplitMode } from '../../utils/csvSplit'
 import { parseInputTable } from '../../utils/inputTable'
 import { runDataTool } from './shared/ConvertToolLayout'
+import { OutputActions } from './shared/OutputActions'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvSplitTool() {
@@ -106,6 +107,7 @@ export function CsvSplitTool() {
             {meta && <span className="tool-convert__meta">{meta}</span>}
           </div>
           <textarea className="tool-convert__textarea tool-convert__textarea--output" value={output} readOnly rows={12} spellCheck={false} />
+        <OutputActions output={output} downloadFilename="partes.csv" />
         </div>
       </div>
 

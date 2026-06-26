@@ -3,6 +3,7 @@ import { jsonPathSample, parseJsonInput, queryJsonPath } from '../../utils/jsonP
 import { copyText } from '../../utils/toolIO'
 import { JsonPathExplorer } from './shared/JsonPathExplorer'
 import { runDataTool } from './shared/ConvertToolLayout'
+import { OutputActions } from './shared/OutputActions'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function JsonPathTool() {
@@ -142,6 +143,7 @@ export function JsonPathTool() {
           readOnly
           spellCheck={false}
         />
+        <OutputActions output={output} downloadFilename="resultado.json" />
       </div>
 
       {error && (

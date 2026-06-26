@@ -1,3 +1,4 @@
+import { serializeDelimited } from './csv'
 import { detectDelimiter, parseDelimited } from './csv'
 import { DataToolError } from './dataError'
 
@@ -90,4 +91,8 @@ export function buildTablePreview(input: string, format: PreviewFormat): TablePr
   }
 
   return rowsFromCsv(trimmed)
+}
+
+export function exportTablePreview(data: TablePreviewData): string {
+  return serializeDelimited([data.headers, ...data.rows])
 }

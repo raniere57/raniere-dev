@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { jsonSchemaSamples, validateJsonSchema } from '../../utils/jsonSchema'
 import { runDataTool } from './shared/ConvertToolLayout'
+import { OutputActions } from './shared/OutputActions'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function JsonSchemaTool() {
@@ -72,6 +73,7 @@ export function JsonSchemaTool() {
         <pre className={`tool-schema__output${output ? (isValid ? ' is-valid' : ' is-invalid') : ''}`}>
           {output || 'O resultado da validação aparece aqui.'}
         </pre>
+        <OutputActions output={output} downloadFilename="validacao.txt" />
       </div>
 
       {error && (

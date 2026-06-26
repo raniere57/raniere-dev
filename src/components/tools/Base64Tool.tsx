@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { base64Sample, convertBase64, fileToBase64, type Base64Direction } from '../../utils/base64Tool'
 import { DataToolError } from '../../utils/dataError'
 import { runDataTool } from './shared/ConvertToolLayout'
+import { OutputActions } from './shared/OutputActions'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function Base64Tool() {
@@ -100,6 +101,7 @@ export function Base64Tool() {
             {meta && <span className="tool-convert__meta">{meta}</span>}
           </div>
           <textarea className="tool-convert__textarea tool-convert__textarea--output" value={output} readOnly rows={12} spellCheck={false} />
+          <OutputActions output={output} downloadFilename={direction === 'encode' ? 'resultado.base64.txt' : 'resultado.txt'} />
         </div>
       </div>
 

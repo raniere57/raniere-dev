@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { DataToolError } from '../../utils/dataError'
-import { computeDiff, diffSample, type DiffLine } from '../../utils/textDiff'
+import { computeDiff, diffSample, formatDiffLines, type DiffLine } from '../../utils/textDiff'
+import { OutputActions } from './shared/OutputActions'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 function DiffMeta({ adds, removes }: { adds: number; removes: number }) {
@@ -141,6 +142,10 @@ export function DiffTool() {
         ) : (
           <div className="tool-diff__output tool-diff__output--empty">O diff aparece aqui.</div>
         )}
+        <OutputActions
+          output={diffLines ? formatDiffLines(diffLines) : ''}
+          downloadFilename="diff.txt"
+        />
       </div>
 
       {error && (

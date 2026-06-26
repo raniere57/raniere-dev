@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react'
-import { buildTablePreview, type PreviewFormat } from '../../utils/tablePreview'
+import { buildTablePreview, exportTablePreview, type PreviewFormat } from '../../utils/tablePreview'
 import { DataToolError } from '../../utils/dataError'
 import { jsonCsvSamples } from '../../utils/jsonCsv'
+import { OutputActions } from './shared/OutputActions'
 import { ImportFileButton } from './shared/ImportFileButton'
 import { TableView } from './shared/TableView'
 
@@ -93,6 +94,11 @@ export function TablePreviewTool() {
             {preview && <span className="tool-convert__meta">{preview.meta}</span>}
           </div>
           {preview ? <TableView data={preview} /> : <p className="tool-table__empty">A tabela aparece aqui.</p>}
+          <OutputActions
+            output={preview ? exportTablePreview(preview) : ''}
+            downloadFilename="tabela.csv"
+            downloadBom
+          />
         </div>
       </div>
 

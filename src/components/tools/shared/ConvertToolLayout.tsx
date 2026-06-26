@@ -1,33 +1,10 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useId } from 'react'
 import { DataToolError } from '../../../utils/dataError'
-import { copyText, DEFAULT_TEXT_IMPORT, downloadText } from '../../../utils/toolIO'
+import { DEFAULT_TEXT_IMPORT } from '../../../utils/toolIO'
 import { ImportFileButton } from './ImportFileButton'
+import { OutputActions } from './OutputActions'
 
-export function useCopyFeedback() {
-  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle')
-  const copyTimeoutRef = useRef<number>()
-
-  useEffect(() => () => window.clearTimeout(copyTimeoutRef.current), [])
-
-  const copy = useCallback(async (text: string) => {
-    if (!text.trim()) return
-    try {
-      await copyText(text)
-      setCopyState('copied')
-      window.clearTimeout(copyTimeoutRef.current)
-      copyTimeoutRef.current = window.setTimeout(() => setCopyState('idle'), 2000)
-    } catch {
-      setCopyState('error')
-      window.clearTimeout(copyTimeoutRef.current)
-      copyTimeoutRef.current = window.setTimeout(() => setCopyState('idle'), 2000)
-    }
-  }, [])
-
-  const copyLabel =
-    copyState === 'copied' ? 'Copiado ✓' : copyState === 'error' ? 'Falha ao copiar' : 'Copiar resultado'
-
-  return { copy, copyLabel }
-}
+export { useCopyFeedback } from './OutputActions'
 
 interface ConvertToolLayoutProps {
   modes?: { id: string; label: string }[]
@@ -86,7 +63,6 @@ export function ConvertToolLayout({
 }: ConvertToolLayoutProps) {
   const inputId = useId()
   const outputId = useId()
-  const { copy, copyLabel } = useCopyFeedback()
 
   function handleImport(text: string, filename: string) {
     if (onImport) {
@@ -184,39 +160,15 @@ export function ConvertToolLayout({
         </p>
       )}
 
-      <div className="tool-convert__footer">
-        <p className="tool-convert__hint">
-          Atalho: <kbd>Ctrl</kbd> + <kbd>Enter</kbd>
-        </p>
-        <div className="tool-convert__footer-actions">
-          {showBomToggle && onBomChange && (
-            <label className="tool-convert__bom">
-              <input
-                type="checkbox"
-                checked={bomEnabled}
-                onChange={(event) => onBomChange(event.target.checked)}
-              />
-              UTF-8 BOM (Excel BR)
-            </label>
-          )}
-          <button
-            type="button"
-            className="tools-btn tools-btn--ghost"
-            onClick={() => copy(output)}
-            disabled={!output.trim()}
-          >
-            {copyLabel}
-          </button>
-          <button
-            type="button"
-            className="tools-btn tools-btn--ghost"
-            onClick={() => downloadText(downloadFilename, output, downloadBom)}
-            disabled={!output.trim()}
-          >
-            Baixar arquivo
-          </button>
-        </div>
-      </div>
+      <OutputActions
+        output={output}
+        downloadFilename={downloadFilename}
+        downloadBom={downloadBom}
+        showBomToggle={showBomToggle}
+        bomEnabled={bomEnabled}
+        onBomChange={onBomChange}
+        compact={false}
+      />
     </div>
   )
 }

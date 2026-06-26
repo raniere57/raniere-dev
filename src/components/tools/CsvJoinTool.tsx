@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { csvJoinSamples, joinCsvTables, type JoinType } from '../../utils/csvJoin'
 import { listCsvColumns } from '../../utils/csvColumns'
 import { runDataTool } from './shared/ConvertToolLayout'
+import { OutputActions } from './shared/OutputActions'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvJoinTool() {
@@ -123,6 +124,7 @@ export function CsvJoinTool() {
           {meta && <span className="tool-convert__meta">{meta}</span>}
         </div>
         <textarea className="tool-convert__textarea tool-convert__textarea--output" value={output} readOnly rows={10} spellCheck={false} />
+        <OutputActions output={output} downloadFilename="resultado.csv" />
       </div>
 
       {error && (

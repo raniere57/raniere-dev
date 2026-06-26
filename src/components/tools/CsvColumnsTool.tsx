@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { csvColumnsSample, filterCsvColumns, listCsvColumns } from '../../utils/csvColumns'
 import { runDataTool } from './shared/ConvertToolLayout'
+import { OutputActions } from './shared/OutputActions'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 function moveItem<T>(items: T[], from: number, to: number): T[] {
@@ -145,6 +146,7 @@ export function CsvColumnsTool() {
           rows={8}
           spellCheck={false}
         />
+        <OutputActions output={output} downloadFilename="resultado.csv" />
       </div>
 
       {error && (

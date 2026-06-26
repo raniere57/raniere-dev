@@ -7,6 +7,7 @@ import {
 } from '../../utils/csvGroup'
 import { parseInputTable } from '../../utils/inputTable'
 import { runDataTool } from './shared/ConvertToolLayout'
+import { OutputActions } from './shared/OutputActions'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvGroupTool() {
@@ -112,6 +113,7 @@ export function CsvGroupTool() {
             {meta && <span className="tool-convert__meta">{meta}</span>}
           </div>
           <textarea className="tool-convert__textarea tool-convert__textarea--output" value={output} readOnly rows={10} spellCheck={false} />
+        <OutputActions output={output} downloadFilename="resultado.csv" />
         </div>
       </div>
 

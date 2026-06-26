@@ -1238,6 +1238,12 @@
   gap: 0.5rem;
 }
 
+.tool-convert__footer--compact {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  justify-content: flex-end;
+}
+
 .tool-table__wrap {
   overflow: auto;
   max-height: 24rem;
