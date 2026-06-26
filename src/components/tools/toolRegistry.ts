@@ -16,6 +16,7 @@ import { DataProfileTool } from './DataProfileTool'
 import { DiffTool } from './DiffTool'
 import { FakeDataTool } from './FakeDataTool'
 import { FindReplaceTool } from './FindReplaceTool'
+import { ForecastTool } from './ForecastTool'
 import { JsonCsvTool } from './JsonCsvTool'
 import { JsonFlattenTool } from './JsonFlattenTool'
 import { JsonFormatTool } from './JsonFormatTool'
@@ -62,6 +63,7 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   'csv-stack': CsvStackTool,
   'csv-split-column': CsvSplitColumnTool,
   'json-schema': JsonSchemaTool,
+  'series-forecast': ForecastTool,
 }
 
 export function isImplementedTool(toolId: string): boolean {

@@ -314,6 +314,15 @@ export const tools: ToolDefinition[] = [
     mark: '✓',
   },
   {
+    id: 'series-forecast',
+    category: 'dados',
+    name: 'Projeção / previsão',
+    description: 'Projete séries temporais em CSV com gráfico — linear, média móvel ou suavização exponencial.',
+    keywords: ['previsão', 'projeção', 'forecast', 'série temporal', 'gráfico', 'tendência'],
+    status: 'available',
+    mark: '↗',
+  },
+  {
     id: 'cpf-cnpj',
     category: 'validadores',
     name: 'Validador CPF / CNPJ',
