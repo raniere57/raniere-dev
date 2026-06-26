@@ -823,6 +823,96 @@
   border-color: color-mix(in oklab, var(--color-diff-remove-text) 35%, var(--color-border));
 }
 
+.tool-json-tree {
+  max-height: 22rem;
+  overflow: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.tool-json-tree__branch + .tool-json-tree__branch {
+  margin-top: 0;
+}
+
+.tool-json-tree__row {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-height: 1.85rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--color-border) 65%, transparent);
+}
+
+.tool-json-tree__row.is-selected {
+  background: var(--color-accent-soft);
+}
+
+.tool-json-tree__row--leaf {
+  display: grid;
+  grid-template-columns: minmax(5rem, 0.9fr) 4.5rem 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+  padding: 0.35rem 0.65rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid color-mix(in oklab, var(--color-border) 65%, transparent);
+  cursor: pointer;
+}
+
+.tool-json-tree__row--leaf.is-selected {
+  background: var(--color-accent-soft);
+}
+
+.tool-json-tree__toggle {
+  flex-shrink: 0;
+  width: 1.65rem;
+  padding: 0.35rem 0;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.tool-json-tree__select {
+  display: grid;
+  grid-template-columns: minmax(5rem, 0.9fr) 4.5rem 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  padding: 0.35rem 0.65rem 0.35rem 0;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.tool-json-tree__key {
+  color: var(--color-accent);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tool-json-tree__type {
+  color: var(--color-text-faint);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tool-json-tree__value {
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .tool-convert__field {
   display: flex;
   flex-direction: column;

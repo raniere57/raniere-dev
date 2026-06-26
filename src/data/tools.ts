@@ -191,7 +191,7 @@ export const tools: ToolDefinition[] = [
     id: 'json-path',
     category: 'dados',
     name: 'JSONPath',
-    description: 'Extraia campos de JSON com expressões como $.items[*].nome.',
+    description: 'Extraia campos ou clique no JSON para descobrir o JSONPath automaticamente.',
     keywords: ['jsonpath', 'json', 'query', 'extrair'],
     status: 'available',
     mark: '→',

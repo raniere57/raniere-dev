@@ -1,5 +1,39 @@
 import { DataToolError, type DataToolResult } from './dataError'
 
+export type PathSegment =
+  | { kind: 'key'; key: string }
+  | { kind: 'index'; index: number }
+
+export function segmentsToJsonPath(segments: PathSegment[]): string {
+  if (segments.length === 0) return '$'
+
+  let path = '$'
+  for (const segment of segments) {
+    if (segment.kind === 'key') {
+      if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(segment.key)) {
+        path += `.${segment.key}`
+      } else {
+        path += `['${segment.key.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}']`
+      }
+    } else {
+      path += `[${segment.index}]`
+    }
+  }
+
+  return path
+}
+
+export function parseJsonInput(input: string): unknown {
+  const trimmed = input.trim()
+  if (!trimmed) throw new DataToolError('Cole um JSON para explorar.')
+
+  try {
+    return JSON.parse(trimmed)
+  } catch {
+    throw new DataToolError('JSON inválido.')
+  }
+}
+
 function tokenize(path: string): string[] {
   const trimmed = path.trim()
   if (!trimmed) throw new DataToolError('Informe uma expressão JSONPath.')
@@ -26,8 +60,13 @@ function tokenize(path: string): string[] {
       const end = normalized.indexOf(']', i)
       if (end === -1) throw new DataToolError('Colchetes não fechados na expressão.')
       const inside = normalized.slice(i + 1, end).trim()
-      if (inside !== '*') throw new DataToolError('Use [*] para iterar arrays.')
-      tokens.push('*')
+      if (inside === '*') {
+        tokens.push('*')
+      } else if (/^\d+$/.test(inside)) {
+        tokens.push(inside)
+      } else {
+        throw new DataToolError('Use [*] para iterar arrays ou [0], [1]… para índices.')
+      }
       i = end
       current = ''
       continue
@@ -50,6 +89,11 @@ function walk(value: unknown, tokens: string[]): unknown[] {
     return value.flatMap((item) => walk(item, rest))
   }
 
+  if (/^\d+$/.test(token)) {
+    if (!Array.isArray(value)) return []
+    return walk(value[Number(token)], rest)
+  }
+
   if (value === null || typeof value !== 'object') return []
 
   const record = value as Record<string, unknown>
@@ -58,15 +102,7 @@ function walk(value: unknown, tokens: string[]): unknown[] {
 }
 
 export function queryJsonPath(input: string, path: string): DataToolResult {
-  const trimmed = input.trim()
-  if (!trimmed) throw new DataToolError('Cole um JSON para consultar.')
-
-  let parsed: unknown
-  try {
-    parsed = JSON.parse(trimmed)
-  } catch {
-    throw new DataToolError('JSON inválido.')
-  }
+  const parsed = parseJsonInput(input)
 
   const tokens = tokenize(path.startsWith('$') ? path : `$${path.startsWith('.') ? path : `.${path}`}`)
   const matches = walk(parsed, tokens)
