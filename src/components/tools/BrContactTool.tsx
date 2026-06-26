@@ -1,23 +1,30 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   brContactSamples,
+  CONTACT_CORRECTION_HINT,
+  correctContact,
+  correctContactBatch,
+  correctContactCsv,
+  correctSingleContact,
   validateContact,
   validateContactBatch,
   validateContactCsv,
   validateSingleContact,
   type ContactKind,
 } from '../../utils/brContact'
+import { DataToolError } from '../../utils/dataError'
 import { parseInputTable } from '../../utils/inputTable'
-import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
 import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 type ValidatorView = 'single' | 'batch' | 'csv'
+type ContactAction = 'validate' | 'correct'
 
 export function BrContactTool() {
   const [view, setView] = useState<ValidatorView>('single')
   const [kind, setKind] = useState<ContactKind>('email')
+  const [action, setAction] = useState<ContactAction>('validate')
   const [input, setInput] = useState('')
   const [column, setColumn] = useState('')
   const [columns, setColumns] = useState<string[]>([])
@@ -39,25 +46,40 @@ export function BrContactTool() {
 
   const singlePreview = useMemo(() => {
     if (view !== 'single' || !input.trim()) return null
-    return validateContact(input, kind)
-  }, [input, kind, view])
+    return action === 'correct' ? correctContact(input, kind) : validateContact(input, kind)
+  }, [action, input, kind, view])
 
   const run = useCallback(() => {
-    runDataTool(
-      () => {
-        if (view === 'single') return validateSingleContact(input, kind)
-        if (view === 'batch') return validateContactBatch(input, kind)
-        return validateContactCsv(input, column, kind)
-      },
-      setOutput,
-      setMeta,
-      setError,
-    )
-  }, [column, input, kind, view])
+    try {
+      let result
+      if (action === 'correct') {
+        if (view === 'single') result = correctSingleContact(input, kind)
+        else if (view === 'batch') result = correctContactBatch(input, kind)
+        else result = correctContactCsv(input, column, kind)
+      } else if (view === 'single') {
+        result = validateSingleContact(input, kind)
+      } else if (view === 'batch') {
+        result = validateContactBatch(input, kind)
+      } else {
+        result = validateContactCsv(input, column, kind)
+      }
+      setOutput(result.output)
+      setMeta(result.meta ?? null)
+      setError(null)
+    } catch (cause) {
+      setOutput('')
+      setMeta(null)
+      setError(cause instanceof DataToolError ? cause.message : 'Não foi possível processar.')
+    }
+  }, [action, column, input, kind, view])
 
   const loadSample = () => {
     if (view === 'single') {
-      setInput(kind === 'email' ? brContactSamples.email : brContactSamples.phone)
+      if (action === 'correct') {
+        setInput(kind === 'email' ? brContactSamples.emailMessy : brContactSamples.phoneMessy)
+      } else {
+        setInput(kind === 'email' ? brContactSamples.email : brContactSamples.phone)
+      }
     } else if (view === 'batch') {
       setInput(kind === 'email' ? brContactSamples.batchEmail : brContactSamples.batchPhone)
     } else {
@@ -74,6 +96,7 @@ export function BrContactTool() {
       : 'tool-convert__textarea tool-convert__textarea--output'
 
   const singlePlaceholder = kind === 'email' ? 'nome@empresa.com.br' : '(86) 99999-1234'
+  const primaryLabel = action === 'correct' ? 'Corrigir' : 'Validar'
 
   return (
     <div className="tool-convert tool-validator">
@@ -123,7 +146,38 @@ export function BrContactTool() {
             </button>
           ))}
         </div>
+
+        <div className="tool-convert__modes tool-convert__modes--secondary" role="tablist" aria-label="Ação">
+          {(
+            [
+              ['validate', 'Validar'],
+              ['correct', 'Corrigir'],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={action === id}
+              className={`tool-convert__mode tool-convert__mode--compact${action === id ? ' is-active' : ''}`}
+              onClick={() => {
+                setAction(id)
+                setOutput('')
+                setMeta(null)
+                setError(null)
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {action === 'correct' && (
+        <p className="tool-convert__warn" role="note">
+          {CONTACT_CORRECTION_HINT}
+        </p>
+      )}
 
       {view === 'csv' && (
         <div className="tool-convert__settings">
@@ -143,7 +197,7 @@ export function BrContactTool() {
       <ToolToolbar
         action={
           <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-            Validar
+            {primaryLabel}
           </button>
         }
       >
@@ -211,6 +265,11 @@ export function BrContactTool() {
               {singlePreview.valid
                 ? `✓ Válido${singlePreview.formatted ? ` · ${singlePreview.formatted}` : ''}`
                 : `✗ Inválido${singlePreview.reason ? ` — ${singlePreview.reason}` : ''}`}
+              {'warnings' in singlePreview &&
+                Array.isArray(singlePreview.warnings) &&
+                singlePreview.warnings.length > 0 && (
+                <span className="tool-cpfcnpj__preview-warn"> · {singlePreview.warnings[0]}</span>
+              )}
             </p>
           )}
         </div>
@@ -233,7 +292,11 @@ export function BrContactTool() {
         </div>
       </div>
 
-      <p className="tool-convert__hint">Processado no seu navegador — nada é enviado ao servidor.</p>
+      <p className="tool-convert__hint">
+        {action === 'correct'
+          ? 'Correção local no navegador — nada é enviado ao servidor.'
+          : 'Validação local no navegador — nada é enviado ao servidor.'}
+      </p>
 
       {error && (
         <p className="tool-convert__error" role="alert">

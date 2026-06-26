@@ -27,6 +27,11 @@ export interface ContactValidation {
   reason: string | null
 }
 
+export interface ContactCorrection extends ContactValidation {
+  warnings: string[]
+  changed: boolean
+}
+
 export function stripPhoneDigits(value: string): string {
   return value.replace(/\D/g, '')
 }
@@ -193,7 +198,95 @@ export function validateContact(raw: string, kind: ContactKind): ContactValidati
   return kind === 'email' ? validateEmail(raw) : validatePhone(raw)
 }
 
-function formatSingleResult(result: ContactValidation): string {
+export function correctEmail(raw: string): ContactCorrection {
+  const warnings: string[] = []
+  let value = raw.trim()
+
+  if (!value) {
+    return { ...validateEmail(''), warnings: [], changed: false }
+  }
+
+  if (/^mailto:/i.test(value)) {
+    value = value.replace(/^mailto:/i, '')
+    warnings.push('Prefixo mailto: removido.')
+  }
+
+  const bracketMatch = value.match(/<([^>]+@[^>]+)>/)
+  if (bracketMatch) {
+    value = bracketMatch[1]!.trim()
+    warnings.push('Mantido apenas o e-mail entre <>.')
+  }
+
+  if (/[,;|]/.test(value)) {
+    const first = value.split(/[,;|]/)[0]?.trim() ?? value
+    if (first !== value) {
+      value = first
+      warnings.push('Separadores detectados — mantido só o primeiro e-mail.')
+    }
+  }
+
+  const withoutSpaces = value.replace(/\s+/g, '')
+  if (withoutSpaces !== value) {
+    value = withoutSpaces
+    warnings.push('Espaços removidos.')
+  }
+
+  const normalized = value.toLowerCase()
+  if (normalized !== raw.trim()) {
+    warnings.push('Convertido para minúsculas.')
+  }
+
+  const validation = validateEmail(normalized)
+  return {
+    ...validation,
+    warnings,
+    changed: warnings.length > 0 || validation.formatted !== raw.trim(),
+  }
+}
+
+export function correctPhone(raw: string): ContactCorrection {
+  const warnings: string[] = []
+  let digits = stripPhoneDigits(raw)
+
+  if (!digits) {
+    return { ...validatePhone(''), warnings: [], changed: false }
+  }
+
+  if (digits.startsWith('55') && digits.length >= 12) {
+    digits = digits.slice(2)
+    warnings.push('Código do país (+55) removido.')
+  }
+
+  while (digits.startsWith('0') && digits.length > 11) {
+    digits = digits.slice(1)
+    warnings.push('Zero(s) à esquerda removido(s).')
+  }
+
+  if (digits.length > 11) {
+    const extra = digits.length - 11
+    digits = digits.slice(-11)
+    warnings.push(`${extra} dígito(s) extra(s) removido(s) — confira se o número ficou correto.`)
+  } else if (digits.length === 9) {
+    warnings.push('Nove dígitos sem DDD — não foi possível completar automaticamente.')
+  } else if (digits.length === 8) {
+    warnings.push('Oito dígitos sem DDD — não foi possível completar automaticamente.')
+  }
+
+  const validation = validatePhone(digits)
+  const changed = warnings.length > 0 || digits !== normalizePhoneDigits(raw)
+
+  return {
+    ...validation,
+    warnings,
+    changed,
+  }
+}
+
+export function correctContact(raw: string, kind: ContactKind): ContactCorrection {
+  return kind === 'email' ? correctEmail(raw) : correctPhone(raw)
+}
+
+function formatSingleResult(result: ContactValidation, warnings?: string[]): string {
   const lines = [
     result.valid ? '✓ Válido' : '✗ Inválido',
     `Tipo: ${result.kind === 'email' ? 'E-mail' : 'Telefone'}`,
@@ -207,15 +300,20 @@ function formatSingleResult(result: ContactValidation): string {
     lines.push(result.kind === 'email' ? `E-mail: ${result.formatted}` : `Formatado: ${result.formatted}`)
   }
   if (result.reason) lines.push(`Motivo: ${result.reason}`)
+  if (warnings?.length) {
+    lines.push('', '⚠ Ajustes aplicados (possível perda de dados):')
+    warnings.forEach((warning) => lines.push(`  · ${warning}`))
+  }
 
   return lines.join('\n')
 }
 
-function formatBatchLine(result: ContactValidation): string {
+function formatBatchLine(result: ContactValidation, warnings?: string[]): string {
   const label = result.valid ? '✓ válido' : '✗ inválido'
   const formatted = result.formatted ?? result.raw
   const detail = result.reason ? ` — ${result.reason}` : ''
-  return `${formatted} | ${label}${detail}`
+  const warn = warnings?.length ? ` ⚠ ${warnings.join('; ')}` : ''
+  return `${formatted} | ${label}${detail}${warn}`
 }
 
 function summarizeResults(results: ContactValidation[]): string {
@@ -232,6 +330,20 @@ export function validateSingleContact(raw: string, kind: ContactKind): DataToolR
   }
 }
 
+export function correctSingleContact(raw: string, kind: ContactKind): DataToolResult {
+  const result = correctContact(raw, kind)
+  return {
+    output: formatSingleResult(result, result.warnings),
+    meta: result.valid
+      ? result.warnings.length
+        ? 'Corrigido · válido'
+        : 'Válido · sem alterações'
+      : result.warnings.length
+        ? 'Corrigido · ainda inválido'
+        : 'Inválido',
+  }
+}
+
 export function validateContactBatch(raw: string, kind: ContactKind): DataToolResult {
   const lines = raw
     .split(/\r?\n/)
@@ -244,8 +356,26 @@ export function validateContactBatch(raw: string, kind: ContactKind): DataToolRe
 
   const results = lines.map((line) => validateContact(line, kind))
   return {
-    output: results.map(formatBatchLine).join('\n'),
+    output: results.map((item) => formatBatchLine(item)).join('\n'),
     meta: summarizeResults(results),
+  }
+}
+
+export function correctContactBatch(raw: string, kind: ContactKind): DataToolResult {
+  const lines = raw
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+  if (lines.length === 0) {
+    throw new DataToolError('Informe ao menos um item (um por linha).')
+  }
+
+  const results = lines.map((line) => correctContact(line, kind))
+  const adjusted = results.filter((item) => item.warnings.length > 0).length
+  return {
+    output: results.map((item) => formatBatchLine(item, item.warnings)).join('\n'),
+    meta: `${summarizeResults(results)} · ${adjusted} com ajustes`,
   }
 }
 
@@ -273,11 +403,48 @@ export function validateContactCsv(input: string, column: string, kind: ContactK
   }
 }
 
+export function correctContactCsv(input: string, column: string, kind: ContactKind): DataToolResult {
+  const table = parseInputTable(input, 'auto')
+  if (!column) throw new DataToolError('Selecione a coluna.')
+  if (!table.headers.includes(column)) throw new DataToolError(`Coluna "${column}" não encontrada.`)
+
+  const columnIndex = table.headers.indexOf(column)
+  const results = table.rows.map((row) => correctContact(row[columnIndex] ?? '', kind))
+  const headers = [
+    ...table.headers,
+    'contato_valido',
+    'contato_formatado',
+    'contato_motivo',
+    'contato_ajustes',
+  ]
+  const rows = table.rows.map((row, index) => {
+    const result = results[index]!
+    return [
+      ...row,
+      result.valid ? 'sim' : 'nao',
+      result.formatted ?? '',
+      result.reason ?? '',
+      result.warnings.join(' | '),
+    ]
+  })
+
+  const adjusted = results.filter((item) => item.warnings.length > 0).length
+  return {
+    output: serializeDelimited([headers, ...rows]),
+    meta: `${table.rows.length} linha${table.rows.length === 1 ? '' : 's'} · ${summarizeResults(results)} · ${adjusted} com ajustes`,
+  }
+}
+
 export const brContactSamples = {
   email: 'ana.silva@example.com',
+  emailMessy: '  Ana.Silva@Example.COM  ',
   phone: '(86) 99999-1234',
+  phoneMessy: '+55 (86) 99999-1234',
   batchEmail: ['ana@example.com', 'invalido', 'contato@empresa.com.br'].join('\n'),
   batchPhone: ['86999991234', '(11) 3456-7890', '123', '(86) 88888-1111'].join('\n'),
   csvEmail: ['nome,email', 'Ana,ana@example.com', 'Ruim,nao-email', 'Beto,beto@empresa.com'].join('\n'),
   csvPhone: ['nome,telefone', 'Ana,(86) 99999-1234', 'Loja,(86) 3211-4455', 'Erro,123'].join('\n'),
 }
+
+export const CONTACT_CORRECTION_HINT =
+  'Correção pode remover prefixos, sufixos, espaços ou dígitos extras. Confira o resultado antes de usar em produção.'

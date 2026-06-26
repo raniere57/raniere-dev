@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
+  CEP_LOOKUP_HINT,
+  type CepAddress,
   cepSamples,
   validateCep,
   validateCepBatch,
   validateCepCsv,
   validateSingleCep,
 } from '../../utils/cep'
+import { DataToolError } from '../../utils/dataError'
 import { parseInputTable } from '../../utils/inputTable'
-import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
 import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
@@ -22,6 +24,8 @@ export function CepTool() {
   const [output, setOutput] = useState('')
   const [meta, setMeta] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [address, setAddress] = useState<CepAddress | null>(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (view !== 'csv') return
@@ -40,17 +44,33 @@ export function CepTool() {
     return validateCep(input)
   }, [input, view])
 
-  const run = useCallback(() => {
-    runDataTool(
-      () => {
-        if (view === 'single') return validateSingleCep(input)
-        if (view === 'batch') return validateCepBatch(input)
-        return validateCepCsv(input, column)
-      },
-      setOutput,
-      setMeta,
-      setError,
-    )
+  const run = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    setAddress(null)
+    try {
+      if (view === 'single') {
+        const result = await validateSingleCep(input)
+        setOutput(result.output)
+        setMeta(result.meta ?? null)
+        setAddress(result.address ?? null)
+      } else if (view === 'batch') {
+        const result = await validateCepBatch(input)
+        setOutput(result.output)
+        setMeta(result.meta ?? null)
+      } else {
+        const result = await validateCepCsv(input, column)
+        setOutput(result.output)
+        setMeta(result.meta ?? null)
+      }
+    } catch (cause) {
+      setOutput('')
+      setMeta(null)
+      setAddress(null)
+      setError(cause instanceof DataToolError ? cause.message : 'Não foi possível consultar.')
+    } finally {
+      setLoading(false)
+    }
   }, [column, input, view])
 
   const loadSample = () => {
@@ -59,6 +79,7 @@ export function CepTool() {
     else setInput(cepSamples.csv)
     setOutput('')
     setMeta(null)
+    setAddress(null)
     setError(null)
   }
 
@@ -87,6 +108,7 @@ export function CepTool() {
               setView(id)
               setOutput('')
               setMeta(null)
+              setAddress(null)
               setError(null)
             }}
           >
@@ -94,6 +116,11 @@ export function CepTool() {
           </button>
         ))}
       </div>
+
+      <p className="tool-convert__warn tool-convert__warn--info" role="note">
+        {CEP_LOOKUP_HINT}
+        {view !== 'single' && ' Limite: 20 CEPs (lista) ou 30 linhas (CSV) por consulta.'}
+      </p>
 
       {view === 'csv' && (
         <div className="tool-convert__settings">
@@ -112,12 +139,12 @@ export function CepTool() {
 
       <ToolToolbar
         action={
-          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-            Validar
+          <button type="button" className="tools-btn tools-btn--primary" onClick={() => void run()} disabled={loading}>
+            {loading ? 'Consultando…' : 'Validar e buscar'}
           </button>
         }
       >
-        <button type="button" className="tools-btn tools-btn--ghost" onClick={loadSample}>
+        <button type="button" className="tools-btn tools-btn--ghost" onClick={loadSample} disabled={loading}>
           Carregar exemplo
         </button>
         <ImportFileButton accept=".csv,.tsv,.txt" onLoad={(text) => setInput(text)} />
@@ -128,8 +155,10 @@ export function CepTool() {
             setInput('')
             setOutput('')
             setMeta(null)
+            setAddress(null)
             setError(null)
           }}
+          disabled={loading}
         >
           Limpar
         </button>
@@ -150,10 +179,10 @@ export function CepTool() {
               onKeyDown={(event) => {
                 if (event.key === 'Enter') {
                   event.preventDefault()
-                  run()
+                  void run()
                 }
               }}
-              placeholder="64000-000"
+              placeholder="64010-010"
               spellCheck={false}
               autoComplete="off"
             />
@@ -173,7 +202,7 @@ export function CepTool() {
               aria-live="polite"
             >
               {singlePreview.valid
-                ? `✓ CEP válido${singlePreview.formatted ? ` · ${singlePreview.formatted}` : ''}`
+                ? `✓ Formato válido${singlePreview.formatted ? ` · ${singlePreview.formatted}` : ''}`
                 : `✗ Inválido${singlePreview.reason ? ` — ${singlePreview.reason}` : ''}`}
             </p>
           )}
@@ -184,6 +213,22 @@ export function CepTool() {
             <span className="tool-convert__label">Resultado</span>
             {meta && <span className="tool-convert__meta">{meta}</span>}
           </div>
+
+          {view === 'single' && address?.found && (
+            <div className="tool-cep__address">
+              <p className="tool-cep__address-line">{address.street || 'Logradouro não informado'}</p>
+              <p className="tool-cep__address-line">
+                {[address.district, `${address.city} — ${address.state}`].filter(Boolean).join(' · ')}
+              </p>
+              {address.complement && <p className="tool-cep__address-meta">{address.complement}</p>}
+              <p className="tool-cep__address-meta">CEP {address.cep}</p>
+            </div>
+          )}
+
+          {view === 'single' && address && !address.found && output && (
+            <p className="tool-cep__address tool-cep__address--missing">CEP não encontrado na base dos Correios.</p>
+          )}
+
           {view === 'single' && output ? (
             <pre className={outputClassName}>{output}</pre>
           ) : (
@@ -196,10 +241,6 @@ export function CepTool() {
           />
         </div>
       </div>
-
-      <p className="tool-convert__hint">
-        Validação de formato no navegador — consulta de endereço via ViaCEP pode ser adicionada depois.
-      </p>
 
       {error && (
         <p className="tool-convert__error" role="alert">
