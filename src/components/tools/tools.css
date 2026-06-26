@@ -920,7 +920,61 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
+}
+
+.tool-diff__output--empty {
+  color: var(--color-text-muted);
+}
+
+.tool-diff__line {
+  display: flex;
+  gap: 0.55rem;
+  padding: 0.08rem 0.45rem;
+  margin-inline: -0.45rem;
+  border-radius: 3px;
   white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.tool-diff__line--add {
+  background: var(--color-diff-add-bg);
+  color: var(--color-diff-add-text);
+}
+
+.tool-diff__line--remove {
+  background: var(--color-diff-remove-bg);
+  color: var(--color-diff-remove-text);
+}
+
+.tool-diff__sign {
+  flex-shrink: 0;
+  width: 1ch;
+  font-weight: 600;
+  user-select: none;
+}
+
+.tool-diff__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.tool-diff__meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.tool-diff__meta-add {
+  color: var(--color-diff-add-text);
+  font-weight: 600;
+}
+
+.tool-diff__meta-remove {
+  color: var(--color-diff-remove-text);
+  font-weight: 600;
+}
+
+.tool-diff__meta-sep {
+  color: var(--color-text-muted);
 }
 
 .tool-xlsx__import {

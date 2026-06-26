@@ -5,6 +5,12 @@ export interface DiffLine {
   text: string
 }
 
+export interface DiffResult {
+  lines: DiffLine[]
+  adds: number
+  removes: number
+}
+
 function diffLines(left: string, right: string): DiffLine[] {
   const leftLines = left.replace(/\r\n/g, '\n').split('\n')
   const rightLines = right.replace(/\r\n/g, '\n').split('\n')
@@ -52,7 +58,7 @@ function diffLines(left: string, right: string): DiffLine[] {
   return result
 }
 
-export function diffText(left: string, right: string, format: 'text' | 'json'): DataToolResult {
+export function computeDiff(left: string, right: string, format: 'text' | 'json'): DiffResult {
   const leftTrimmed = left.trim()
   const rightTrimmed = right.trim()
   if (!leftTrimmed || !rightTrimmed) {
@@ -75,6 +81,12 @@ export function diffText(left: string, right: string, format: 'text' | 'json'): 
   const adds = lines.filter((line) => line.type === 'add').length
   const removes = lines.filter((line) => line.type === 'remove').length
 
+  return { lines, adds, removes }
+}
+
+export function diffText(left: string, right: string, format: 'text' | 'json'): DataToolResult {
+  const { lines, adds, removes } = computeDiff(left, right, format)
+
   const output = lines
     .map((line) => {
       if (line.type === 'add') return `+ ${line.text}`
@@ -90,12 +102,7 @@ export function diffText(left: string, right: string, format: 'text' | 'json'): 
 }
 
 export function diffTextLines(left: string, right: string, format: 'text' | 'json'): DiffLine[] {
-  if (format === 'json') {
-    const normalizedLeft = JSON.stringify(JSON.parse(left.trim()), null, 2)
-    const normalizedRight = JSON.stringify(JSON.parse(right.trim()), null, 2)
-    return diffLines(normalizedLeft, normalizedRight)
-  }
-  return diffLines(left.trim(), right.trim())
+  return computeDiff(left, right, format).lines
 }
 
 export const diffSample = {

@@ -1,18 +1,52 @@
 import { useCallback, useState } from 'react'
-import { diffText, diffSample } from '../../utils/textDiff'
-import { runDataTool } from './shared/ConvertToolLayout'
+import { DataToolError } from '../../utils/dataError'
+import { computeDiff, diffSample, type DiffLine } from '../../utils/textDiff'
 import { ImportFileButton } from './shared/ImportFileButton'
+
+function DiffMeta({ adds, removes }: { adds: number; removes: number }) {
+  return (
+    <span className="tool-diff__meta">
+      <span className="tool-diff__meta-add">+{adds}</span>
+      <span className="tool-diff__meta-sep"> / </span>
+      <span className="tool-diff__meta-remove">−{removes}</span>
+    </span>
+  )
+}
+
+function DiffOutput({ lines }: { lines: DiffLine[] }) {
+  return (
+    <div className="tool-diff__output" role="region" aria-label="Resultado da comparação">
+      {lines.map((line, index) => (
+        <div key={`${line.type}-${index}`} className={`tool-diff__line tool-diff__line--${line.type}`}>
+          <span className="tool-diff__sign" aria-hidden="true">
+            {line.type === 'add' ? '+' : line.type === 'remove' ? '−' : ' '}
+          </span>
+          <span className="tool-diff__text">{line.text || '\u00A0'}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 export function DiffTool() {
   const [format, setFormat] = useState<'json' | 'text'>('json')
   const [left, setLeft] = useState('')
   const [right, setRight] = useState('')
-  const [output, setOutput] = useState('')
-  const [meta, setMeta] = useState<string | null>(null)
+  const [diffLines, setDiffLines] = useState<DiffLine[] | null>(null)
+  const [stats, setStats] = useState<{ adds: number; removes: number } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const run = useCallback(() => {
-    runDataTool(() => diffText(left, right, format), setOutput, setMeta, setError)
+    try {
+      const result = computeDiff(left, right, format)
+      setDiffLines(result.lines)
+      setStats({ adds: result.adds, removes: result.removes })
+      setError(null)
+    } catch (cause) {
+      setDiffLines(null)
+      setStats(null)
+      setError(cause instanceof DataToolError ? cause.message : 'Não foi possível processar.')
+    }
   }, [format, left, right])
 
   return (
@@ -56,8 +90,8 @@ export function DiffTool() {
           onClick={() => {
             setLeft('')
             setRight('')
-            setOutput('')
-            setMeta(null)
+            setDiffLines(null)
+            setStats(null)
             setError(null)
           }}
         >
@@ -100,9 +134,13 @@ export function DiffTool() {
       <div className="tool-convert__pane">
         <div className="tool-convert__pane-head">
           <span className="tool-convert__label">Diff</span>
-          {meta && <span className="tool-convert__meta">{meta}</span>}
+          {stats && <DiffMeta adds={stats.adds} removes={stats.removes} />}
         </div>
-        <pre className="tool-diff__output">{output || 'O diff aparece aqui.'}</pre>
+        {diffLines ? (
+          <DiffOutput lines={diffLines} />
+        ) : (
+          <div className="tool-diff__output tool-diff__output--empty">O diff aparece aqui.</div>
+        )}
       </div>
 
       {error && (
