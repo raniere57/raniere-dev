@@ -161,3 +161,17 @@ export const projects: Project[] = [
     },
   },
 ]
+
+export const defaultProjectId = projects[0]?.id ?? 'signal'
+
+export function getProjectById(id: string): Project | undefined {
+  return projects.find((project) => project.id === id)
+}
+
+export function getProjectGroup(category: string): string {
+  return category.split(' · ')[0]
+}
+
+export const projectGroups = Array.from(
+  new Set(projects.map((project) => getProjectGroup(project.category))),
+)
