@@ -10,6 +10,7 @@ import {
   validateContactBatch,
   validateContactCsv,
   validateSingleContact,
+  type ContactCorrection,
   type ContactKind,
 } from '../../utils/brContact'
 import { DataToolError } from '../../utils/dataError'
@@ -20,6 +21,47 @@ import { ImportFileButton } from './shared/ImportFileButton'
 
 type ValidatorView = 'single' | 'batch' | 'csv'
 type ContactAction = 'validate' | 'correct'
+
+function detectImportView(text: string): ValidatorView {
+  const trimmed = text.trim()
+  if (!trimmed) return 'single'
+
+  try {
+    const table = parseInputTable(text, 'auto')
+    if (table.headers.length >= 1 && table.rows.length >= 1) return 'csv'
+  } catch {
+    /* not tabular */
+  }
+
+  const lines = trimmed.split(/\r?\n/).filter(Boolean)
+  return lines.length > 1 ? 'batch' : 'single'
+}
+
+function ContactCorrectionPanel({ result }: { result: ContactCorrection }) {
+  const value = result.formatted ?? result.normalized ?? '—'
+
+  return (
+    <div className={`tool-contact__correction${result.valid ? ' is-valid' : ' is-invalid'}`}>
+      <span className="tool-contact__correction-label">Resultado corrigido</span>
+      <p className="tool-contact__correction-value">{value}</p>
+      <p className={`tool-contact__correction-status${result.valid ? ' is-valid' : ' is-invalid'}`}>
+        {result.valid ? '✓ Válido' : `✗ Inválido${result.reason ? ` — ${result.reason}` : ''}`}
+      </p>
+      {result.raw && result.raw !== value && (
+        <p className="tool-contact__correction-original">
+          <span>Original</span> {result.raw}
+        </p>
+      )}
+      {result.warnings.length > 0 && (
+        <ul className="tool-contact__correction-warnings">
+          {result.warnings.map((warning) => (
+            <li key={warning}>{warning}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
 
 export function BrContactTool() {
   const [view, setView] = useState<ValidatorView>('single')
@@ -47,6 +89,11 @@ export function BrContactTool() {
   const singlePreview = useMemo(() => {
     if (view !== 'single' || !input.trim()) return null
     return action === 'correct' ? correctContact(input, kind) : validateContact(input, kind)
+  }, [action, input, kind, view])
+
+  const singleCorrection = useMemo(() => {
+    if (view !== 'single' || action !== 'correct' || !input.trim()) return null
+    return correctContact(input, kind)
   }, [action, input, kind, view])
 
   const run = useCallback(() => {
@@ -81,13 +128,29 @@ export function BrContactTool() {
         setInput(kind === 'email' ? brContactSamples.email : brContactSamples.phone)
       }
     } else if (view === 'batch') {
-      setInput(kind === 'email' ? brContactSamples.batchEmail : brContactSamples.batchPhone)
+      setInput(
+        kind === 'email'
+          ? action === 'correct'
+            ? brContactSamples.batchEmailMessy
+            : brContactSamples.batchEmail
+          : action === 'correct'
+            ? brContactSamples.batchPhoneMessy
+            : brContactSamples.batchPhone,
+      )
     } else {
       setInput(kind === 'email' ? brContactSamples.csvEmail : brContactSamples.csvPhone)
     }
     setOutput('')
     setMeta(null)
     setError(null)
+  }
+
+  const handleImport = (text: string) => {
+    setInput(text)
+    setOutput('')
+    setMeta(null)
+    setError(null)
+    setView(detectImportView(text))
   }
 
   const outputClassName =
@@ -204,7 +267,7 @@ export function BrContactTool() {
         <button type="button" className="tools-btn tools-btn--ghost" onClick={loadSample}>
           Carregar exemplo
         </button>
-        <ImportFileButton accept=".csv,.tsv,.txt" onLoad={(text) => setInput(text)} />
+        <ImportFileButton accept=".csv,.tsv,.txt" onLoad={handleImport} />
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
@@ -285,14 +348,24 @@ export function BrContactTool() {
               </span>
             )}
           </div>
-          {view === 'single' && output ? (
+          {view === 'single' && action === 'correct' && output && singleCorrection ? (
+            <ContactCorrectionPanel result={singleCorrection} />
+          ) : view === 'single' && output ? (
             <pre className={outputClassName}>{output}</pre>
           ) : (
             <textarea className={outputClassName} value={output} readOnly rows={view === 'csv' ? 10 : 8} spellCheck={false} />
           )}
           <OutputActions
             output={output}
-            downloadFilename={view === 'csv' ? 'contatos-validados.csv' : 'validacao.txt'}
+            downloadFilename={
+              action === 'correct'
+                ? view === 'csv'
+                  ? 'contatos-corrigidos.csv'
+                  : 'contatos-corrigidos.txt'
+                : view === 'csv'
+                  ? 'contatos-validados.csv'
+                  : 'validacao.txt'
+            }
             downloadBom={view === 'csv'}
           />
         </div>
@@ -300,7 +373,9 @@ export function BrContactTool() {
 
       <p className="tool-convert__hint">
         {action === 'correct'
-          ? 'Correção local no navegador — nada é enviado ao servidor.'
+          ? view === 'single'
+            ? 'Correção local no navegador — nada é enviado ao servidor.'
+            : 'Correção em massa: importe um .csv/.txt, selecione a coluna (CSV) e clique em Corrigir. Lista e CSV adicionam colunas ou linhas com o valor corrigido.'
           : 'Validação local no navegador — nada é enviado ao servidor.'}
       </p>
 

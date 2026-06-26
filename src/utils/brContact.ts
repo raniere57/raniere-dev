@@ -398,6 +398,13 @@ export function correctContact(raw: string, kind: ContactKind): ContactCorrectio
 }
 
 function formatSingleResult(result: ContactValidation, warnings?: string[], corrected = false): string {
+  const lines: string[] = []
+  const displayValue = result.formatted ?? result.normalized ?? null
+
+  if (corrected && displayValue) {
+    lines.push('RESULTADO CORRIGIDO', displayValue, '')
+  }
+
   const status = result.valid
     ? corrected
       ? '✓ Corrigido e válido'
@@ -405,12 +412,18 @@ function formatSingleResult(result: ContactValidation, warnings?: string[], corr
     : corrected
       ? '✗ Ainda inválido após correção'
       : '✗ Inválido'
-  const lines = [status, `Tipo: ${result.kind === 'email' ? 'E-mail' : 'Telefone'}`, `Entrada: ${result.raw || '—'}`]
+  lines.push(status)
+
+  if (corrected && result.raw) {
+    lines.push(`Entrada original: ${result.raw}`)
+  } else {
+    lines.push(`Entrada: ${result.raw || '—'}`)
+  }
 
   if (result.kind === 'phone') lines.push(`Somente dígitos: ${result.normalized || '—'}`)
-  else lines.push(`Normalizado: ${result.normalized || '—'}`)
+  else if (!corrected) lines.push(`Normalizado: ${result.normalized || '—'}`)
 
-  if (result.formatted) {
+  if (result.formatted && !corrected) {
     lines.push(result.kind === 'email' ? `E-mail: ${result.formatted}` : `Formatado: ${result.formatted}`)
   }
   if (result.reason) lines.push(`Motivo: ${result.reason}`)
@@ -422,12 +435,17 @@ function formatSingleResult(result: ContactValidation, warnings?: string[], corr
   return lines.join('\n')
 }
 
-function formatBatchLine(result: ContactValidation, warnings?: string[]): string {
+function formatBatchLine(result: ContactValidation, warnings?: string[], corrected = false): string {
   const label = result.valid ? '✓ válido' : '✗ inválido'
-  const formatted = result.formatted ?? result.raw
+  const value = result.formatted ?? result.normalized ?? result.raw
   const detail = result.reason ? ` — ${result.reason}` : ''
   const warn = warnings?.length ? ` ⚠ ${warnings.join('; ')}` : ''
-  return `${formatted} | ${label}${detail}${warn}`
+
+  if (corrected && result.raw && value && result.raw !== value) {
+    return `${result.raw} → ${value} | ${label}${detail}${warn}`
+  }
+
+  return `${value} | ${label}${detail}${warn}`
 }
 
 function summarizeResults(results: ContactValidation[]): string {
@@ -488,7 +506,7 @@ export function correctContactBatch(raw: string, kind: ContactKind): DataToolRes
   const results = lines.map((line) => correctContact(line, kind))
   const adjusted = results.filter((item) => item.warnings.length > 0).length
   return {
-    output: results.map((item) => formatBatchLine(item, item.warnings)).join('\n'),
+    output: results.map((item) => formatBatchLine(item, item.warnings, true)).join('\n'),
     meta: `${summarizeResults(results)} · ${adjusted} com ajustes`,
   }
 }
@@ -555,7 +573,9 @@ export const brContactSamples = {
   phone: '(86) 99999-1234',
   phoneMessy: '+55 (86) 9999-1234',
   batchEmail: ['ana@example.com', 'invalido', 'contato@empresa.com.br'].join('\n'),
+  batchEmailMessy: ['ana.silva@example.com@', 'invalido', 'contato@empresa.com.br,extra'].join('\n'),
   batchPhone: ['86999991234', '(11) 3456-7890', '123', '(86) 88888-1111'].join('\n'),
+  batchPhoneMessy: ['+55 (86) 9999-1234', '(11) 3456-7890', '123', '+55 (86) 8888-1111'].join('\n'),
   csvEmail: ['nome,email', 'Ana,ana@example.com', 'Ruim,nao-email', 'Beto,beto@empresa.com'].join('\n'),
   csvPhone: ['nome,telefone', 'Ana,(86) 99999-1234', 'Loja,(86) 3211-4455', 'Erro,123'].join('\n'),
 }

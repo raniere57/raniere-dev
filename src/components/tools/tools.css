@@ -665,6 +665,84 @@
   color: oklch(78% 0.12 85);
 }
 
+.tool-contact__correction {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.tool-contact__correction.is-valid {
+  background: var(--color-diff-add-bg);
+  border-color: color-mix(in oklab, var(--color-diff-add-text) 35%, var(--color-border));
+}
+
+.tool-contact__correction.is-invalid {
+  background: var(--color-diff-remove-bg);
+  border-color: color-mix(in oklab, var(--color-diff-remove-text) 35%, var(--color-border));
+}
+
+.tool-contact__correction-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.tool-contact__correction-value {
+  margin: 0 0 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.tool-contact__correction-status {
+  margin: 0 0 0.75rem;
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+}
+
+.tool-contact__correction-status.is-valid {
+  color: oklch(52% 0.14 145);
+}
+
+.tool-contact__correction-status.is-invalid {
+  color: oklch(62% 0.18 25);
+}
+
+.tool-contact__correction-original {
+  margin: 0 0 0.75rem;
+  padding-top: 0.75rem;
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  border-top: 1px solid color-mix(in oklab, var(--color-border) 80%, transparent);
+}
+
+.tool-contact__correction-original span {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tool-contact__correction-warnings {
+  margin: 0;
+  padding: 0.65rem 0 0 1.1rem;
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: oklch(78% 0.12 85);
+  border-top: 1px solid color-mix(in oklab, var(--color-border) 80%, transparent);
+}
+
 .tool-convert__meta--bad {
   color: oklch(62% 0.18 25);
 }
