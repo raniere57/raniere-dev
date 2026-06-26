@@ -35,3 +35,10 @@ export function downloadBlob(filename: string, blob: Blob): void {
   anchor.click()
   URL.revokeObjectURL(url)
 }
+
+export async function readTextFile(file: File): Promise<string> {
+  return file.text()
+}
+
+export const DEFAULT_TEXT_IMPORT =
+  '.txt,.csv,.tsv,.json,.ndjson,.jsonl,.yaml,.yml,.md,.sql'

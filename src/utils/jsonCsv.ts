@@ -4,7 +4,6 @@ import {
   delimitedToObjects,
   objectsToDelimited,
   parseDelimited,
-  type CsvDelimiter,
 } from './csv'
 
 export type JsonCsvDirection = 'json-to-csv' | 'csv-to-json'
@@ -50,7 +49,7 @@ function normalizeJsonRows(parsed: unknown): Record<string, unknown>[] {
   )
 }
 
-export function jsonToCsv(input: string, delimiter: CsvDelimiter = ','): DataToolResult {
+export function jsonToCsv(input: string, delimiter = ','): DataToolResult {
   const trimmed = input.trim()
   if (!trimmed) throw new ConvertError('Cole um JSON para converter.')
 
@@ -73,7 +72,7 @@ export function jsonToCsv(input: string, delimiter: CsvDelimiter = ','): DataToo
   }
 }
 
-export function csvToJson(input: string, delimiter?: CsvDelimiter): DataToolResult {
+export function csvToJson(input: string, delimiter?: string): DataToolResult {
   const trimmed = input.trim()
   if (!trimmed) throw new ConvertError('Cole um CSV para converter.')
 

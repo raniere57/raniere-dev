@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { buildTablePreview, type PreviewFormat } from '../../utils/tablePreview'
 import { DataToolError } from '../../utils/dataError'
 import { jsonCsvSamples } from '../../utils/jsonCsv'
+import { ImportFileButton } from './shared/ImportFileButton'
 import { TableView } from './shared/TableView'
 
 export function TablePreviewTool() {
@@ -47,6 +48,7 @@ export function TablePreviewTool() {
         <button type="button" className="tools-btn tools-btn--ghost" onClick={() => setInput(jsonCsvSamples.csv)}>
           Carregar exemplo
         </button>
+        <ImportFileButton accept=".csv,.tsv,.json,.txt" onLoad={(text) => setInput(text)} />
         <button
           type="button"
           className="tools-btn tools-btn--ghost"

@@ -74,7 +74,7 @@ export const tools: ToolDefinition[] = [
     id: 'csv-delimiter',
     category: 'dados',
     name: 'Delimitador CSV / TSV',
-    description: 'Converta entre vírgula, ponto e vírgula e tab. Download com BOM para Excel BR.',
+    description: 'Converta entre vírgula, ponto e vírgula, tab, pipe ou caractere custom. Download com BOM para Excel BR.',
     keywords: ['csv', 'tsv', 'delimitador', 'bom', 'excel', 'ponto e vírgula'],
     status: 'available',
     mark: ';;',

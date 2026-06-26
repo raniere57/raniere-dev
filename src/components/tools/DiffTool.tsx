@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { diffText, diffSample } from '../../utils/textDiff'
 import { runDataTool } from './shared/ConvertToolLayout'
+import { ImportFileButton } from './shared/ImportFileButton'
 
 export function DiffTool() {
   const [format, setFormat] = useState<'json' | 'text'>('json')
@@ -47,6 +48,8 @@ export function DiffTool() {
         >
           Carregar exemplo
         </button>
+        <ImportFileButton accept=".json,.txt,.csv,.yaml,.yml" label="Importar original" onLoad={(text) => setLeft(text)} />
+        <ImportFileButton accept=".json,.txt,.csv,.yaml,.yml" label="Importar novo" onLoad={(text) => setRight(text)} />
         <button
           type="button"
           className="tools-btn tools-btn--ghost"

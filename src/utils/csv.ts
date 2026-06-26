@@ -1,11 +1,32 @@
 import { DataToolError } from './dataError'
 
-export type CsvDelimiter = ',' | ';' | '\t'
+export const DELIMITER_PRESETS = [',', ';', '\t', '|'] as const
 
-export const CSV_DELIMITER_LABELS: Record<CsvDelimiter, string> = {
-  ',': 'vírgula (,)',
-  ';': 'ponto e vírgula (;)',
-  '\t': 'tab (TSV)',
+export type DelimiterPreset = (typeof DELIMITER_PRESETS)[number]
+
+export function formatDelimiterLabel(delimiter: string): string {
+  switch (delimiter) {
+    case ',':
+      return 'vírgula (,)'
+    case ';':
+      return 'ponto e vírgula (;)'
+    case '\t':
+      return 'tab (TSV)'
+    case '|':
+      return 'pipe (|)'
+    default:
+      return delimiter.length === 1 ? `custom (${delimiter})` : 'custom'
+  }
+}
+
+export function normalizeDelimiter(value: string): string {
+  if (value === '\\t' || value === 'tab') return '\t'
+  const trimmed = value.trim()
+  if (!trimmed) throw new DataToolError('Informe um delimitador de saída.')
+  if (trimmed.length !== 1) {
+    throw new DataToolError('Use um único caractere como delimitador customizado.')
+  }
+  return trimmed
 }
 
 function parseDelimitedLine(line: string, delimiter: string): string[] {
@@ -93,21 +114,26 @@ export function serializeDelimited(rows: string[][], delimiter = ','): string {
     .join('\n')
 }
 
-export function detectDelimiter(text: string): CsvDelimiter {
-  const sample = text.trim().split('\n').slice(0, 5).join('\n')
-  const counts: Record<CsvDelimiter, number> = { ',': 0, ';': 0, '\t': 0 }
+export function detectDelimiter(text: string): string {
+  const sample = text.trim().split('\n').slice(0, 8).join('\n')
+  let bestDelimiter = ','
+  let bestScore = 0
 
-  ;([',', ';', '\t'] as CsvDelimiter[]).forEach((delimiter) => {
+  for (const delimiter of DELIMITER_PRESETS) {
     const rows = parseDelimited(sample, delimiter)
-    if (rows.length === 0) return
+    if (rows.length === 0) continue
     const width = rows[0]?.length ?? 0
-    if (width < 2) return
+    if (width < 2) continue
     const consistent = rows.every((row) => row.length === width)
-    if (consistent) counts[delimiter] = width * rows.length
-  })
+    if (!consistent) continue
+    const score = width * rows.length
+    if (score > bestScore) {
+      bestScore = score
+      bestDelimiter = delimiter
+    }
+  }
 
-  const best = (Object.entries(counts) as [CsvDelimiter, number][]).sort((a, b) => b[1] - a[1])[0]
-  return best?.[1] ? best[0] : ','
+  return bestDelimiter
 }
 
 export function delimitedToObjects(rows: string[][]): Record<string, string>[] {
@@ -125,10 +151,7 @@ export function delimitedToObjects(rows: string[][]): Record<string, string>[] {
   })
 }
 
-export function objectsToDelimited(
-  objects: Record<string, unknown>[],
-  delimiter = ',',
-): string {
+export function objectsToDelimited(objects: Record<string, unknown>[], delimiter = ','): string {
   if (objects.length === 0) return ''
 
   const headers = Array.from(
@@ -148,18 +171,19 @@ export function objectsToDelimited(
 
 export function convertDelimiter(
   input: string,
-  target: CsvDelimiter,
-  source?: CsvDelimiter,
-): { output: string; meta: string; detected: CsvDelimiter } {
+  target: string,
+  source: string | 'auto' = 'auto',
+): { output: string; meta: string; detected: string } {
   const trimmed = input.trim()
-  if (!trimmed) throw new DataToolError('Cole um CSV ou TSV para converter.')
+  if (!trimmed) throw new DataToolError('Cole um arquivo ou texto delimitado para converter.')
 
-  const detected = source ?? detectDelimiter(trimmed)
+  const resolvedTarget = normalizeDelimiter(target)
+  const detected = source === 'auto' ? detectDelimiter(trimmed) : normalizeDelimiter(source)
   const rows = parseDelimited(trimmed, detected)
   if (rows.length === 0) throw new DataToolError('Nenhuma linha válida encontrada.')
 
-  const output = serializeDelimited(rows, target)
-  const meta = `${rows.length} linha${rows.length === 1 ? '' : 's'} · ${rows[0]?.length ?? 0} coluna${rows[0]?.length === 1 ? '' : 's'} · ${CSV_DELIMITER_LABELS[detected]} → ${CSV_DELIMITER_LABELS[target]}`
+  const output = serializeDelimited(rows, resolvedTarget)
+  const meta = `${rows.length} linha${rows.length === 1 ? '' : 's'} · ${rows[0]?.length ?? 0} coluna${rows[0]?.length === 1 ? '' : 's'} · ${formatDelimiterLabel(detected)} → ${formatDelimiterLabel(resolvedTarget)}`
 
   return { output, meta, detected }
 }

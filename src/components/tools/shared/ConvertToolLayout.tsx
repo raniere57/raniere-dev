@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { DataToolError } from '../../../utils/dataError'
-import { copyText, downloadText } from '../../../utils/toolIO'
+import { copyText, DEFAULT_TEXT_IMPORT, downloadText } from '../../../utils/toolIO'
+import { ImportFileButton } from './ImportFileButton'
 
 export function useCopyFeedback() {
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle')
@@ -32,6 +33,7 @@ interface ConvertToolLayoutProps {
   modes?: { id: string; label: string }[]
   activeMode?: string
   onModeChange?: (modeId: string) => void
+  settings?: React.ReactNode
   toolbarExtra?: React.ReactNode
   inputLabel: string
   outputLabel: string
@@ -46,6 +48,11 @@ interface ConvertToolLayoutProps {
   inputPlaceholder?: string
   downloadFilename?: string
   downloadBom?: boolean
+  showBomToggle?: boolean
+  bomEnabled?: boolean
+  onBomChange?: (enabled: boolean) => void
+  importAccept?: string
+  onImport?: (text: string, filename: string) => void
   outputReadOnly?: boolean
   children?: React.ReactNode
 }
@@ -54,6 +61,7 @@ export function ConvertToolLayout({
   modes,
   activeMode,
   onModeChange,
+  settings,
   toolbarExtra,
   inputLabel,
   outputLabel,
@@ -68,12 +76,25 @@ export function ConvertToolLayout({
   inputPlaceholder,
   downloadFilename = 'resultado.txt',
   downloadBom = false,
+  showBomToggle = false,
+  bomEnabled = false,
+  onBomChange,
+  importAccept = DEFAULT_TEXT_IMPORT,
+  onImport,
   outputReadOnly = true,
   children,
 }: ConvertToolLayoutProps) {
   const inputId = useId()
   const outputId = useId()
   const { copy, copyLabel } = useCopyFeedback()
+
+  function handleImport(text: string, filename: string) {
+    if (onImport) {
+      onImport(text, filename)
+      return
+    }
+    onInputChange(text)
+  }
 
   return (
     <div className="tool-convert">
@@ -94,12 +115,15 @@ export function ConvertToolLayout({
         </div>
       )}
 
+      {settings && <div className="tool-convert__settings">{settings}</div>}
+
       <div className="tool-convert__toolbar">
         {onSample && (
           <button type="button" className="tools-btn tools-btn--ghost" onClick={onSample}>
             Carregar exemplo
           </button>
         )}
+        <ImportFileButton accept={importAccept} onLoad={handleImport} />
         {onClear && (
           <button type="button" className="tools-btn tools-btn--ghost" onClick={onClear}>
             Limpar
@@ -165,6 +189,16 @@ export function ConvertToolLayout({
           Atalho: <kbd>Ctrl</kbd> + <kbd>Enter</kbd>
         </p>
         <div className="tool-convert__footer-actions">
+          {showBomToggle && onBomChange && (
+            <label className="tool-convert__bom">
+              <input
+                type="checkbox"
+                checked={bomEnabled}
+                onChange={(event) => onBomChange(event.target.checked)}
+              />
+              UTF-8 BOM (Excel BR)
+            </label>
+          )}
           <button
             type="button"
             className="tools-btn tools-btn--ghost"
@@ -179,7 +213,7 @@ export function ConvertToolLayout({
             onClick={() => downloadText(downloadFilename, output, downloadBom)}
             disabled={!output.trim()}
           >
-            Baixar{downloadBom ? ' com BOM' : ''}
+            Baixar arquivo
           </button>
         </div>
       </div>

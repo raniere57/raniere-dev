@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { csvColumnsSample, filterCsvColumns, listCsvColumns } from '../../utils/csvColumns'
 import { runDataTool } from './shared/ConvertToolLayout'
+import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvColumnsTool() {
   const [input, setInput] = useState('')
@@ -32,6 +33,7 @@ export function CsvColumnsTool() {
         <button type="button" className="tools-btn tools-btn--ghost" onClick={() => setInput(csvColumnsSample)}>
           Carregar exemplo
         </button>
+        <ImportFileButton accept=".csv,.tsv,.txt" onLoad={(text) => setInput(text)} />
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
