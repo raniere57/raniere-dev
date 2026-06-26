@@ -21,7 +21,7 @@ interface JsonPathTreeNodeProps {
   value: unknown
   path: PathSegment[]
   selectedPath: string | null
-  onSelect: (path: PathSegment[], value: unknown) => void
+  onSelect: (path: PathSegment[]) => void
   depth: number
   defaultOpen?: boolean
 }
@@ -62,7 +62,7 @@ function JsonPathTreeNode({
         type="button"
         className={`tool-json-tree__row tool-json-tree__row--leaf${isSelected ? ' is-selected' : ''}`}
         style={{ paddingLeft: `${depth * 0.85 + 0.45}rem` }}
-        onClick={() => onSelect(path, value)}
+        onClick={() => onSelect(path)}
       >
         <span className="tool-json-tree__key">{label}</span>
         <span className="tool-json-tree__type">{typeLabel(value)}</span>
@@ -85,7 +85,7 @@ function JsonPathTreeNode({
         >
           {open ? '▾' : '▸'}
         </button>
-        <button type="button" className="tool-json-tree__select" onClick={() => onSelect(path, value)}>
+        <button type="button" className="tool-json-tree__select" onClick={() => onSelect(path)}>
           <span className="tool-json-tree__key">{label}</span>
           <span className="tool-json-tree__type">{typeLabel(value)}</span>
           <span className="tool-json-tree__value">{previewValue(value)}</span>
@@ -110,18 +110,18 @@ function JsonPathTreeNode({
 interface JsonPathExplorerProps {
   data: unknown
   selectedPath: string | null
-  onSelectPath: (path: string, value: unknown) => void
+  onSelectPath: (path: string) => void
 }
 
 export function JsonPathExplorer({ data, selectedPath, onSelectPath }: JsonPathExplorerProps) {
   return (
-    <div className="tool-json-tree">
+    <div className="tool-json-tree tool-json-tree--fill">
       <JsonPathTreeNode
         label="$"
         value={data}
         path={[]}
         selectedPath={selectedPath}
-        onSelect={(path, value) => onSelectPath(segmentsToJsonPath(path), value)}
+        onSelect={(path) => onSelectPath(segmentsToJsonPath(path))}
         depth={0}
         defaultOpen
       />

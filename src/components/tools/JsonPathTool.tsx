@@ -5,14 +5,10 @@ import { JsonPathExplorer } from './shared/JsonPathExplorer'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { ImportFileButton } from './shared/ImportFileButton'
 
-type JsonPathMode = 'query' | 'explore'
-
 export function JsonPathTool() {
-  const [mode, setMode] = useState<JsonPathMode>('query')
   const [input, setInput] = useState('')
   const [path, setPath] = useState('$.items[*].nome')
   const [selectedPath, setSelectedPath] = useState<string | null>(null)
-  const [selectedPreview, setSelectedPreview] = useState<string>('')
   const [output, setOutput] = useState('')
   const [meta, setMeta] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -30,16 +26,10 @@ export function JsonPathTool() {
     runDataTool(() => queryJsonPath(input, path), setOutput, setMeta, setError)
   }, [input, path])
 
-  const handleExploreSelect = (nextPath: string, value: unknown) => {
+  const handleTreeSelect = (nextPath: string) => {
     setSelectedPath(nextPath)
     setPath(nextPath)
-    setSelectedPreview(
-      value !== null && typeof value === 'object'
-        ? Array.isArray(value)
-          ? `[${value.length} itens]`
-          : `{${Object.keys(value as object).length} chaves}`
-        : JSON.stringify(value),
-    )
+    runDataTool(() => queryJsonPath(input, nextPath), setOutput, setMeta, setError)
   }
 
   const handleCopyPath = async () => {
@@ -55,36 +45,13 @@ export function JsonPathTool() {
 
   const loadSample = () => {
     setInput(jsonPathSample.input)
-    setPath(jsonPathSample.path)
+    setPath('$.items[0].nome')
     setSelectedPath('$.items[0].nome')
-    setSelectedPreview('"Ana"')
-    setOutput('')
-    setMeta(null)
-    setError(null)
+    runDataTool(() => queryJsonPath(jsonPathSample.input, '$.items[0].nome'), setOutput, setMeta, setError)
   }
 
   return (
-    <div className="tool-convert">
-      <div className="tool-convert__modes" role="tablist">
-        {(
-          [
-            ['query', 'Consultar'],
-            ['explore', 'Explorar / descobrir'],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={mode === id}
-            className={`tool-convert__mode${mode === id ? ' is-active' : ''}`}
-            onClick={() => setMode(id)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
+    <div className="tool-convert tool-jsonpath">
       <div className="tool-convert__toolbar">
         <button type="button" className="tools-btn tools-btn--ghost" onClick={loadSample}>
           Carregar exemplo
@@ -97,7 +64,6 @@ export function JsonPathTool() {
             setInput('')
             setPath('$.')
             setSelectedPath(null)
-            setSelectedPreview('')
             setOutput('')
             setMeta(null)
             setError(null)
@@ -105,99 +71,80 @@ export function JsonPathTool() {
         >
           Limpar
         </button>
-        {mode === 'query' ? (
-          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-            Extrair
-          </button>
-        ) : (
-          <button type="button" className="tools-btn tools-btn--primary" onClick={handleCopyPath} disabled={!path.trim()}>
-            {copyState === 'copied' ? 'Path copiado ✓' : 'Copiar path'}
-          </button>
-        )}
+        <button type="button" className="tools-btn tools-btn--ghost" onClick={handleCopyPath} disabled={!path.trim()}>
+          {copyState === 'copied' ? 'Path copiado ✓' : 'Copiar path'}
+        </button>
+        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+          Extrair
+        </button>
       </div>
 
-      <div className="tool-convert__settings">
-        <label className="tool-convert__setting tool-convert__setting--wide">
-          <span>JSONPath {mode === 'explore' ? '(clique no JSON ou edite)' : ''}</span>
+      <div className="tool-convert__panes">
+        <div className="tool-convert__pane">
+          <label className="tool-convert__label" htmlFor="jsonpath-input">
+            JSON
+          </label>
+          <textarea
+            id="jsonpath-input"
+            className="tool-convert__textarea tool-jsonpath__input"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            spellCheck={false}
+          />
+        </div>
+
+        <div className="tool-convert__pane tool-jsonpath__tree-pane">
+          <div className="tool-convert__pane-head">
+            <span className="tool-convert__label">Árvore</span>
+            <span className="tool-convert__meta">clique para descobrir o path</span>
+          </div>
+          {!input.trim() ? (
+            <p className="tool-table__empty tool-jsonpath__tree-empty">Cole um JSON para explorar.</p>
+          ) : parsedJson === null ? (
+            <p className="tool-convert__error tool-jsonpath__tree-empty" role="alert">
+              JSON inválido — corrija o texto à esquerda.
+            </p>
+          ) : (
+            <JsonPathExplorer data={parsedJson} selectedPath={selectedPath} onSelectPath={handleTreeSelect} />
+          )}
+        </div>
+      </div>
+
+      <div className="tool-jsonpath__query">
+        <label className="tool-convert__setting tool-convert__setting--wide" htmlFor="jsonpath-expression">
+          <span>JSONPath</span>
           <input
+            id="jsonpath-expression"
             type="text"
             className="tool-convert__setting-input"
             value={path}
             onChange={(event) => setPath(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault()
+                run()
+              }
+            }}
             placeholder="$.items[0].nome"
             spellCheck={false}
           />
         </label>
       </div>
 
-      {mode === 'query' ? (
-        <div className="tool-convert__panes">
-          <div className="tool-convert__pane">
-            <label className="tool-convert__label" htmlFor="jsonpath-input">
-              JSON
-            </label>
-            <textarea
-              id="jsonpath-input"
-              className="tool-convert__textarea"
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              rows={12}
-              spellCheck={false}
-            />
-          </div>
-          <div className="tool-convert__pane">
-            <div className="tool-convert__pane-head">
-              <span className="tool-convert__label">Resultado</span>
-              {meta && <span className="tool-convert__meta">{meta}</span>}
-            </div>
-            <textarea className="tool-convert__textarea tool-convert__textarea--output" value={output} readOnly rows={12} spellCheck={false} />
-          </div>
+      <div className="tool-convert__pane tool-jsonpath__result">
+        <div className="tool-convert__pane-head">
+          <span className="tool-convert__label">Resultado</span>
+          {meta && <span className="tool-convert__meta">{meta}</span>}
         </div>
-      ) : (
-        <div className="tool-convert__panes tool-convert__panes--stack">
-          <div className="tool-convert__pane">
-            <label className="tool-convert__label" htmlFor="jsonpath-explore-input">
-              JSON
-            </label>
-            <textarea
-              id="jsonpath-explore-input"
-              className="tool-convert__textarea"
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              rows={6}
-              spellCheck={false}
-            />
-          </div>
+        <textarea
+          className="tool-convert__textarea tool-convert__textarea--output tool-jsonpath__output"
+          value={output}
+          readOnly
+          spellCheck={false}
+        />
+      </div>
 
-          <div className="tool-convert__pane">
-            <div className="tool-convert__pane-head">
-              <span className="tool-convert__label">Árvore — clique para descobrir o path</span>
-              {selectedPath && <span className="tool-convert__meta">{selectedPreview}</span>}
-            </div>
-            {!input.trim() ? (
-              <p className="tool-table__empty">Cole um JSON para explorar.</p>
-            ) : parsedJson === null ? (
-              <p className="tool-convert__error" role="alert">
-                JSON inválido — corrija o texto acima.
-              </p>
-            ) : (
-              <JsonPathExplorer
-                data={parsedJson}
-                selectedPath={selectedPath}
-                onSelectPath={handleExploreSelect}
-              />
-            )}
-          </div>
-        </div>
-      )}
-
-      {mode === 'explore' && selectedPath && (
-        <p className="tool-convert__hint">
-          Path selecionado: <code>{selectedPath}</code> — use a aba Consultar para extrair o valor.
-        </p>
-      )}
-
-      {error && mode === 'query' && (
+      {error && (
         <p className="tool-convert__error" role="alert">
           {error}
         </p>
