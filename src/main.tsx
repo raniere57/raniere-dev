@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './App'
-import { clearChunkReloadFlag } from './utils/lazyWithRetry'
+import { clearChunkReloadFlag, stripChunkReloadQuery } from './utils/chunkReload'
 import './styles/global.css'
 
 // Recarregar a página sempre começa do topo (sem restaurar scroll anterior)
@@ -10,6 +10,7 @@ if ('scrollRestoration' in history) {
 }
 
 clearChunkReloadFlag()
+stripChunkReloadQuery()
 
 const rootElement = document.getElementById('root')
 

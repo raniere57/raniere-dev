@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   defaultToolId,
   getToolById,
@@ -10,7 +10,7 @@ import {
   type ToolDefinition,
 } from '../../data/tools'
 import { useReveal } from '../../hooks/useReveal'
-import { getEagerTool, getLazyTool, isImplementedTool } from './toolRegistry'
+import { getToolComponent, isImplementedTool } from './toolRegistry'
 import './tools.css'
 
 function normalizeToolId(raw: string | null): string {
@@ -18,12 +18,9 @@ function normalizeToolId(raw: string | null): string {
   return defaultToolId
 }
 
-function LazyToolPanel({ toolId }: { toolId: string }) {
-  const EagerTool = getEagerTool(toolId)
-  if (EagerTool) return <EagerTool />
-
-  const LazyTool = getLazyTool(toolId)
-  if (!LazyTool) {
+function ToolContent({ toolId }: { toolId: string }) {
+  const Tool = getToolComponent(toolId)
+  if (!Tool) {
     return (
       <div className="tool-detail__soon">
         <p>Esta ferramenta ainda não está disponível.</p>
@@ -31,11 +28,7 @@ function LazyToolPanel({ toolId }: { toolId: string }) {
     )
   }
 
-  return (
-    <Suspense fallback={<div className="tool-detail__loading">Carregando ferramenta…</div>}>
-      <LazyTool />
-    </Suspense>
-  )
+  return <Tool />
 }
 
 function ToolPanel({ toolId }: { toolId: string }) {
@@ -58,7 +51,7 @@ function ToolPanel({ toolId }: { toolId: string }) {
     )
   }
 
-  return <LazyToolPanel toolId={toolId} />
+  return <ToolContent toolId={toolId} />
 }
 
 function matchesSearch(tool: ToolDefinition, query: string): boolean {

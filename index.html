@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
 
     <title>raniere.dev | Desenvolvimento, Dados e Automação</title>
     <meta
@@ -75,6 +78,41 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Recupera bundle desatualizado em cache após deploy (GitHub Pages). -->
+    <script>
+      ;(function () {
+        var KEY = 'app-chunk-reload'
+        var CHUNK_RE = /importing a module script failed|failed to fetch dynamically imported module|loading chunk|error loading dynamically imported module/i
+
+        function reloadOnce() {
+          if (sessionStorage.getItem(KEY)) return
+          sessionStorage.setItem(KEY, '1')
+          var u = new URL(location.href)
+          u.searchParams.set('_cb', Date.now().toString())
+          location.replace(u.toString())
+        }
+
+        window.addEventListener(
+          'error',
+          function (event) {
+            var target = event.target
+            if (target && target.tagName === 'SCRIPT' && /\/assets\/.+\.js/.test(target.src || '')) {
+              reloadOnce()
+            }
+          },
+          true,
+        )
+
+        window.addEventListener('unhandledrejection', function (event) {
+          var reason = event.reason
+          var message = String((reason && reason.message) || reason || '')
+          if (CHUNK_RE.test(message)) {
+            event.preventDefault()
+            reloadOnce()
+          }
+        })
+      })()
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

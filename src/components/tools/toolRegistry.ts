@@ -1,18 +1,19 @@
 import type { ComponentType } from 'react'
-import { lazyWithRetry } from '../../utils/lazyWithRetry'
 import { CsvColumnsTool } from './CsvColumnsTool'
 import { CsvDelimiterTool } from './CsvDelimiterTool'
 import { DiffTool } from './DiffTool'
 import { JsonCsvTool } from './JsonCsvTool'
 import { JsonFlattenTool } from './JsonFlattenTool'
 import { JsonFormatTool } from './JsonFormatTool'
+import { JsonYamlTool } from './JsonYamlTool'
 import { MarkdownCsvTool } from './MarkdownCsvTool'
 import { NdjsonTool } from './NdjsonTool'
 import { SqlInsertTool } from './SqlInsertTool'
 import { TablePreviewTool } from './TablePreviewTool'
+import { XlsxTool } from './XlsxTool'
 
-/** Ferramentas leves — importadas no bundle principal (evita 404 de chunk após deploy). */
-export const EAGER_TOOLS: Record<string, ComponentType> = {
+/** Todas as ferramentas no bundle principal — evita 404 de chunks após deploy. */
+export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   'json-csv': JsonCsvTool,
   'json-format': JsonFormatTool,
   'table-preview': TablePreviewTool,
@@ -23,26 +24,14 @@ export const EAGER_TOOLS: Record<string, ComponentType> = {
   'markdown-csv': MarkdownCsvTool,
   'csv-columns': CsvColumnsTool,
   'json-diff': DiffTool,
+  'json-yaml': JsonYamlTool,
+  'xlsx-convert': XlsxTool,
 }
-
-/** Ferramentas pesadas — lazy load com retry automático se o chunk estiver desatualizado. */
-export const LAZY_TOOLS = {
-  'json-yaml': lazyWithRetry(() =>
-    import('./JsonYamlTool').then((module) => ({ default: module.JsonYamlTool })),
-  ),
-  'xlsx-convert': lazyWithRetry(() =>
-    import('./XlsxTool').then((module) => ({ default: module.XlsxTool })),
-  ),
-} as const
 
 export function isImplementedTool(toolId: string): boolean {
-  return toolId in EAGER_TOOLS || toolId in LAZY_TOOLS
+  return toolId in TOOL_COMPONENTS
 }
 
-export function getEagerTool(toolId: string): ComponentType | undefined {
-  return EAGER_TOOLS[toolId]
-}
-
-export function getLazyTool(toolId: string) {
-  return LAZY_TOOLS[toolId as keyof typeof LAZY_TOOLS]
+export function getToolComponent(toolId: string): ComponentType | undefined {
+  return TOOL_COMPONENTS[toolId]
 }
