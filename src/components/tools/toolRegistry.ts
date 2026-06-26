@@ -3,6 +3,9 @@ import { Base64Tool } from './Base64Tool'
 import { BrContactTool } from './BrContactTool'
 import { CepTool } from './CepTool'
 import { CpfCnpjTool } from './CpfCnpjTool'
+import { CreditCardTool } from './CreditCardTool'
+import { PisTool } from './PisTool'
+import { PixTool } from './PixTool'
 import { CsvColumnsTool } from './CsvColumnsTool'
 import { CsvDedupeTool } from './CsvDedupeTool'
 import { CsvDelimiterTool } from './CsvDelimiterTool'
@@ -70,6 +73,9 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   'cpf-cnpj': CpfCnpjTool,
   'br-contact': BrContactTool,
   'cep': CepTool,
+  'pis': PisTool,
+  'pix': PixTool,
+  'credit-card': CreditCardTool,
 }
 
 export function isImplementedTool(toolId: string): boolean {
