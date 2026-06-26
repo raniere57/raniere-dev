@@ -3,6 +3,7 @@ import { csvProcvSamples, procvCsv } from '../../utils/csvProcv'
 import { parseInputTable } from '../../utils/inputTable'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolActionBar, ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvProcvTool() {
@@ -59,7 +60,7 @@ export function CsvProcvTool() {
 
   return (
     <div className="tool-convert">
-      <div className="tool-convert__toolbar">
+      <ToolToolbar>
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
@@ -85,10 +86,7 @@ export function CsvProcvTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Aplicar PROCV
-        </button>
-      </div>
+        </ToolToolbar>
 
       <div className="tool-convert__settings">
         <label className="tool-convert__setting">
@@ -143,6 +141,12 @@ export function CsvProcvTool() {
           />
         </label>
       </div>
+
+      <ToolActionBar>
+        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+          Aplicar PROCV
+        </button>
+      </ToolActionBar>
 
       <div className="tool-convert__panes">
         <div className="tool-convert__pane">

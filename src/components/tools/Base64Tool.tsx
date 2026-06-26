@@ -3,6 +3,7 @@ import { base64Sample, convertBase64, fileToBase64, type Base64Direction } from 
 import { DataToolError } from '../../utils/dataError'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function Base64Tool() {
@@ -51,7 +52,13 @@ export function Base64Tool() {
         ))}
       </div>
 
-      <div className="tool-convert__toolbar">
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Converter
+          </button>
+        }
+      >
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
@@ -83,10 +90,7 @@ export function Base64Tool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Converter
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__panes">
         <div className="tool-convert__pane">

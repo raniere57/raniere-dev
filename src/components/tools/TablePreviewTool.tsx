@@ -3,6 +3,7 @@ import { buildTablePreview, exportTablePreview, type PreviewFormat } from '../..
 import { DataToolError } from '../../utils/dataError'
 import { jsonCsvSamples } from '../../utils/jsonCsv'
 import { OutputActions } from './shared/OutputActions'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 import { TableView } from './shared/TableView'
 
@@ -45,7 +46,13 @@ export function TablePreviewTool() {
         ))}
       </div>
 
-      <div className="tool-convert__toolbar">
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Visualizar
+          </button>
+        }
+      >
         <button type="button" className="tools-btn tools-btn--ghost" onClick={() => setInput(jsonCsvSamples.csv)}>
           Carregar exemplo
         </button>
@@ -61,10 +68,7 @@ export function TablePreviewTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Visualizar
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__panes">
         <div className="tool-convert__pane">

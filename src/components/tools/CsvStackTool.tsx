@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { csvStackSamples, stackCsvTables } from '../../utils/csvStack'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvStackTool() {
@@ -19,7 +20,13 @@ export function CsvStackTool() {
 
   return (
     <div className="tool-convert">
-      <div className="tool-convert__toolbar">
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Empilhar
+          </button>
+        }
+      >
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
@@ -47,10 +54,7 @@ export function CsvStackTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Empilhar
-        </button>
-      </div>
+      </ToolToolbar>
 
       <label className="tool-convert__checkbox">
         <input type="checkbox" checked={alignColumns} onChange={(event) => setAlignColumns(event.target.checked)} />

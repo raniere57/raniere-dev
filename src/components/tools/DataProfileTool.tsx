@@ -4,6 +4,7 @@ import { DataToolError } from '../../utils/dataError'
 import type { InputTableFormat } from '../../utils/inputTable'
 import { parseInputTable } from '../../utils/inputTable'
 import { OutputActions } from './shared/OutputActions'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function DataProfileTool() {
@@ -54,7 +55,13 @@ export function DataProfileTool() {
         ))}
       </div>
 
-      <div className="tool-convert__toolbar">
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Analisar
+          </button>
+        }
+      >
         <button type="button" className="tools-btn tools-btn--ghost" onClick={() => setInput(dataProfileSample)}>
           Carregar exemplo
         </button>
@@ -72,10 +79,7 @@ export function DataProfileTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Analisar
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__panes">
         <div className="tool-convert__pane">

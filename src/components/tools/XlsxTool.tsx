@@ -8,7 +8,8 @@ import {
   type XlsxSheetInfo,
 } from '../../utils/xlsxConvert'
 import { jsonCsvSamples } from '../../utils/jsonCsv'
-import { useCopyFeedback } from './shared/ConvertToolLayout'
+import { OutputActions } from './shared/OutputActions'
+import { ToolActionBar, ToolToolbar } from './shared/ToolToolbar'
 
 type XlsxMode = 'xlsx-to-csv' | 'xlsx-to-json' | 'csv-to-xlsx' | 'json-to-xlsx'
 
@@ -22,10 +23,18 @@ export function XlsxTool() {
   const [fileData, setFileData] = useState<ArrayBuffer | null>(null)
   const [sheets, setSheets] = useState<XlsxSheetInfo[]>([])
   const [sheetName, setSheetName] = useState('')
+  const [exportReady, setExportReady] = useState(false)
   const xlsxBufferRef = useRef<ArrayBuffer | null>(null)
-  const { copy, copyLabel } = useCopyFeedback()
 
   const isImport = mode === 'xlsx-to-csv' || mode === 'xlsx-to-json'
+
+  const resetOutput = useCallback(() => {
+    setOutput('')
+    setMeta(null)
+    setError(null)
+    setExportReady(false)
+    xlsxBufferRef.current = null
+  }, [])
 
   const handleFile = useCallback(async (file: File) => {
     const buffer = await file.arrayBuffer()
@@ -34,8 +43,8 @@ export function XlsxTool() {
     setFileName(file.name)
     setSheets(info)
     setSheetName(info[0]?.name ?? '')
-    setError(null)
-  }, [])
+    resetOutput()
+  }, [resetOutput])
 
   const run = useCallback(() => {
     try {
@@ -45,6 +54,7 @@ export function XlsxTool() {
         const result = convertXlsxSheet(fileData, sheetName, direction)
         setOutput(result.output)
         setMeta(result.meta ?? null)
+        setExportReady(false)
         setError(null)
         return
       }
@@ -53,10 +63,12 @@ export function XlsxTool() {
       xlsxBufferRef.current = buffer
       setOutput('')
       setMeta(`${mode === 'csv-to-xlsx' ? 'CSV' : 'JSON'} convertido · pronto para download`)
+      setExportReady(true)
       setError(null)
     } catch (cause) {
       setOutput('')
       setMeta(null)
+      setExportReady(false)
       setError(cause instanceof DataToolError ? cause.message : 'Não foi possível converter.')
     }
   }, [fileData, input, isImport, mode, sheetName])
@@ -88,29 +100,12 @@ export function XlsxTool() {
             className={`tool-convert__mode${mode === id ? ' is-active' : ''}`}
             onClick={() => {
               setMode(id)
-              setOutput('')
-              setMeta(null)
-              setError(null)
+              resetOutput()
             }}
           >
             {label}
           </button>
         ))}
-      </div>
-
-      <div className="tool-convert__toolbar">
-        {!isImport && (
-          <button
-            type="button"
-            className="tools-btn tools-btn--ghost"
-            onClick={() => setInput(mode === 'csv-to-xlsx' ? jsonCsvSamples.csv : jsonCsvSamples.json)}
-          >
-            Carregar exemplo
-          </button>
-        )}
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Converter
-        </button>
       </div>
 
       {isImport ? (
@@ -141,34 +136,85 @@ export function XlsxTool() {
           )}
         </div>
       ) : (
+        <>
+          <ToolToolbar>
+            <button
+              type="button"
+              className="tools-btn tools-btn--ghost"
+              onClick={() => setInput(mode === 'csv-to-xlsx' ? jsonCsvSamples.csv : jsonCsvSamples.json)}
+            >
+              Carregar exemplo
+            </button>
+            <button
+              type="button"
+              className="tools-btn tools-btn--ghost"
+              onClick={() => {
+                setInput('')
+                resetOutput()
+              }}
+            >
+              Limpar
+            </button>
+          </ToolToolbar>
+          <div className="tool-convert__pane">
+            <label className="tool-convert__label" htmlFor="xlsx-text-input">
+              {mode === 'csv-to-xlsx' ? 'CSV' : 'JSON'}
+            </label>
+            <textarea
+              id="xlsx-text-input"
+              className="tool-convert__textarea"
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              rows={12}
+              spellCheck={false}
+            />
+          </div>
+        </>
+      )}
+
+      <ToolActionBar>
+        {isImport && fileName && (
+          <button
+            type="button"
+            className="tools-btn tools-btn--ghost"
+            onClick={() => {
+              setFileData(null)
+              setFileName(null)
+              setSheets([])
+              setSheetName('')
+              resetOutput()
+            }}
+          >
+            Limpar
+          </button>
+        )}
+        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+          Converter
+        </button>
+      </ToolActionBar>
+
+      {isImport && output && (
         <div className="tool-convert__pane">
-          <label className="tool-convert__label" htmlFor="xlsx-text-input">
-            {mode === 'csv-to-xlsx' ? 'CSV' : 'JSON'}
-          </label>
-          <textarea
-            id="xlsx-text-input"
-            className="tool-convert__textarea"
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            rows={12}
-            spellCheck={false}
-          />
+          <div className="tool-convert__pane-head">
+            <span className="tool-convert__label">Saída</span>
+            {meta && <span className="tool-convert__meta">{meta}</span>}
+          </div>
+          <textarea className="tool-convert__textarea tool-convert__textarea--output" value={output} readOnly rows={12} />
+          <OutputActions output={output} downloadFilename={mode === 'xlsx-to-csv' ? 'dados.csv' : 'dados.json'} />
         </div>
       )}
 
-      {(output || meta) && (
+      {!isImport && exportReady && meta && (
         <div className="tool-convert__pane">
           <div className="tool-convert__pane-head">
-            <span className="tool-convert__label">{isImport ? 'Saída' : 'Download'}</span>
-            {meta && <span className="tool-convert__meta">{meta}</span>}
+            <span className="tool-convert__label">Download</span>
+            <span className="tool-convert__meta">{meta}</span>
           </div>
-          {isImport ? (
-            <textarea className="tool-convert__textarea tool-convert__textarea--output" value={output} readOnly rows={12} />
-          ) : (
+          <ToolActionBar>
             <button type="button" className="tools-btn tools-btn--primary" onClick={downloadXlsx}>
               Baixar dados.xlsx
             </button>
-          )}
+          </ToolActionBar>
         </div>
       )}
 
@@ -176,16 +222,6 @@ export function XlsxTool() {
         <p className="tool-convert__error" role="alert">
           {error}
         </p>
-      )}
-
-      {isImport && output && (
-        <div className="tool-convert__footer">
-          <div className="tool-convert__footer-actions">
-            <button type="button" className="tools-btn tools-btn--ghost" onClick={() => copy(output)}>
-              {copyLabel}
-            </button>
-          </div>
-        </div>
       )}
     </div>
   )

@@ -3,6 +3,7 @@ import { csvSplitColumnSample, splitCsvColumn } from '../../utils/csvSplitColumn
 import { parseInputTable } from '../../utils/inputTable'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolActionBar, ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvSplitColumnTool() {
@@ -31,7 +32,7 @@ export function CsvSplitColumnTool() {
 
   return (
     <div className="tool-convert">
-      <div className="tool-convert__toolbar">
+      <ToolToolbar>
         <button type="button" className="tools-btn tools-btn--ghost" onClick={() => setInput(csvSplitColumnSample)}>
           Carregar exemplo
         </button>
@@ -48,10 +49,7 @@ export function CsvSplitColumnTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Separar coluna
-        </button>
-      </div>
+        </ToolToolbar>
 
       <div className="tool-convert__settings">
         <label className="tool-convert__setting">
@@ -73,6 +71,12 @@ export function CsvSplitColumnTool() {
           <input type="number" min={0} value={maxParts} onChange={(event) => setMaxParts(Number(event.target.value))} />
         </label>
       </div>
+
+      <ToolActionBar>
+        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+          Separar coluna
+        </button>
+      </ToolActionBar>
 
       <div className="tool-convert__panes tool-convert__panes--stack">
         <div className="tool-convert__pane">

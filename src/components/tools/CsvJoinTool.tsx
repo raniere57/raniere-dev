@@ -3,6 +3,7 @@ import { csvJoinSamples, joinCsvTables, type JoinType } from '../../utils/csvJoi
 import { listCsvColumns } from '../../utils/csvColumns'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolActionBar, ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvJoinTool() {
@@ -40,7 +41,7 @@ export function CsvJoinTool() {
 
   return (
     <div className="tool-convert">
-      <div className="tool-convert__toolbar">
+      <ToolToolbar>
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
@@ -66,10 +67,7 @@ export function CsvJoinTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Fazer join
-        </button>
-      </div>
+        </ToolToolbar>
 
       <div className="tool-convert__settings">
         <label className="tool-convert__setting">
@@ -102,6 +100,12 @@ export function CsvJoinTool() {
           </select>
         </label>
       </div>
+
+      <ToolActionBar>
+        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+          Fazer join
+        </button>
+      </ToolActionBar>
 
       <div className="tool-convert__panes">
         <div className="tool-convert__pane">

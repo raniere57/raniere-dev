@@ -8,6 +8,7 @@ import {
 import { parseInputTable } from '../../utils/inputTable'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolActionBar, ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvGroupTool() {
@@ -45,7 +46,7 @@ export function CsvGroupTool() {
 
   return (
     <div className="tool-convert">
-      <div className="tool-convert__toolbar">
+      <ToolToolbar>
         <button type="button" className="tools-btn tools-btn--ghost" onClick={() => setInput(csvGroupSample)}>
           Carregar exemplo
         </button>
@@ -62,10 +63,7 @@ export function CsvGroupTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Agrupar
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__settings">
         <label className="tool-convert__setting">
@@ -99,6 +97,12 @@ export function CsvGroupTool() {
           </select>
         </label>
       </div>
+
+      <ToolActionBar>
+        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+          Agrupar
+        </button>
+      </ToolActionBar>
 
       <div className="tool-convert__panes tool-convert__panes--stack">
         <div className="tool-convert__pane">

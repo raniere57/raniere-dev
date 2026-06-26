@@ -4,6 +4,7 @@ import { copyText } from '../../utils/toolIO'
 import { JsonPathExplorer } from './shared/JsonPathExplorer'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function JsonPathTool() {
@@ -53,7 +54,7 @@ export function JsonPathTool() {
 
   return (
     <div className="tool-convert tool-jsonpath">
-      <div className="tool-convert__toolbar">
+      <ToolToolbar>
         <button type="button" className="tools-btn tools-btn--ghost" onClick={loadSample}>
           Carregar exemplo
         </button>
@@ -72,13 +73,7 @@ export function JsonPathTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--ghost" onClick={handleCopyPath} disabled={!path.trim()}>
-          {copyState === 'copied' ? 'Path copiado ✓' : 'Copiar path'}
-        </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Extrair
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__panes">
         <div className="tool-convert__pane">
@@ -130,6 +125,14 @@ export function JsonPathTool() {
             spellCheck={false}
           />
         </label>
+        <div className="tool-jsonpath__query-actions">
+          <button type="button" className="tools-btn tools-btn--ghost" onClick={handleCopyPath} disabled={!path.trim()}>
+            {copyState === 'copied' ? 'Path copiado ✓' : 'Copiar path'}
+          </button>
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Extrair
+          </button>
+        </div>
       </div>
 
       <div className="tool-convert__pane tool-jsonpath__result">

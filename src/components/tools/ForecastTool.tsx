@@ -9,6 +9,7 @@ import {
 import { parseInputTable } from '../../utils/inputTable'
 import { DataToolError } from '../../utils/dataError'
 import { ForecastChart } from './shared/ForecastChart'
+import { ToolActionBar, ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 import { OutputActions } from './shared/OutputActions'
 
@@ -72,7 +73,7 @@ export function ForecastTool() {
         ))}
       </div>
 
-      <div className="tool-convert__toolbar">
+      <ToolToolbar>
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
@@ -96,10 +97,7 @@ export function ForecastTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Projetar
-        </button>
-      </div>
+        </ToolToolbar>
 
       <div className="tool-convert__settings">
         <label className="tool-convert__setting">
@@ -146,6 +144,12 @@ export function ForecastTool() {
           </label>
         )}
       </div>
+
+      <ToolActionBar>
+        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+          Projetar
+        </button>
+      </ToolActionBar>
 
       <div className="tool-convert__panes tool-convert__panes--stack">
         <div className="tool-convert__pane">

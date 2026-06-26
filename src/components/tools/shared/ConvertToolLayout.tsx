@@ -3,6 +3,7 @@ import { DataToolError } from '../../../utils/dataError'
 import { DEFAULT_TEXT_IMPORT } from '../../../utils/toolIO'
 import { ImportFileButton } from './ImportFileButton'
 import { OutputActions } from './OutputActions'
+import { ToolToolbar } from './ToolToolbar'
 
 export { useCopyFeedback } from './OutputActions'
 
@@ -20,6 +21,7 @@ interface ConvertToolLayoutProps {
   meta?: string | null
   error?: string | null
   onRun: () => void
+  runLabel?: string
   onSample?: () => void
   onClear?: () => void
   inputPlaceholder?: string
@@ -48,6 +50,7 @@ export function ConvertToolLayout({
   meta,
   error,
   onRun,
+  runLabel = 'Processar',
   onSample,
   onClear,
   inputPlaceholder,
@@ -93,7 +96,13 @@ export function ConvertToolLayout({
 
       {settings && <div className="tool-convert__settings">{settings}</div>}
 
-      <div className="tool-convert__toolbar">
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={onRun}>
+            {runLabel}
+          </button>
+        }
+      >
         {onSample && (
           <button type="button" className="tools-btn tools-btn--ghost" onClick={onSample}>
             Carregar exemplo
@@ -106,10 +115,7 @@ export function ConvertToolLayout({
           </button>
         )}
         {toolbarExtra}
-        <button type="button" className="tools-btn tools-btn--primary" onClick={onRun}>
-          Processar
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__panes">
         <div className="tool-convert__pane">

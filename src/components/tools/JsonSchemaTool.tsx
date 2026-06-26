@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { jsonSchemaSamples, validateJsonSchema } from '../../utils/jsonSchema'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function JsonSchemaTool() {
@@ -19,7 +20,13 @@ export function JsonSchemaTool() {
 
   return (
     <div className="tool-convert">
-      <div className="tool-convert__toolbar">
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Validar
+          </button>
+        }
+      >
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
@@ -45,10 +52,7 @@ export function JsonSchemaTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Validar
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__panes">
         <div className="tool-convert__pane">

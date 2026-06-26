@@ -9,6 +9,7 @@ import {
 import { parseInputTable } from '../../utils/inputTable'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolActionBar, ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 const DEFAULT_FILTER = (): RowFilter => ({
@@ -52,7 +53,7 @@ export function CsvFilterTool() {
 
   return (
     <div className="tool-convert">
-      <div className="tool-convert__toolbar">
+      <ToolToolbar>
         <button type="button" className="tools-btn tools-btn--ghost" onClick={() => setInput(csvFilterSample)}>
           Carregar exemplo
         </button>
@@ -70,10 +71,7 @@ export function CsvFilterTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Filtrar
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__panes tool-convert__panes--stack">
         <div className="tool-convert__pane">
@@ -125,6 +123,12 @@ export function CsvFilterTool() {
           </div>
         </div>
       </div>
+
+      <ToolActionBar>
+        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+          Filtrar
+        </button>
+      </ToolActionBar>
 
       <div className="tool-convert__pane">
         <div className="tool-convert__pane-head">

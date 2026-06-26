@@ -3,6 +3,7 @@ import { csvSortSample, sortCsvRows, type SortDirection, type SortRule } from '.
 import { parseInputTable } from '../../utils/inputTable'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvSortTool() {
@@ -38,7 +39,13 @@ export function CsvSortTool() {
 
   return (
     <div className="tool-convert">
-      <div className="tool-convert__toolbar">
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Ordenar
+          </button>
+        }
+      >
         <button type="button" className="tools-btn tools-btn--ghost" onClick={() => setInput(csvSortSample)}>
           Carregar exemplo
         </button>
@@ -56,10 +63,7 @@ export function CsvSortTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Ordenar
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__panes tool-convert__panes--stack">
         <div className="tool-convert__pane">

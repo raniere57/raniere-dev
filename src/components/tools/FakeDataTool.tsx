@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { generateFakeData, type FakeOutputFormat } from '../../utils/fakeData'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolActionBar } from './shared/ToolToolbar'
 
 export function FakeDataTool() {
   const [format, setFormat] = useState<FakeOutputFormat>('csv')
@@ -36,7 +37,20 @@ export function FakeDataTool() {
         ))}
       </div>
 
-      <div className="tool-convert__toolbar">
+      <div className="tool-convert__settings">
+        <label className="tool-convert__setting">
+          <span>Linhas</span>
+          <input
+            type="number"
+            min={1}
+            max={10000}
+            value={count}
+            onChange={(event) => setCount(Number(event.target.value))}
+          />
+        </label>
+      </div>
+
+      <ToolActionBar>
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
@@ -51,20 +65,7 @@ export function FakeDataTool() {
         <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
           Gerar dados
         </button>
-      </div>
-
-      <div className="tool-convert__settings">
-        <label className="tool-convert__setting">
-          <span>Linhas</span>
-          <input
-            type="number"
-            min={1}
-            max={10000}
-            value={count}
-            onChange={(event) => setCount(Number(event.target.value))}
-          />
-        </label>
-      </div>
+      </ToolActionBar>
 
       <div className="tool-convert__pane">
         <div className="tool-convert__pane-head">

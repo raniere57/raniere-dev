@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { csvColumnsSample, filterCsvColumns, listCsvColumns } from '../../utils/csvColumns'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 function moveItem<T>(items: T[], from: number, to: number): T[] {
@@ -42,7 +43,13 @@ export function CsvColumnsTool() {
 
   return (
     <div className="tool-convert">
-      <div className="tool-convert__toolbar">
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Aplicar ordem
+          </button>
+        }
+      >
         <button type="button" className="tools-btn tools-btn--ghost" onClick={() => setInput(csvColumnsSample)}>
           Carregar exemplo
         </button>
@@ -60,10 +67,7 @@ export function CsvColumnsTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Aplicar ordem
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__panes tool-convert__panes--stack">
         <div className="tool-convert__pane">

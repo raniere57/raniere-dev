@@ -3,6 +3,7 @@ import { csvDedupeSample, dedupeTable } from '../../utils/csvDedupe'
 import { parseInputTable, type InputTableFormat } from '../../utils/inputTable'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvDedupeTool() {
@@ -58,7 +59,13 @@ export function CsvDedupeTool() {
         ))}
       </div>
 
-      <div className="tool-convert__toolbar">
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Remover duplicatas
+          </button>
+        }
+      >
         <button type="button" className="tools-btn tools-btn--ghost" onClick={() => setInput(csvDedupeSample)}>
           Carregar exemplo
         </button>
@@ -76,10 +83,7 @@ export function CsvDedupeTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Remover duplicatas
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__panes tool-convert__panes--stack">
         <div className="tool-convert__pane">

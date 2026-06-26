@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { DataToolError } from '../../utils/dataError'
 import { computeDiff, diffSample, formatDiffLines, type DiffLine } from '../../utils/textDiff'
 import { OutputActions } from './shared/OutputActions'
+import { ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 function DiffMeta({ adds, removes }: { adds: number; removes: number }) {
@@ -72,7 +73,13 @@ export function DiffTool() {
         ))}
       </div>
 
-      <div className="tool-convert__toolbar">
+      <ToolToolbar
+        action={
+          <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+            Comparar
+          </button>
+        }
+      >
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
@@ -98,10 +105,7 @@ export function DiffTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Comparar
-        </button>
-      </div>
+      </ToolToolbar>
 
       <div className="tool-convert__panes">
         <div className="tool-convert__pane">

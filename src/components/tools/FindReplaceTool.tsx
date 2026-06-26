@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { findAndReplace, findReplaceSample, type ReplaceMode } from '../../utils/findReplace'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolActionBar, ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function FindReplaceTool() {
@@ -39,7 +40,7 @@ export function FindReplaceTool() {
         ))}
       </div>
 
-      <div className="tool-convert__toolbar">
+      <ToolToolbar>
         <button
           type="button"
           className="tools-btn tools-btn--ghost"
@@ -66,10 +67,7 @@ export function FindReplaceTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Substituir
-        </button>
-      </div>
+        </ToolToolbar>
 
       <div className="tool-convert__settings">
         <label className="tool-convert__setting tool-convert__setting--wide">
@@ -81,6 +79,12 @@ export function FindReplaceTool() {
           <input type="text" className="tool-convert__setting-input" value={replacement} onChange={(event) => setReplacement(event.target.value)} spellCheck={false} />
         </label>
       </div>
+
+      <ToolActionBar>
+        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+          Substituir
+        </button>
+      </ToolActionBar>
 
       <div className="tool-convert__panes">
         <div className="tool-convert__pane">

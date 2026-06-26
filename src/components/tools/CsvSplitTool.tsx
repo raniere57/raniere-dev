@@ -3,6 +3,7 @@ import { csvSplitSample, splitCsv, type SplitMode } from '../../utils/csvSplit'
 import { parseInputTable } from '../../utils/inputTable'
 import { runDataTool } from './shared/ConvertToolLayout'
 import { OutputActions } from './shared/OutputActions'
+import { ToolActionBar, ToolToolbar } from './shared/ToolToolbar'
 import { ImportFileButton } from './shared/ImportFileButton'
 
 export function CsvSplitTool() {
@@ -52,7 +53,7 @@ export function CsvSplitTool() {
         ))}
       </div>
 
-      <div className="tool-convert__toolbar">
+      <ToolToolbar>
         <button type="button" className="tools-btn tools-btn--ghost" onClick={() => setInput(csvSplitSample)}>
           Carregar exemplo
         </button>
@@ -69,10 +70,7 @@ export function CsvSplitTool() {
         >
           Limpar
         </button>
-        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
-          Dividir
-        </button>
-      </div>
+        </ToolToolbar>
 
       <div className="tool-convert__settings">
         {mode === 'rows' ? (
@@ -93,6 +91,12 @@ export function CsvSplitTool() {
           </label>
         )}
       </div>
+
+      <ToolActionBar>
+        <button type="button" className="tools-btn tools-btn--primary" onClick={run}>
+          Dividir
+        </button>
+      </ToolActionBar>
 
       <div className="tool-convert__panes tool-convert__panes--stack">
         <div className="tool-convert__pane">
