@@ -5,6 +5,7 @@ interface ImportFileButtonProps {
   accept?: string
   label?: string
   onLoad: (text: string, filename: string) => void
+  onBinaryLoad?: (file: File) => void
   onError?: (message: string) => void
 }
 
@@ -12,6 +13,7 @@ export function ImportFileButton({
   accept = DEFAULT_TEXT_IMPORT,
   label = 'Importar arquivo',
   onLoad,
+  onBinaryLoad,
   onError,
 }: ImportFileButtonProps) {
   const inputId = useId()
@@ -21,6 +23,11 @@ export function ImportFileButton({
     const file = event.target.files?.[0]
     event.target.value = ''
     if (!file) return
+
+    if (onBinaryLoad) {
+      onBinaryLoad(file)
+      return
+    }
 
     try {
       const text = await readTextFile(file)

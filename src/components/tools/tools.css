@@ -637,8 +637,8 @@
 }
 
 .tool-convert__settings {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
   gap: 0.75rem;
   margin-bottom: 1rem;
   padding: 0.85rem;
@@ -661,6 +661,100 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
   gap: 0.65rem;
+}
+
+.tool-convert__setting {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.tool-convert__setting--wide {
+  grid-column: 1 / -1;
+}
+
+.tool-convert__setting select,
+.tool-convert__setting input,
+.tool-convert__setting-input {
+  padding: 0.45rem 0.65rem;
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-text);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.tool-convert__hint {
+  margin: 0.75rem 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.tool-profile__wrap {
+  overflow: auto;
+  max-height: 24rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.tool-profile {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.tool-profile th,
+.tool-profile td {
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.tool-profile th {
+  position: sticky;
+  top: 0;
+  background: var(--color-bg-raised);
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.tool-profile__type {
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.tool-profile__type--empty {
+  background: oklch(55% 0.02 255 / 0.15);
+  color: var(--color-text-muted);
+}
+
+.tool-profile__type--integer,
+.tool-profile__type--decimal {
+  background: oklch(60% 0.12 250 / 0.15);
+  color: oklch(72% 0.1 250);
+}
+
+.tool-profile__type--date {
+  background: oklch(70% 0.12 80 / 0.15);
+  color: oklch(75% 0.1 80);
+}
+
+.tool-profile__type--boolean {
+  background: oklch(65% 0.14 300 / 0.15);
+  color: oklch(78% 0.12 300);
 }
 
 .tool-convert__field {
