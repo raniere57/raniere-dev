@@ -277,7 +277,13 @@ export function BrContactTool() {
         <div className="tool-convert__pane">
           <div className="tool-convert__pane-head">
             <span className="tool-convert__label">Resultado</span>
-            {meta && <span className="tool-convert__meta">{meta}</span>}
+            {meta && (
+              <span
+                className={`tool-convert__meta${output.startsWith('✓') ? '' : ' tool-convert__meta--bad'}`}
+              >
+                {meta}
+              </span>
+            )}
           </div>
           {view === 'single' && output ? (
             <pre className={outputClassName}>{output}</pre>

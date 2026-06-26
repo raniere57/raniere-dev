@@ -198,6 +198,56 @@ export function validateContact(raw: string, kind: ContactKind): ContactValidati
   return kind === 'email' ? validateEmail(raw) : validatePhone(raw)
 }
 
+function pushWarning(warnings: string[], message: string) {
+  if (!warnings.includes(message)) warnings.push(message)
+}
+
+/** Tenta extrair e limpar um e-mail malformado (modo correção). */
+function sanitizeEmailCandidate(value: string, warnings: string[]): string {
+  let v = value.toLowerCase()
+
+  const embedded = v.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i)
+  if (embedded && embedded[0].toLowerCase() !== v) {
+    v = embedded[0].toLowerCase()
+    pushWarning(warnings, 'Extraído o trecho reconhecido como e-mail.')
+  }
+
+  const trimmedEdges = v.replace(/^[^a-z0-9._%+-]+/i, '').replace(/[^a-z0-9._%+-]+$/gi, '')
+  if (trimmedEdges !== v) {
+    v = trimmedEdges
+    pushWarning(warnings, 'Caracteres inválidos nas extremidades removidos.')
+  }
+
+  let previous = ''
+  while (previous !== v) {
+    previous = v
+    const stripped = v.replace(/[@.,;\s:<>]+$/g, '')
+    if (stripped !== v) {
+      v = stripped
+      pushWarning(warnings, 'Sufixo inválido removido.')
+    }
+  }
+
+  const atCount = (v.match(/@/g) ?? []).length
+  if (atCount > 1) {
+    const [local, ...rest] = v.split('@')
+    const domain =
+      rest.find((part) => /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(part)) ??
+      rest.join('').replace(/@+/g, '')
+    if (local && domain) {
+      v = `${local}@${domain}`
+      pushWarning(warnings, 'Múltiplos @ — reconstruído como local@domínio.')
+    }
+  }
+
+  if (v.includes('..')) {
+    v = v.replace(/\.{2,}/g, '.')
+    pushWarning(warnings, 'Pontos duplicados removidos.')
+  }
+
+  return v
+}
+
 export function correctEmail(raw: string): ContactCorrection {
   const warnings: string[] = []
   let value = raw.trim()
@@ -208,35 +258,54 @@ export function correctEmail(raw: string): ContactCorrection {
 
   if (/^mailto:/i.test(value)) {
     value = value.replace(/^mailto:/i, '')
-    warnings.push('Prefixo mailto: removido.')
+    pushWarning(warnings, 'Prefixo mailto: removido.')
   }
 
   const bracketMatch = value.match(/<([^>]+@[^>]+)>/)
   if (bracketMatch) {
     value = bracketMatch[1]!.trim()
-    warnings.push('Mantido apenas o e-mail entre <>.')
+    pushWarning(warnings, 'Mantido apenas o e-mail entre <>.')
   }
 
   if (/[,;|]/.test(value)) {
     const first = value.split(/[,;|]/)[0]?.trim() ?? value
     if (first !== value) {
       value = first
-      warnings.push('Separadores detectados — mantido só o primeiro e-mail.')
+      pushWarning(warnings, 'Separadores detectados — mantido só o primeiro e-mail.')
     }
   }
 
   const withoutSpaces = value.replace(/\s+/g, '')
   if (withoutSpaces !== value) {
     value = withoutSpaces
-    warnings.push('Espaços removidos.')
+    pushWarning(warnings, 'Espaços removidos.')
   }
 
-  const normalized = value.toLowerCase()
-  if (normalized !== raw.trim()) {
-    warnings.push('Convertido para minúsculas.')
+  value = sanitizeEmailCandidate(value, warnings)
+  let normalized = value.toLowerCase()
+  if (normalized !== raw.trim().replace(/\s+/g, '')) {
+    pushWarning(warnings, 'E-mail normalizado.')
   }
 
-  const validation = validateEmail(normalized)
+  let validation = validateEmail(normalized)
+
+  if (!validation.valid && normalized.length > 3) {
+    let attempt = normalized
+    for (let i = 0; i < 8 && !validation.valid; i += 1) {
+      const next = sanitizeEmailCandidate(attempt, warnings)
+      if (next !== attempt) {
+        attempt = next
+      } else {
+        const trimmed = attempt.replace(/[^a-z0-9._%+-@]+$/i, '')
+        if (trimmed === attempt) break
+        attempt = trimmed
+        pushWarning(warnings, 'Caracteres finais inválidos removidos.')
+      }
+      validation = validateEmail(attempt)
+      normalized = attempt
+    }
+  }
+
   return {
     ...validation,
     warnings,
@@ -254,22 +323,26 @@ export function correctPhone(raw: string): ContactCorrection {
 
   if (digits.startsWith('55') && digits.length >= 12) {
     digits = digits.slice(2)
-    warnings.push('Código do país (+55) removido.')
+    pushWarning(warnings, 'Código do país (+55) removido.')
   }
 
   while (digits.startsWith('0') && digits.length > 11) {
     digits = digits.slice(1)
-    warnings.push('Zero(s) à esquerda removido(s).')
+    pushWarning(warnings, 'Zero(s) à esquerda removido(s).')
   }
 
   if (digits.length > 11) {
     const extra = digits.length - 11
     digits = digits.slice(-11)
-    warnings.push(`${extra} dígito(s) extra(s) removido(s) — confira se o número ficou correto.`)
+    pushWarning(warnings, `${extra} dígito(s) extra(s) removido(s) — confira se o número ficou correto.`)
+  } else if (digits.length === 10 && /^[6-9]/.test(digits.slice(2))) {
+    // Celular antigo sem o 9 — tentativa conservadora
+    digits = `${digits.slice(0, 2)}9${digits.slice(2)}`
+    pushWarning(warnings, 'Nono dígito (9) inserido — padrão de celular BR.')
   } else if (digits.length === 9) {
-    warnings.push('Nove dígitos sem DDD — não foi possível completar automaticamente.')
+    pushWarning(warnings, 'Nove dígitos sem DDD — não foi possível completar automaticamente.')
   } else if (digits.length === 8) {
-    warnings.push('Oito dígitos sem DDD — não foi possível completar automaticamente.')
+    pushWarning(warnings, 'Oito dígitos sem DDD — não foi possível completar automaticamente.')
   }
 
   const validation = validatePhone(digits)
@@ -286,12 +359,15 @@ export function correctContact(raw: string, kind: ContactKind): ContactCorrectio
   return kind === 'email' ? correctEmail(raw) : correctPhone(raw)
 }
 
-function formatSingleResult(result: ContactValidation, warnings?: string[]): string {
-  const lines = [
-    result.valid ? '✓ Válido' : '✗ Inválido',
-    `Tipo: ${result.kind === 'email' ? 'E-mail' : 'Telefone'}`,
-    `Entrada: ${result.raw || '—'}`,
-  ]
+function formatSingleResult(result: ContactValidation, warnings?: string[], corrected = false): string {
+  const status = result.valid
+    ? corrected
+      ? '✓ Corrigido e válido'
+      : '✓ Válido'
+    : corrected
+      ? '✗ Ainda inválido após correção'
+      : '✗ Inválido'
+  const lines = [status, `Tipo: ${result.kind === 'email' ? 'E-mail' : 'Telefone'}`, `Entrada: ${result.raw || '—'}`]
 
   if (result.kind === 'phone') lines.push(`Somente dígitos: ${result.normalized || '—'}`)
   else lines.push(`Normalizado: ${result.normalized || '—'}`)
@@ -333,7 +409,7 @@ export function validateSingleContact(raw: string, kind: ContactKind): DataToolR
 export function correctSingleContact(raw: string, kind: ContactKind): DataToolResult {
   const result = correctContact(raw, kind)
   return {
-    output: formatSingleResult(result, result.warnings),
+    output: formatSingleResult(result, result.warnings, true),
     meta: result.valid
       ? result.warnings.length
         ? 'Corrigido · válido'
@@ -437,7 +513,7 @@ export function correctContactCsv(input: string, column: string, kind: ContactKi
 
 export const brContactSamples = {
   email: 'ana.silva@example.com',
-  emailMessy: '  Ana.Silva@Example.COM  ',
+  emailMessy: 'ana.silva@example.com@',
   phone: '(86) 99999-1234',
   phoneMessy: '+55 (86) 99999-1234',
   batchEmail: ['ana@example.com', 'invalido', 'contato@empresa.com.br'].join('\n'),
