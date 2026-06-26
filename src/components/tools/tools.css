@@ -627,6 +627,40 @@
   background: var(--color-accent);
 }
 
+.tool-convert__modes--secondary {
+  margin-top: -0.5rem;
+}
+
+.tool-convert__mode--compact {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+}
+
+.tool-cpfcnpj__input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.tool-cpfcnpj__preview {
+  margin: 0.65rem 0 0;
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+}
+
+.tool-cpfcnpj__preview.is-valid {
+  color: oklch(52% 0.14 145);
+}
+
+.tool-cpfcnpj__preview.is-invalid {
+  color: oklch(62% 0.18 25);
+}
+
 .tool-convert__toolbar,
 .tool-json-csv__toolbar {
   display: flex;

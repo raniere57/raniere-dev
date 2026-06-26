@@ -328,7 +328,7 @@ export const tools: ToolDefinition[] = [
     name: 'Validador CPF / CNPJ',
     description: 'Valida dígitos verificadores e formata documentos brasileiros.',
     keywords: ['cpf', 'cnpj', 'documento', 'brasil'],
-    status: 'soon',
+    status: 'available',
     mark: '✓',
   },
   {

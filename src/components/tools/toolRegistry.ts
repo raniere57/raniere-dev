@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import { Base64Tool } from './Base64Tool'
+import { CpfCnpjTool } from './CpfCnpjTool'
 import { CsvColumnsTool } from './CsvColumnsTool'
 import { CsvDedupeTool } from './CsvDedupeTool'
 import { CsvDelimiterTool } from './CsvDelimiterTool'
@@ -64,6 +65,7 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   'csv-split-column': CsvSplitColumnTool,
   'json-schema': JsonSchemaTool,
   'series-forecast': ForecastTool,
+  'cpf-cnpj': CpfCnpjTool,
 }
 
 export function isImplementedTool(toolId: string): boolean {
