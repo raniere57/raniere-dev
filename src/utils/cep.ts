@@ -21,6 +21,12 @@ export interface CepAddress {
   found: boolean
 }
 
+export interface CepLocation {
+  lat: number
+  lon: number
+  label: string
+}
+
 interface ViaCepResponse {
   cep?: string
   logradouro?: string
@@ -35,6 +41,8 @@ interface ViaCepResponse {
 const REPEATED_DIGITS = /^(\d)\1+$/
 const VIACEP_TIMEOUT_MS = 12_000
 const VIACEP_BATCH_DELAY_MS = 300
+const NOMINATIM_TIMEOUT_MS = 10_000
+const NOMINATIM_USER_AGENT = 'raniere.dev/1.0 (CEP validator; https://raniere.dev)'
 
 export function stripCepDigits(value: string): string {
   return value.replace(/\D/g, '')
@@ -154,6 +162,100 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => window.setTimeout(resolve, ms))
 }
 
+export function formatAddressLine(address: CepAddress): string {
+  return [address.street, address.district, `${address.city} — ${address.state}`]
+    .filter(Boolean)
+    .join(', ')
+}
+
+function buildGeocodeQueries(address: CepAddress): string[] {
+  const queries: string[] = []
+
+  if (address.street) {
+    queries.push(formatAddressLine(address))
+  }
+
+  queries.push(`${address.cep}, ${address.city}, ${address.state}, Brasil`)
+  queries.push(`${address.city}, ${address.state}, Brasil`)
+
+  return [...new Set(queries.filter(Boolean))]
+}
+
+interface NominatimResult {
+  lat?: string
+  lon?: string
+  display_name?: string
+}
+
+async function searchNominatim(query: string): Promise<CepLocation | null> {
+  const controller = new AbortController()
+  const timeout = window.setTimeout(() => controller.abort(), NOMINATIM_TIMEOUT_MS)
+
+  try {
+    const url = new URL('https://nominatim.openstreetmap.org/search')
+    url.searchParams.set('q', query)
+    url.searchParams.set('format', 'json')
+    url.searchParams.set('limit', '1')
+    url.searchParams.set('countrycodes', 'br')
+
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        Accept: 'application/json',
+        'User-Agent': NOMINATIM_USER_AGENT,
+      },
+    })
+
+    if (!response.ok) return null
+
+    const results = (await response.json()) as NominatimResult[]
+    const hit = results[0]
+    if (!hit?.lat || !hit.lon) return null
+
+    const lat = Number.parseFloat(hit.lat)
+    const lon = Number.parseFloat(hit.lon)
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null
+
+    return {
+      lat,
+      lon,
+      label: hit.display_name ?? query,
+    }
+  } catch {
+    return null
+  } finally {
+    window.clearTimeout(timeout)
+  }
+}
+
+export async function geocodeCepAddress(address: CepAddress): Promise<CepLocation | null> {
+  if (!address.found) return null
+
+  for (const query of buildGeocodeQueries(address)) {
+    const location = await searchNominatim(query)
+    if (location) return location
+  }
+
+  return null
+}
+
+export function buildOsmEmbedUrl(location: CepLocation): string {
+  const delta = 0.012
+  const bbox = `${location.lon - delta},${location.lat - delta},${location.lon + delta},${location.lat + delta}`
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${location.lat},${location.lon}`
+}
+
+export function buildGoogleMapsUrl(location: CepLocation): string {
+  const url = new URL('https://www.google.com/maps/search/')
+  url.searchParams.set('api', '1')
+  url.searchParams.set('query', `${location.lat},${location.lon}`)
+  return url.toString()
+}
+
+export function buildOpenStreetMapUrl(location: CepLocation): string {
+  return `https://www.openstreetmap.org/?mlat=${location.lat}&mlon=${location.lon}#map=16/${location.lat}/${location.lon}`
+}
+
 export function formatAddressBlock(address: CepAddress): string {
   if (!address.found) {
     return 'CEP não encontrado na base dos Correios.'
@@ -209,7 +311,9 @@ function summarizeResults(results: CepValidation[]): string {
   return `${valid} válido${valid === 1 ? '' : 's'} · ${invalid} inválido${invalid === 1 ? '' : 's'}`
 }
 
-export async function validateSingleCep(raw: string): Promise<DataToolResult & { address?: CepAddress }> {
+export async function validateSingleCep(
+  raw: string,
+): Promise<DataToolResult & { address?: CepAddress; location?: CepLocation | null }> {
   const validation = validateCep(raw)
   if (!validation.valid) {
     return {
@@ -219,10 +323,12 @@ export async function validateSingleCep(raw: string): Promise<DataToolResult & {
   }
 
   const address = await fetchCepAddress(validation.digits)
+  const location = address.found ? await geocodeCepAddress(address) : null
   return {
     output: formatSingleResult(validation, address),
     meta: address.found ? `${address.city} — ${address.state}` : 'CEP não encontrado',
     address,
+    location,
   }
 }
 
@@ -324,4 +430,4 @@ export const cepSamples = {
 }
 
 export const CEP_LOOKUP_HINT =
-  'Consulta de endereço via ViaCEP — o CEP é enviado à API pública dos Correios.'
+  'Consulta de endereço via ViaCEP — o CEP é enviado à API pública dos Correios. Mapa via OpenStreetMap (geocodificação aproximada).'

@@ -2,6 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   CEP_LOOKUP_HINT,
   type CepAddress,
+  type CepLocation,
+  buildGoogleMapsUrl,
+  buildOpenStreetMapUrl,
+  buildOsmEmbedUrl,
   cepSamples,
   validateCep,
   validateCepBatch,
@@ -25,6 +29,7 @@ export function CepTool() {
   const [meta, setMeta] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [address, setAddress] = useState<CepAddress | null>(null)
+  const [location, setLocation] = useState<CepLocation | null>(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -48,12 +53,14 @@ export function CepTool() {
     setLoading(true)
     setError(null)
     setAddress(null)
+    setLocation(null)
     try {
       if (view === 'single') {
         const result = await validateSingleCep(input)
         setOutput(result.output)
         setMeta(result.meta ?? null)
         setAddress(result.address ?? null)
+        setLocation(result.location ?? null)
       } else if (view === 'batch') {
         const result = await validateCepBatch(input)
         setOutput(result.output)
@@ -67,6 +74,7 @@ export function CepTool() {
       setOutput('')
       setMeta(null)
       setAddress(null)
+      setLocation(null)
       setError(cause instanceof DataToolError ? cause.message : 'Não foi possível consultar.')
     } finally {
       setLoading(false)
@@ -80,6 +88,7 @@ export function CepTool() {
     setOutput('')
     setMeta(null)
     setAddress(null)
+    setLocation(null)
     setError(null)
   }
 
@@ -109,6 +118,7 @@ export function CepTool() {
               setOutput('')
               setMeta(null)
               setAddress(null)
+              setLocation(null)
               setError(null)
             }}
           >
@@ -156,6 +166,7 @@ export function CepTool() {
             setOutput('')
             setMeta(null)
             setAddress(null)
+            setLocation(null)
             setError(null)
           }}
           disabled={loading}
@@ -215,14 +226,43 @@ export function CepTool() {
           </div>
 
           {view === 'single' && address?.found && (
-            <div className="tool-cep__address">
-              <p className="tool-cep__address-line">{address.street || 'Logradouro não informado'}</p>
-              <p className="tool-cep__address-line">
-                {[address.district, `${address.city} — ${address.state}`].filter(Boolean).join(' · ')}
-              </p>
-              {address.complement && <p className="tool-cep__address-meta">{address.complement}</p>}
-              <p className="tool-cep__address-meta">CEP {address.cep}</p>
-            </div>
+            <>
+              <div className="tool-cep__address">
+                <p className="tool-cep__address-line">{address.street || 'Logradouro não informado'}</p>
+                <p className="tool-cep__address-line">
+                  {[address.district, `${address.city} — ${address.state}`].filter(Boolean).join(' · ')}
+                </p>
+                {address.complement && <p className="tool-cep__address-meta">{address.complement}</p>}
+                <p className="tool-cep__address-meta">CEP {address.cep}</p>
+              </div>
+
+              {location ? (
+                <div className="tool-cep__map">
+                  <iframe
+                    title={`Mapa — ${address.street || address.cep}`}
+                    className="tool-cep__map-frame"
+                    src={buildOsmEmbedUrl(location)}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                  <div className="tool-cep__map-links">
+                    <a href={buildGoogleMapsUrl(location)} target="_blank" rel="noopener noreferrer">
+                      Abrir no Google Maps
+                    </a>
+                    <a href={buildOpenStreetMapUrl(location)} target="_blank" rel="noopener noreferrer">
+                      Abrir no OpenStreetMap
+                    </a>
+                  </div>
+                  <p className="tool-cep__map-note">Localização aproximada com base no endereço retornado pelo ViaCEP.</p>
+                </div>
+              ) : (
+                output && (
+                  <p className="tool-cep__map-unavailable">
+                    Mapa indisponível — não foi possível geocodificar este endereço.
+                  </p>
+                )
+              )}
+            </>
           )}
 
           {view === 'single' && address && !address.found && output && (
