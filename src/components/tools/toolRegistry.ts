@@ -3,9 +3,14 @@ import { Base64Tool } from './Base64Tool'
 import { CsvColumnsTool } from './CsvColumnsTool'
 import { CsvDedupeTool } from './CsvDedupeTool'
 import { CsvDelimiterTool } from './CsvDelimiterTool'
+import { CsvFilterTool } from './CsvFilterTool'
+import { CsvGroupTool } from './CsvGroupTool'
 import { CsvJoinTool } from './CsvJoinTool'
 import { CsvProcvTool } from './CsvProcvTool'
+import { CsvSortTool } from './CsvSortTool'
+import { CsvSplitColumnTool } from './CsvSplitColumnTool'
 import { CsvSplitTool } from './CsvSplitTool'
+import { CsvStackTool } from './CsvStackTool'
 import { CsvTransposeTool } from './CsvTransposeTool'
 import { DataProfileTool } from './DataProfileTool'
 import { DiffTool } from './DiffTool'
@@ -15,6 +20,7 @@ import { JsonCsvTool } from './JsonCsvTool'
 import { JsonFlattenTool } from './JsonFlattenTool'
 import { JsonFormatTool } from './JsonFormatTool'
 import { JsonPathTool } from './JsonPathTool'
+import { JsonSchemaTool } from './JsonSchemaTool'
 import { JsonYamlTool } from './JsonYamlTool'
 import { MarkdownCsvTool } from './MarkdownCsvTool'
 import { NdjsonTool } from './NdjsonTool'
@@ -50,6 +56,12 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   'find-replace': FindReplaceTool,
   'xml-json': XmlJsonTool,
   'csv-split': CsvSplitTool,
+  'csv-filter': CsvFilterTool,
+  'csv-sort': CsvSortTool,
+  'csv-group': CsvGroupTool,
+  'csv-stack': CsvStackTool,
+  'csv-split-column': CsvSplitColumnTool,
+  'json-schema': JsonSchemaTool,
 }
 
 export function isImplementedTool(toolId: string): boolean {
