@@ -13,6 +13,7 @@ import {
   type Project,
 } from '../../data/projects'
 import { useReveal } from '../../hooks/useReveal'
+import { useCollapsibleGroups } from '../../hooks/useCollapsibleGroups'
 import './projects.css'
 
 function ProjectLinks({ project }: { project: Project }) {
@@ -143,7 +144,13 @@ export function Projects() {
   const [activeProjectId, setActiveProjectId] = useState(defaultProjectId)
 
   const activeProject = getProjectById(activeProjectId) ?? getProjectById(defaultProjectId)!
-  const showGroupedList = activeGroup === 'all' && !searchQuery.trim()
+  const isSearching = searchQuery.trim().length > 0
+  const showGroupedList = activeGroup === 'all'
+  const defaultProject = getProjectById(defaultProjectId)
+  const { toggle: toggleGroup, expand: expandGroup, isExpanded: isGroupExpanded } =
+    useCollapsibleGroups(
+      defaultProject ? getProjectGroup(defaultProject.category) : undefined,
+    )
 
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
@@ -187,6 +194,11 @@ export function Projects() {
       })
     }
   }, [])
+
+  useEffect(() => {
+    const project = getProjectById(activeProjectId)
+    if (project) expandGroup(getProjectGroup(project.category))
+  }, [activeProjectId, expandGroup])
 
   useEffect(() => {
     const activeItem = listRef.current?.querySelector<HTMLElement>('.projects-sidebar__item.is-active')
@@ -332,12 +344,41 @@ export function Projects() {
                   )
                   if (items.length === 0) return null
 
+                  const open = isGroupExpanded(group, isSearching)
+
                   return (
                     <div key={group} className="projects-sidebar__group">
-                      <p className="projects-sidebar__group-label">
-                        {getProjectGroupLabel(group)}
-                      </p>
-                      <ul className="projects-sidebar__items">{items.map(renderSidebarItem)}</ul>
+                      <button
+                        type="button"
+                        className={`projects-sidebar__group-toggle${open ? ' is-expanded' : ''}`}
+                        onClick={() => toggleGroup(group)}
+                        aria-expanded={open}
+                        disabled={isSearching}
+                      >
+                        <svg
+                          className="projects-sidebar__group-chevron"
+                          viewBox="0 0 24 24"
+                          width="12"
+                          height="12"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M9 6l6 6-6 6"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span className="projects-sidebar__group-label">
+                          {getProjectGroupLabel(group)}
+                        </span>
+                        <span className="projects-sidebar__count">{items.length}</span>
+                      </button>
+                      {open && (
+                        <ul className="projects-sidebar__items">{items.map(renderSidebarItem)}</ul>
+                      )}
                     </div>
                   )
                 })

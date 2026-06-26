@@ -10,6 +10,7 @@ import {
   type ToolDefinition,
 } from '../../data/tools'
 import { useReveal } from '../../hooks/useReveal'
+import { useCollapsibleGroups } from '../../hooks/useCollapsibleGroups'
 import { getToolComponent, isImplementedTool } from './toolRegistry'
 import './tools.css'
 
@@ -135,7 +136,10 @@ export function Tools() {
   const [activeToolId, setActiveToolId] = useState(defaultToolId)
 
   const activeTool = getToolById(activeToolId) ?? getToolById(defaultToolId)!
-  const showGroupedList = activeCategory === 'all' && !searchQuery.trim()
+  const isSearching = searchQuery.trim().length > 0
+  const showGroupedList = activeCategory === 'all'
+  const { toggle: toggleGroup, expand: expandGroup, isExpanded: isGroupExpanded } =
+    useCollapsibleGroups<ToolCategoryId>(getToolById(defaultToolId)?.category)
 
   const filteredTools = useMemo(() => {
     return tools.filter((tool) => {
@@ -182,6 +186,11 @@ export function Tools() {
       })
     }
   }, [])
+
+  useEffect(() => {
+    const tool = getToolById(activeToolId)
+    if (tool) expandGroup(tool.category)
+  }, [activeToolId, expandGroup])
 
   useEffect(() => {
     const activeItem = listRef.current?.querySelector<HTMLElement>('.tools-sidebar__item.is-active')
@@ -342,12 +351,41 @@ export function Tools() {
                   const items = filteredTools.filter((tool) => tool.category === category.id)
                   if (items.length === 0) return null
 
+                  const open = isGroupExpanded(category.id, isSearching)
+
                   return (
                     <div key={category.id} className="tools-sidebar__group">
-                      <p className="tools-sidebar__group-label">
-                        {getToolCategoryShortLabel(category.id)}
-                      </p>
-                      <ul className="tools-sidebar__items">{items.map(renderSidebarItem)}</ul>
+                      <button
+                        type="button"
+                        className={`tools-sidebar__group-toggle${open ? ' is-expanded' : ''}`}
+                        onClick={() => toggleGroup(category.id)}
+                        aria-expanded={open}
+                        disabled={isSearching}
+                      >
+                        <svg
+                          className="tools-sidebar__group-chevron"
+                          viewBox="0 0 24 24"
+                          width="12"
+                          height="12"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="M9 6l6 6-6 6"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span className="tools-sidebar__group-label">
+                          {getToolCategoryShortLabel(category.id)}
+                        </span>
+                        <span className="tools-sidebar__count">{items.length}</span>
+                      </button>
+                      {open && (
+                        <ul className="tools-sidebar__items">{items.map(renderSidebarItem)}</ul>
+                      )}
                     </div>
                   )
                 })
