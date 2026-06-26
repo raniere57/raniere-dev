@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import {
   defaultToolId,
   getToolById,
@@ -10,7 +10,7 @@ import {
   type ToolDefinition,
 } from '../../data/tools'
 import { useReveal } from '../../hooks/useReveal'
-import { isImplementedTool, TOOL_LOADERS } from './toolRegistry'
+import { getEagerTool, getLazyTool, isImplementedTool } from './toolRegistry'
 import './tools.css'
 
 function normalizeToolId(raw: string | null): string {
@@ -18,13 +18,12 @@ function normalizeToolId(raw: string | null): string {
   return defaultToolId
 }
 
-const LAZY_TOOLS = Object.fromEntries(
-  Object.entries(TOOL_LOADERS).map(([id, loader]) => [id, lazy(loader)]),
-) as Record<string, ReturnType<typeof lazy>>
-
 function LazyToolPanel({ toolId }: { toolId: string }) {
-  const Component = LAZY_TOOLS[toolId]
-  if (!Component) {
+  const EagerTool = getEagerTool(toolId)
+  if (EagerTool) return <EagerTool />
+
+  const LazyTool = getLazyTool(toolId)
+  if (!LazyTool) {
     return (
       <div className="tool-detail__soon">
         <p>Esta ferramenta ainda não está disponível.</p>
@@ -34,7 +33,7 @@ function LazyToolPanel({ toolId }: { toolId: string }) {
 
   return (
     <Suspense fallback={<div className="tool-detail__loading">Carregando ferramenta…</div>}>
-      <Component />
+      <LazyTool />
     </Suspense>
   )
 }

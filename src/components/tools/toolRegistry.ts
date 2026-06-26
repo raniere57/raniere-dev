@@ -1,27 +1,48 @@
 import type { ComponentType } from 'react'
+import { lazyWithRetry } from '../../utils/lazyWithRetry'
+import { CsvColumnsTool } from './CsvColumnsTool'
+import { CsvDelimiterTool } from './CsvDelimiterTool'
+import { DiffTool } from './DiffTool'
+import { JsonCsvTool } from './JsonCsvTool'
+import { JsonFlattenTool } from './JsonFlattenTool'
+import { JsonFormatTool } from './JsonFormatTool'
+import { MarkdownCsvTool } from './MarkdownCsvTool'
+import { NdjsonTool } from './NdjsonTool'
+import { SqlInsertTool } from './SqlInsertTool'
+import { TablePreviewTool } from './TablePreviewTool'
 
-type ToolModule = { default: ComponentType }
-
-export const TOOL_LOADERS: Record<string, () => Promise<ToolModule>> = {
-  'json-csv': () => import('./JsonCsvTool').then((module) => ({ default: module.JsonCsvTool })),
-  'json-format': () => import('./JsonFormatTool').then((module) => ({ default: module.JsonFormatTool })),
-  'table-preview': () =>
-    import('./TablePreviewTool').then((module) => ({ default: module.TablePreviewTool })),
-  'csv-delimiter': () =>
-    import('./CsvDelimiterTool').then((module) => ({ default: module.CsvDelimiterTool })),
-  'ndjson-json': () => import('./NdjsonTool').then((module) => ({ default: module.NdjsonTool })),
-  'xlsx-convert': () => import('./XlsxTool').then((module) => ({ default: module.XlsxTool })),
-  'json-yaml': () => import('./JsonYamlTool').then((module) => ({ default: module.JsonYamlTool })),
-  'json-flatten': () =>
-    import('./JsonFlattenTool').then((module) => ({ default: module.JsonFlattenTool })),
-  'sql-insert': () => import('./SqlInsertTool').then((module) => ({ default: module.SqlInsertTool })),
-  'markdown-csv': () =>
-    import('./MarkdownCsvTool').then((module) => ({ default: module.MarkdownCsvTool })),
-  'csv-columns': () =>
-    import('./CsvColumnsTool').then((module) => ({ default: module.CsvColumnsTool })),
-  'json-diff': () => import('./DiffTool').then((module) => ({ default: module.DiffTool })),
+/** Ferramentas leves — importadas no bundle principal (evita 404 de chunk após deploy). */
+export const EAGER_TOOLS: Record<string, ComponentType> = {
+  'json-csv': JsonCsvTool,
+  'json-format': JsonFormatTool,
+  'table-preview': TablePreviewTool,
+  'csv-delimiter': CsvDelimiterTool,
+  'ndjson-json': NdjsonTool,
+  'json-flatten': JsonFlattenTool,
+  'sql-insert': SqlInsertTool,
+  'markdown-csv': MarkdownCsvTool,
+  'csv-columns': CsvColumnsTool,
+  'json-diff': DiffTool,
 }
 
+/** Ferramentas pesadas — lazy load com retry automático se o chunk estiver desatualizado. */
+export const LAZY_TOOLS = {
+  'json-yaml': lazyWithRetry(() =>
+    import('./JsonYamlTool').then((module) => ({ default: module.JsonYamlTool })),
+  ),
+  'xlsx-convert': lazyWithRetry(() =>
+    import('./XlsxTool').then((module) => ({ default: module.XlsxTool })),
+  ),
+} as const
+
 export function isImplementedTool(toolId: string): boolean {
-  return toolId in TOOL_LOADERS
+  return toolId in EAGER_TOOLS || toolId in LAZY_TOOLS
+}
+
+export function getEagerTool(toolId: string): ComponentType | undefined {
+  return EAGER_TOOLS[toolId]
+}
+
+export function getLazyTool(toolId: string) {
+  return LAZY_TOOLS[toolId as keyof typeof LAZY_TOOLS]
 }
