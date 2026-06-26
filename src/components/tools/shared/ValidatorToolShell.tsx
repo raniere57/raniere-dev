@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { DataToolError, type DataToolResult } from '../../../utils/dataError'
+import { type DataToolResult } from '../../../utils/dataError'
 import { parseInputTable } from '../../../utils/inputTable'
 import { runDataTool } from './ConvertToolLayout'
 import { OutputActions } from './OutputActions'
