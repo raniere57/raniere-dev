@@ -74,7 +74,7 @@ export function Contact() {
     >
       <div className="container">
         <div className="contact__panel reveal">
-          <p className="section-label">04 / Contato</p>
+          <p className="section-label">05 / Contato</p>
           <h2 id="contact-heading" className="contact__title">
             Tem um processo manual, um dado preso ou dois sistemas que não conversam?
           </h2>

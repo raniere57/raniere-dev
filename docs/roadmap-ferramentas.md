@@ -12,7 +12,7 @@ Tudo roda no browser; zero API externa. Encaixa na seção **Ferramentas** (`#fe
 
 | # | Ferramenta | Descrição | Status |
 |---|------------|-----------|--------|
-| 4.1 | **JSON ↔ CSV** | Colar JSON → tabela/CSV; colar CSV → JSON. Download do resultado. | pendente |
+| 4.1 | **JSON ↔ CSV** | Colar JSON → tabela/CSV; colar CSV → JSON. Download do resultado. | **concluído** |
 | 4.2 | **Validador CPF/CNPJ** | Input → válido/inválido, formatação, dígitos verificadores. | pendente |
 | 4.3 | **Testador de regex** | Pattern + flags + texto de teste → matches destacados. | pendente |
 | 4.4 | **Próximas execuções cron** | Expressão cron + timezone → próximas N datas legíveis. | pendente |
@@ -105,3 +105,4 @@ Decisão atual: **Opção A** para 4.1–4.2; reavaliar `/tools/` se passar de ~
 | Data | Nota |
 |------|------|
 | 2026-06-22 | Roadmap criado; fase 1 (item 4) priorizada. |
+| 2026-06-19 | 4.1 JSON ↔ CSV — hub `#ferramentas` com busca, categorias e deep link `?tool=json-csv`. |

@@ -4,6 +4,7 @@ import { Ticker } from './components/ticker/Ticker'
 import { Services } from './components/services/Services'
 import { Projects } from './components/projects/Projects'
 import { About } from './components/about/About'
+import { Tools } from './components/tools/Tools'
 import { Contact } from './components/contact/Contact'
 import { Footer } from './components/footer/Footer'
 import { useSmoothAnchors } from './hooks/useSmoothAnchors'
@@ -24,6 +25,7 @@ export function App() {
         <Services />
         <Projects />
         <About />
+        <Tools />
         <Contact />
       </main>
       <Footer />
