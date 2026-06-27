@@ -3,10 +3,14 @@ import { Base64Tool } from './Base64Tool'
 import { BankAccountTool } from './BankAccountTool'
 import { BrContactTool } from './BrContactTool'
 import { CepTool } from './CepTool'
+import { CertidaoTool } from './CertidaoTool'
+import { CnhTool } from './CnhTool'
+import { CnsTool } from './CnsTool'
 import { CpfCnpjTool } from './CpfCnpjTool'
 import { CreditCardTool } from './CreditCardTool'
 import { PisTool } from './PisTool'
 import { PixTool } from './PixTool'
+import { PlateTool } from './PlateTool'
 import { RenavamTool } from './RenavamTool'
 import { TituloEleitorTool } from './TituloEleitorTool'
 import { CsvColumnsTool } from './CsvColumnsTool'
@@ -82,6 +86,10 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   'bank-account': BankAccountTool,
   'renavam': RenavamTool,
   'titulo-eleitor': TituloEleitorTool,
+  'cnh': CnhTool,
+  'cns': CnsTool,
+  'certidao': CertidaoTool,
+  'plate': PlateTool,
 }
 
 export function isImplementedTool(toolId: string): boolean {
