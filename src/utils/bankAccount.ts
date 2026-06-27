@@ -35,7 +35,33 @@ export const BANK_NAMES: Record<string, string> = {
   '077': 'Inter',
 }
 
-const SUPPORTED_BANKS = new Set(['001', '033', '104', '237', '341'])
+const SUPPORTED_BANKS = new Set(['001', '033', '077', '104', '237', '260', '341', '748', '756'])
+
+const NU_BANK_MULTIPLICATION = [
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  [1, 2, 3, 4, 0, 6, 7, 8, 9, 5],
+  [2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
+  [3, 4, 0, 1, 2, 8, 9, 5, 6, 7],
+  [4, 0, 1, 2, 3, 9, 5, 6, 7, 8],
+  [5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
+  [6, 5, 9, 8, 7, 1, 0, 4, 3, 2],
+  [7, 6, 5, 9, 8, 2, 1, 0, 4, 3],
+  [8, 7, 6, 5, 9, 3, 2, 1, 0, 4],
+  [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+] as const
+
+const NU_BANK_PERMUTATION = [
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  [1, 5, 7, 6, 2, 8, 3, 0, 9, 4],
+  [5, 8, 0, 3, 7, 9, 6, 1, 4, 2],
+  [8, 9, 1, 6, 0, 4, 3, 5, 2, 7],
+  [9, 4, 5, 3, 1, 2, 6, 8, 7, 0],
+  [4, 2, 8, 6, 5, 7, 3, 9, 0, 1],
+  [2, 7, 9, 3, 8, 0, 6, 4, 1, 5],
+  [7, 0, 4, 6, 9, 1, 3, 2, 5, 8],
+] as const
+
+const NU_BANK_INVERSE = [0, 4, 3, 2, 1, 5, 6, 7, 8, 9] as const
 
 export function getBankName(code: string): string {
   return BANK_NAMES[code] ?? `Banco ${code}`
@@ -92,6 +118,33 @@ function mod11Digit(sum: number, restRules: { zero: string; one: string }): stri
   if (rest === 0) return restRules.zero
   if (rest === 1) return restRules.one
   return String(11 - rest)
+}
+
+function mod11Factor2to9(account: string, restRule: 'zero' | 'one'): string {
+  const weights = [2, 3, 4, 5, 6, 7, 8, 9]
+  let sum = 0
+  for (let index = account.length - 1, weightIndex = 0; index >= 0; index -= 1, weightIndex += 1) {
+    sum += Number(account[index]) * weights[weightIndex % weights.length]!
+  }
+  const rest = sum % 11
+  const digit = 11 - rest
+  if (restRule === 'zero') {
+    if (rest === 0 || rest === 1) return '0'
+    return String(digit)
+  }
+  if (digit > 9) return '1'
+  return String(digit)
+}
+
+function validateNubank(input: BankAccountInput): string {
+  const account = input.accountBody.replace(/\D/g, '').padStart(8, '0')
+  let checksum = 0
+  for (let index = 0; index < account.length; index += 1) {
+    const digit = Number(account[account.length - index - 1])
+    checksum =
+      NU_BANK_MULTIPLICATION[checksum]![NU_BANK_PERMUTATION[(index + 1) % 8]![digit]!]!
+  }
+  return String(NU_BANK_INVERSE[checksum]!)
 }
 
 function validateBB(input: BankAccountInput): string {
@@ -151,6 +204,26 @@ function validateSantander(input: BankAccountInput): string {
   return String((10 - rest) % 10)
 }
 
+function validateSicoob(input: BankAccountInput): string {
+  const account = input.accountBody.replace(/\D/g, '').padStart(8, '0')
+  return mod11Factor2to9(account, 'zero')
+}
+
+function validateSicredi(input: BankAccountInput): string {
+  const account = input.accountBody.replace(/\D/g, '').padStart(5, '0')
+  return mod11Factor2to9(account, 'zero')
+}
+
+function validateInter(input: BankAccountInput): string {
+  const account = input.accountBody.replace(/\D/g, '').padStart(7, '0')
+  let sum = 0
+  for (let index = 0; index < account.length; index += 1) {
+    sum += Number(account[index]) * (8 - index)
+  }
+  const result = 11 - (sum % 11)
+  return result > 9 ? '0' : String(result)
+}
+
 function calculateExpectedDigit(input: BankAccountInput): string | null {
   switch (input.bankCode) {
     case '001':
@@ -163,6 +236,14 @@ function calculateExpectedDigit(input: BankAccountInput): string | null {
       return validateCaixa(input)
     case '033':
       return validateSantander(input)
+    case '756':
+      return validateSicoob(input)
+    case '748':
+      return validateSicredi(input)
+    case '260':
+      return validateNubank(input)
+    case '077':
+      return validateInter(input)
     default:
       return null
   }
@@ -364,12 +445,20 @@ export function validateBankAccountCsv(input: string, column: string): DataToolR
 }
 
 export const bankAccountSamples = {
-  single: { bank: '001', agency: '1234', account: '56793-0', operation: '' },
-  batch: ['001;1234;56793-0', '341;1234;12345-6', '104;1234;001;12345678-9', '237;1234;1234567-0'].join('\n'),
+  single: { bank: '260', agency: '0001', account: '12345678-9', operation: '' },
+  batch: [
+    '001;1234;56793-0',
+    '260;0001;12345678-9',
+    '077;0001;1234567-0',
+    '756;3010;12345678-9',
+    '748;1234;12345-5',
+  ].join('\n'),
   csv: [
     'nome,conta',
     'Ana,001;1234;56793-0',
+    'Nubank,260;0001;12345678-9',
+    'Inter,077;0001;1234567-0',
+    'Sicoob,756;3010;12345678-9',
     'Erro,341;1234;00000-0',
-    'Caixa,104;1234;001;12345678-9',
   ].join('\n'),
 }

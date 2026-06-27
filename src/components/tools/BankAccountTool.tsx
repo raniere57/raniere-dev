@@ -15,7 +15,7 @@ import { ImportFileButton } from './shared/ImportFileButton'
 
 type ValidatorView = 'single' | 'batch' | 'csv'
 
-const BANK_OPTIONS = ['001', '033', '104', '237', '341'] as const
+const BANK_OPTIONS = ['001', '033', '077', '104', '237', '260', '341', '748', '756'] as const
 
 export function BankAccountTool() {
   const [view, setView] = useState<ValidatorView>('single')
@@ -118,7 +118,7 @@ export function BankAccountTool() {
       </div>
 
       <p className="tool-convert__warn tool-convert__warn--info" role="note">
-        Valida dígito verificador (BB, Bradesco, Itaú, Caixa, Santander). Não confirma se a conta existe.
+        Valida dígito verificador (BB, Bradesco, Itaú, Caixa, Santander, Nubank, Inter, Sicoob, Sicredi). Não confirma se a conta existe.
         {view !== 'single' && ' Formato: banco;agência;conta-dv — Caixa: banco;agência;operação;conta-dv.'}
       </p>
 
