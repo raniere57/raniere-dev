@@ -1,11 +1,14 @@
 import type { ComponentType } from 'react'
 import { Base64Tool } from './Base64Tool'
+import { BankAccountTool } from './BankAccountTool'
 import { BrContactTool } from './BrContactTool'
 import { CepTool } from './CepTool'
 import { CpfCnpjTool } from './CpfCnpjTool'
 import { CreditCardTool } from './CreditCardTool'
 import { PisTool } from './PisTool'
 import { PixTool } from './PixTool'
+import { RenavamTool } from './RenavamTool'
+import { TituloEleitorTool } from './TituloEleitorTool'
 import { CsvColumnsTool } from './CsvColumnsTool'
 import { CsvDedupeTool } from './CsvDedupeTool'
 import { CsvDelimiterTool } from './CsvDelimiterTool'
@@ -76,6 +79,9 @@ export const TOOL_COMPONENTS: Record<string, ComponentType> = {
   'pis': PisTool,
   'pix': PixTool,
   'credit-card': CreditCardTool,
+  'bank-account': BankAccountTool,
+  'renavam': RenavamTool,
+  'titulo-eleitor': TituloEleitorTool,
 }
 
 export function isImplementedTool(toolId: string): boolean {
